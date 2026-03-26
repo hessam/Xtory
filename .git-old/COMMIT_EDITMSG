@@ -1,0 +1,1 @@
+fix: prevent adding AI-generated events if they overlap with existing events in the same region

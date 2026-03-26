@@ -1,0 +1,100 @@
+@import url('/fonts/fonts.css');
+@import "tailwindcss";
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Prevent pull-to-refresh on mobile (does not affect desktop) */
+@media (max-width: 639.98px) {
+  html, body {
+    overscroll-behavior-y: contain;
+  }
+}
+
+@theme {
+  --font-sans: "Inter", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", "Vazirmatn", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", "Vazirmatn", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-vazirmatn: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(71, 85, 105, 0.5); /* slate-600 */
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.8); /* slate-500 */
+  }
+
+  /* Liquid Glass & Glassmorphism */
+  .liquid-glass {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateZ(0);
+    will-change: transform, backdrop-filter;
+  }
+
+  .liquid-glass-heavy {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateZ(0);
+    will-change: transform, backdrop-filter;
+  }
+
+  /* Calm UX Transitions */
+  .calm-transition {
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Chatbot FAB - mobile behavior (to stay above the sheet) */
+  @media (max-width: 639.98px) {
+    .chat-fab-mobile {
+      position: absolute !important;
+      bottom: var(--bottom-offset, 24px) !important;
+    }
+  }
+
+  /* AI Content Prose Micro-Typography */
+  .ai-prose p {
+    margin: 0;
+  }
+  .ai-prose p + p {
+    margin-top: 1.5em;
+  }
+  .ai-prose .uncertain {
+    color: var(--text-secondary, #94a3b8);
+    font-style: italic;
+  }
+  .ai-prose p:first-child {
+    font-size: 1.05em;
+    line-height: 1.75;
+  }
+}
