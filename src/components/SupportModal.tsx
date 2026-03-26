@@ -71,6 +71,14 @@ export const SupportModal: React.FC<SupportModalProps> = ({ onClose, lang }) => 
         >
           <X className="w-5 h-5" />
         </button>
+        
+        <div className="flex justify-center mb-6">
+          <img 
+            src="/logo.jpeg" 
+            alt="Xtory Logo" 
+            className="h-12 w-auto rounded-2xl shadow-2xl border border-white/20 object-cover" 
+          />
+        </div>
 
         {/* Tabs */}
         <div className="flex bg-black/20 p-1 rounded-2xl mb-6 border border-white/5 w-fit">
