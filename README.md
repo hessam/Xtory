@@ -1,20 +1,64 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Xtory
 
-# Run and deploy your AI Studio app
+**An interactive history atlas of Greater Iran — 4,000 years, no database, fully open source.**
 
-This contains everything you need to run your app locally.
+🌍 **Live at [xtory.sbs](https://xtory.sbs)**
 
-View your app in AI Studio: https://ai.studio/apps/8d54b302-6d81-4d6d-974e-7861d3082b46
+---
 
-## Run Locally
+## What it is
 
-**Prerequisites:**  Node.js
+Greater Iran — or Irānzamin — is a civilisational region stretching across modern Iran, Afghanistan, Tajikistan, Uzbekistan, parts of Iraq, Turkey, the Caucasus, and Central Asia. For four millennia it produced language, philosophy, art, and governance that shaped the world. No single tool showed this complexity honestly.
 
+Xtory is an interactive map and timeline that lets anyone explore who ruled, who built, who fought, and what survived — across that entire region and that entire span of time. Not a textbook. Not a political argument. Just an honest, navigable record.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+## How the data works
+
+Historical data at this scale can't be entered by hand. Xtory uses AI to extract structured historical events from sources, then populates them into a flat JSON format that the frontend reads directly.
+
+No database. No server. Every event, ruler, dynasty, and boundary is stored in JSON files — which means:
+- Zero infrastructure cost to host
+- Anyone can fork it, correct it, or extend it
+- The entire dataset is auditable and version-controlled in git
+
+Getting complex relational historical data — rulers, territories, overlapping dynasties, contested borders — to work at acceptable performance without a backend was the main architectural challenge.
+
+---
+
+## Stack
+
+- **TypeScript** — 92.7% of the codebase
+- **CSS** — custom styling, no framework
+- **Data** — flat JSON, AI-assisted extraction
+- **Hosting** — static, deployable anywhere
+
+---
+
+## Running locally
+
+```bash
+git clone https://github.com/hessam/xtory
+cd xtory
+npm install
+npm run dev
+```
+
+---
+
+## Contributing
+
+The data is the heart of it. If you find an event that's wrong, missing, or misrepresented — open a PR. The JSON structure is straightforward and documented in `/data/README.md`.
+
+All perspectives are welcome. The project has one rule: claims need a source.
+
+---
+
+## License
+
+Open source. See `LICENSE` for details.
+
+---
+
+*Built by [Hessam](https://github.com/hessam) · Istanbul, Turkey*
