@@ -137,6 +137,27 @@ export const regions: Region[] = [
     isWater: true
   },
   {
+    id: 'mediterranean',
+    name: { en: 'Mediterranean', fa: 'دریای مدیترانه' },
+    polygon: '-400,80 40,120 60,200 20,300 20,380 -400,380',
+    center: [-150, 240],
+    isWater: true
+  },
+  {
+    id: 'red_sea',
+    name: { en: 'Red Sea', fa: 'دریای سرخ' },
+    polygon: '15,380 20,380 60,400 60,600 15,600',
+    center: [30, 500],
+    isWater: true
+  },
+  {
+    id: 'egypt',
+    name: { en: 'Egypt', fa: 'مصر' },
+    polygon: '-350,380 15,380 15,600 -350,600',
+    center: [-160, 480],
+    isNeighbor: true
+  },
+  {
     id: 'persian_gulf',
     name: { en: 'Persian Gulf', fa: 'خلیج فارس' },
     polygon: '120,260 160,340 240,380 340,460 480,480 480,520 440,500 360,520 240,440 180,380 140,300',

@@ -54,11 +54,15 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
   const PIXELS_PER_YEAR = 2 * zoomLevel;
   const TOTAL_WIDTH = (MAX_YEAR - MIN_YEAR) * PIXELS_PER_YEAR;
 
+  const coreRegions = useMemo(() => {
+    return regions.filter(r => !r.isWater && !r.isNeighbor);
+  }, []);
+
   const regionToIndex = useMemo(() => {
     const map: Record<string, number> = {};
-    regions.forEach((r, i) => map[r.id] = i);
+    coreRegions.forEach((r, i) => map[r.id] = i);
     return map;
-  }, []);
+  }, [coreRegions]);
 
   const resolveRegion = (item: { regionId?: string; coordinates?: [number, number] }) => {
     if (item.regionId && regionToIndex[item.regionId] !== undefined) return item.regionId;
@@ -86,8 +90,8 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
     events.forEach((event) => {
       rows[event.id] = regionToIndex[resolveRegion(event)] ?? 0;
     });
-    return { eventRows: rows, maxRow: regions.length - 1 };
-  }, [events, regionToIndex]);
+    return { eventRows: rows, maxRow: coreRegions.length - 1 };
+  }, [events, regionToIndex, coreRegions]);
 
   const clusteredHistoricalEvents = useMemo(() => {
     const clusters: { x: number; regionId: string; events: HistoricalEvent[] }[] = [];
@@ -450,10 +454,10 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
         {/* Sticky Region Sidebar */}
         <div className="sticky left-0 z-[60] pointer-events-none w-0 h-0">
           <div className="flex flex-col pt-10 px-3 sm:px-4 bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent w-max min-h-[500px]">
-            {regions.map((region, i) => (
+            {coreRegions.map((region, i) => (
               <div
                 key={`label-${region.id}`}
-                className="h-[40px] flex items-center justify-start"
+                className="h-[40px] flex items-center justify-start transition-opacity duration-300"
               >
                 <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 hover:text-slate-200 transition-colors cursor-default whitespace-nowrap drop-shadow-md">
                   {region.name[lang]}
@@ -494,7 +498,7 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
           })}
           {/* Lane dividers & backgrounds */}
           <div className="absolute left-0 w-full border-t border-white/5" style={{ top: '40px' }} />
-          {regions.map((region, i) => (
+          {coreRegions.map((region, i) => (
             <div
               key={`lane-${region.id}`}
               className="absolute left-0 w-full border-b border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-colors"

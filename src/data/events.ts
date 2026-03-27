@@ -16,6 +16,7 @@ export const events: ReignEvent[] = [
   { id: 'e3', rulerId: 'cyrus_great', regionId: 'mesopotamia', startDate: -539, endDate: -530, status: 'Direct Control' },
   { id: 'e4', rulerId: 'cyrus_great', regionId: 'anatolia', startDate: -547, endDate: -530, status: 'Direct Control' },
   { id: 'e5', rulerId: 'cyrus_great', regionId: 'khorasan', startDate: -540, endDate: -530, status: 'Direct Control' },
+  { id: 'e235', rulerId: 'cyrus_great', regionId: 'tabaristan', startDate: -540, endDate: -530, status: 'Direct Control' },
   
   // Seleucus I
   { id: 'e6', rulerId: 'seleucus_i', regionId: 'mesopotamia', startDate: -305, endDate: -281, status: 'Direct Control' },
@@ -116,6 +117,7 @@ export const events: ReignEvent[] = [
   { id: 'e69', rulerId: 'darius_great', regionId: 'bactria', startDate: -522, endDate: -486, status: 'Direct Control' },
   { id: 'e70', rulerId: 'darius_great', regionId: 'indus', startDate: -522, endDate: -486, status: 'Direct Control' },
   { id: 'e71', rulerId: 'darius_great', regionId: 'caucasus', startDate: -522, endDate: -486, status: 'Direct Control' },
+  { id: 'e236', rulerId: 'darius_great', regionId: 'tabaristan', startDate: -522, endDate: -486, status: 'Direct Control' },
   { id: 'e72', rulerId: 'darius_iii', regionId: 'fars', startDate: -336, endDate: -330, status: 'Direct Control' },
   { id: 'e73', rulerId: 'darius_iii', regionId: 'jibal', startDate: -336, endDate: -330, status: 'Direct Control' },
   { id: 'e74', rulerId: 'darius_iii', regionId: 'mesopotamia', startDate: -336, endDate: -330, status: 'Direct Control' },
@@ -126,6 +128,7 @@ export const events: ReignEvent[] = [
   { id: 'e79', rulerId: 'darius_iii', regionId: 'bactria', startDate: -336, endDate: -330, status: 'Direct Control' },
   { id: 'e80', rulerId: 'darius_iii', regionId: 'indus', startDate: -336, endDate: -330, status: 'Direct Control' },
   { id: 'e81', rulerId: 'darius_iii', regionId: 'caucasus', startDate: -336, endDate: -330, status: 'Direct Control' },
+  { id: 'e237', rulerId: 'darius_iii', regionId: 'tabaristan', startDate: -336, endDate: -330, status: 'Direct Control' },
   // Seleucid
   { id: 'e82', rulerId: 'antiochus_iii', regionId: 'mesopotamia', startDate: -222, endDate: -187, status: 'Direct Control' },
   { id: 'e83', rulerId: 'antiochus_iii', regionId: 'jibal', startDate: -222, endDate: -187, status: 'Direct Control' },
@@ -300,4 +303,11 @@ export const events: ReignEvent[] = [
   { id: 'e232', rulerId: 'khamenei', regionId: 'khorasan', startDate: 1989, endDate: 2024, status: 'Direct Control' },
   { id: 'e233', rulerId: 'khamenei', regionId: 'tabaristan', startDate: 1989, endDate: 2024, status: 'Direct Control' },
   { id: 'e234', rulerId: 'khamenei', regionId: 'sistan', startDate: 1989, endDate: 2024, status: 'Direct Control' },
+  // 542 BC Context
+  { id: 'e238', rulerId: 'nabonidus', regionId: 'mesopotamia', startDate: -556, endDate: -539, status: 'Direct Control' },
+  { id: 'e239', rulerId: 'pukkusati', regionId: 'indus', startDate: -550, endDate: -500, status: 'Direct Control' },
+  { id: 'e240', rulerId: 'cyrus_great', regionId: 'caucasus', startDate: -550, endDate: -530, status: 'Direct Control' },
+  { id: 'e241', rulerId: 'cyrus_great', regionId: 'sistan', startDate: -545, endDate: -530, status: 'Direct Control' },
+  { id: 'e242', rulerId: 'cyrus_great', regionId: 'bactria', startDate: -545, endDate: -530, status: 'Direct Control' },
+  { id: 'e243', rulerId: 'cyrus_great', regionId: 'transoxiana', startDate: -545, endDate: -530, status: 'Direct Control' },
 ];

@@ -224,8 +224,8 @@ export async function generateLineage(personName: string, context: string, lang:
 }
 
 export async function searchHistoricalElement(query: string, lang: 'en' | 'fa'): Promise<SearchResult | null> {
-  const prompt = `You are a historian expert in Greater Iran and surrounding regions.
-  The user is searching for an historical element (event, figure, ruler, dynasty, or region) related to this area.
+  const prompt = `You are a historian expert in world history.
+  The user is searching for an historical element (event, figure, ruler, dynasty, or region). If the element is related to Greater Iran, prioritize that context.
   Query: "${query}"
   
   If you can identify the element, return a JSON object with this exact structure:
@@ -239,7 +239,7 @@ export async function searchHistoricalElement(query: string, lang: 'en' | 'fa'):
     "descriptionFa": "Short description in Persian"
   }
   
-  If the element is not found or not relevant to the history of Greater Iran and its neighboring regions, return:
+  If the element is not found, return:
   {
     "found": false
   }
@@ -288,7 +288,7 @@ export async function fetchHistoricalEventsForYear(year: number, lang: 'en' | 'f
   const cached = getCached<HistoricalEvent[]>(cacheKey);
   if (cached) return cached;
 
-  const prompt = `Find 3 to 5 major historical events (battles, downfalls, political shifts, cultural milestones) that happened in or around Greater Iran and its neighboring regions within 25 years of the year ${year}.
+  const prompt = `Find 3 to 5 major historical events (battles, downfalls, political shifts, cultural milestones) that happened in Greater Iran within 25 years of the year ${year}.
   Return a JSON array of objects. Each object must contain:
   - id: A unique string ID (e.g., "ai_event_1")
   - year: The exact year the event occurred (negative for BC)
@@ -353,8 +353,8 @@ export async function fetchHistoricalFiguresForYear(year: number, lang: 'en' | '
   const cached = getCached<HistoricalFigure[]>(cacheKey);
   if (cached) return cached;
 
-  const prompt = `You are a historian expert in Greater Iran and surrounding regions.
-  Provide a list of 3 to 5 notable historical figures (philosophers, scientists, poets, artists, or other cultural figures) who were alive and active around the year ${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}.
+  const prompt = `You are a historian expert in world history.
+  Provide a list of 3 to 5 notable historical figures (philosophers, scientists, poets, artists, or other thinkers) from any part of the world who were alive and active around the year ${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}.
   Return ONLY a valid JSON array of objects with this exact structure:
   [{
     "id": "unique_string_id",
@@ -418,8 +418,8 @@ export async function fetchArtifactsForYear(year: number, lang: 'en' | 'fa'): Pr
   const cached = getCached<Artifact[]>(cacheKey);
   if (cached) return cached;
 
-  const prompt = `You are a historian expert in Greater Iran and surrounding regions.
-  Provide a list of 3 to 5 notable monuments, heritages, artifacts, or manuscripts that were created or became prominent around the year ${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}.
+  const prompt = `You are a historian expert in Greater Iran.
+  Provide a list of 3 to 5 notable monuments, heritages, artifacts, or manuscripts that were created or became prominent in Greater Iran around the year ${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}.
   Return ONLY a valid JSON array of objects with this exact structure:
   [{
     "id": "unique_string_id",

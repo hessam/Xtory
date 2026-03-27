@@ -219,4 +219,18 @@ export const dynasties: Record<string, Dynasty> = {
     capitalCity: { en: 'Sari', fa: 'ساری' },
     colorFamily: 'persian',
   },
+  neo_babylonian: {
+    id: 'neo_babylonian',
+    name: { en: 'Neo-Babylonian Empire', fa: 'امپراتوری بابل نو' },
+    classification: 'Foreign Empire',
+    capitalCity: { en: 'Babylon', fa: 'بابل' },
+    colorFamily: 'semitic',
+  },
+  gandhara: {
+    id: 'gandhara',
+    name: { en: 'Gandhara Kingdom', fa: 'پادشاهی گندارا' },
+    classification: 'Native Empire',
+    capitalCity: { en: 'Taxila', fa: 'تاکسیلا' },
+    colorFamily: 'nomadic',
+  },
 };
