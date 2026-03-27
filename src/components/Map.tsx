@@ -8,6 +8,7 @@ import { HistoricalEvent } from '../data/historicalEvents';
 import { Artifact } from '../data/artifacts';
 import { Sparkles, ZoomIn, ZoomOut, Maximize, Swords, Skull, Landmark, Globe2, Building2, Book, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { rivers, mountains } from '../data/geography';
 
 interface MapProps {
   year: number;
@@ -44,6 +45,67 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
     return coords;
   };
 
+  /**
+   * AUTHORITATIVE PATH GENERATOR
+   * Strategy: Every 3rd vertex is a hard L (straight segment) — signals intentional borders.
+   * The other 2/3 use a tight Q (quadratic) with reduced handle distance (0.08 vs old 0.18).
+   * Result: borders read as shaped by geography, not by the Bezier interpolation algorithm.
+   */
+  const createSmoothPath = (pointsStr: string) => {
+    const pts = pointsStr.split(' ').map(p => {
+      const [x, y] = p.split(',').map(Number);
+      return [x, y];
+    });
+    if (pts.length < 3) return `M ${pointsStr.replace(/,/g, ' ')}`;
+
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 0; i < pts.length; i++) {
+      const curr = pts[i];
+      const next = pts[(i + 1) % pts.length];
+      const after = pts[(i + 2) % pts.length];
+
+      if (i % 3 === 0) {
+        // Straight segment — authoritative, intentional boundary
+        d += ` L ${next[0]} ${next[1]}`;
+      } else {
+        // Tight quadratic — organic but controlled (handle = 8% of span, not 18%)
+        const cpx = next[0] + (after[0] - curr[0]) * 0.08;
+        const cpy = next[1] + (after[1] - curr[1]) * 0.08;
+        d += ` Q ${cpx.toFixed(1)} ${cpy.toFixed(1)} ${next[0]} ${next[1]}`;
+      }
+    }
+    return d + ' Z';
+  };
+
+  const createSmoothLine = (pts: [number, number][]) => {
+    if (pts.length < 2) return `M ${pts[0][0]} ${pts[0][1]}`;
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = i === 0 ? pts[0] : pts[i - 1];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = i + 2 < pts.length ? pts[i + 2] : pts[i + 1];
+      
+      const cp1x = p1[0] + (p2[0] - p0[0]) * 0.18;
+      const cp1y = p1[1] + (p2[1] - p0[1]) * 0.18;
+      const cp2x = p2[0] - (p3[0] - p1[0]) * 0.18;
+      const cp2y = p2[1] - (p3[1] - p1[1]) * 0.18;
+      
+      d += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2[0]} ${p2[1]}`;
+    }
+    return d;
+  };
+
+  const createSharpLine = (pts: [number, number][], closePath: boolean = false) => {
+    if (pts.length < 2) return `M ${pts[0][0]} ${pts[0][1]}`;
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++) {
+      d += ` L ${pts[i][0]} ${pts[i][1]}`;
+    }
+    if (closePath) d += ' Z';
+    return d;
+  };
+
   const activeEvents = useMemo(() => {
     return events.filter((e) => year >= e.startDate && year <= e.endDate);
   }, [year, events]);
@@ -61,39 +123,69 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
   }, [year, artifacts]);
 
   const getRegionStyle = (regionId: string) => {
+    const region = regions.find(r => r.id === regionId);
+    
+    // Explicit styling for water regions that act as map territories
+    if (region?.isWater) {
+      return {
+        fill: '#0284c7', // Darker oceanic blue (was conflicting with Hellenic #0ea5e9)
+        stroke: '#0369a1',
+        strokeWidth: 1.5,
+        fillOpacity: 0.08,
+        mixBlendMode: 'screen' as const,
+        active: true
+      };
+    }
+
     const regionEvents = activeEvents.filter((e) => e.regionId === regionId);
     
     if (regionEvents.length === 0) {
-      return { fill: '#1e293b', stroke: '#334155', strokeWidth: 1, filter: 'none' }; // Slate 800
+      if (region?.isNeighbor) {
+        return { 
+          fill: 'transparent', 
+          stroke: 'rgba(255,255,255,0.04)', 
+          strokeWidth: 0.8, 
+          fillOpacity: 0, 
+          mixBlendMode: 'normal' as const,
+          active: false 
+        };
+      }
+      // Always visible hairline — the geographic skeleton is always present
+      return { 
+        fill: 'transparent', 
+        stroke: 'rgba(255,255,255,0.12)', 
+        strokeWidth: 0.6, 
+        fillOpacity: 0, 
+        mixBlendMode: 'normal' as const,
+        active: false 
+      };
     }
 
     const primaryEvent = regionEvents.find(e => e.status === 'Direct Control') || regionEvents[0];
     const ruler = rulers[primaryEvent.rulerId];
     const dynasty = dynasties[ruler.dynastyId];
 
-    let baseColor = '#334155';
-    let glowColor = 'transparent';
-    if (dynasty.colorFamily === 'persian') { baseColor = '#a855f7'; glowColor = 'rgba(168, 85, 247, 0.4)'; } // Purple
-    if (dynasty.colorFamily === 'arab') { baseColor = '#10b981'; glowColor = 'rgba(16, 185, 129, 0.4)'; } // Emerald
-    if (dynasty.colorFamily === 'turkic') { baseColor = '#ea580c'; glowColor = 'rgba(234, 88, 12, 0.4)'; } // Orange
-    if (dynasty.colorFamily === 'greek') { baseColor = '#0ea5e9'; glowColor = 'rgba(14, 165, 233, 0.4)'; } // Sky
-    if (dynasty.colorFamily === 'nomadic') { baseColor = '#b45309'; glowColor = 'rgba(180, 83, 9, 0.4)'; } // Amber
-    if (dynasty.colorFamily === 'foreign') { baseColor = '#e11d48'; glowColor = 'rgba(225, 29, 72, 0.4)'; } // Rose
-    if (dynasty.colorFamily === 'semitic') { baseColor = '#78350f'; glowColor = 'rgba(120, 53, 15, 0.4)'; } // Dark Amber
+    let baseColor = '#ffffff';
+    if (dynasty.colorFamily === 'persian') baseColor = '#a855f7';
+    if (dynasty.colorFamily === 'arab') baseColor = '#10b981';
+    if (dynasty.colorFamily === 'turkic') baseColor = '#ea580c';
+    if (dynasty.colorFamily === 'greek') baseColor = '#0ea5e9';
+    if (dynasty.colorFamily === 'nomadic') baseColor = '#b45309';
+    if (dynasty.colorFamily === 'foreign') baseColor = '#e11d48';
+    if (dynasty.colorFamily === 'semitic') baseColor = '#78350f';
 
-    const hasOverlap = regionEvents.length > 1;
-    const isVassal = primaryEvent.status === 'Vassal State';
     const isSphere = primaryEvent.status === 'Sphere of Influence' || primaryEvent.status === 'Contested/Warzone';
+    const isDirect = primaryEvent.status === 'Direct Control';
 
-    if (hasOverlap || isSphere) {
-      return { fill: `url(#stripe-${dynasty.colorFamily})`, stroke: baseColor, strokeWidth: 2, filter: `drop-shadow(0 0 8px ${glowColor})` };
-    }
-
-    if (isVassal) {
-      return { fill: `url(#dot-${dynasty.colorFamily})`, stroke: baseColor, strokeWidth: 2, strokeDasharray: '4 4', filter: `drop-shadow(0 0 8px ${glowColor})` };
-    }
-
-    return { fill: baseColor, stroke: '#ffffff', strokeWidth: 1.5, filter: `drop-shadow(0 0 12px ${glowColor})` };
+    return { 
+      fill: baseColor, 
+      stroke: baseColor, 
+      // Weight hierarchy: Direct Control — heavy. Sphere — thin.
+      strokeWidth: isDirect ? 1.5 : 0.8,
+      fillOpacity: isSphere ? 0.04 : 0.09, 
+      mixBlendMode: 'screen' as const,
+      active: true
+    };
   };
 
   const getEventIcon = (type: string) => {
@@ -117,7 +209,7 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
   const [showLegend, setShowLegend] = useState(false);
 
   return (
-    <div className="w-full h-full relative bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#0f172a] via-[#020617] to-[#000000] overflow-hidden">
+    <div className="w-full h-full relative bg-[#040d1a] overflow-hidden">
       <TransformWrapper
         initialScale={1}
         minScale={0.5}
@@ -160,293 +252,263 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
             </div>
 
             <TransformComponent wrapperClass="!w-full !h-full" contentClass="!w-full !h-full">
-              <svg viewBox="0 0 1000 600" className="w-full h-full" preserveAspectRatio="xMidYMid meet" style={{ overflow: 'visible' }}>
+              <svg viewBox="0 0 1000 600" className="w-full h-full" preserveAspectRatio="xMidYMid meet" style={{ overflow: 'visible', willChange: 'transform' }}>
                 <defs>
-                  {/* Grid Pattern */}
-                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" strokeWidth="0.5" />
-                  </pattern>
+                  {/*
+                    TERRAIN: "Felt not seen" — feDisplacementMap subtly warps
+                    the land silhouette, removing the perfectly-sharp polygon edge
+                    and replacing it with organic micro-variation. Scale=6 = minimal.
+                  */}
+                  <filter id="subtle-relief" x="-5%" y="-5%" width="110%" height="110%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="4" seed="8" result="noise" />
+                    <feGaussianBlur in="noise" stdDeviation="0.5" result="smooth-noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="smooth-noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
+                  </filter>
 
-                  {/* Patterns for Persian */}
-                  <pattern id="stripe-persian" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <rect width="10" height="10" fill="#a855f7" fillOpacity="0.15" />
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#a855f7" strokeWidth="3" />
-                  </pattern>
-                  <pattern id="dot-persian" patternUnits="userSpaceOnUse" width="10" height="10">
-                    <rect width="10" height="10" fill="#a855f7" fillOpacity="0.1" />
-                    <circle cx="5" cy="5" r="2" fill="#a855f7" />
-                  </pattern>
+                  {/* BORDERS: Glass-edge — soft Gaussian on stroke only */}
+                  <filter id="glass-edge" x="-10%" y="-10%" width="120%" height="120%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" />
+                  </filter>
 
-                  {/* Patterns for Arab */}
-                  <pattern id="stripe-arab" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <rect width="10" height="10" fill="#10b981" fillOpacity="0.15" />
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#10b981" strokeWidth="3" />
-                  </pattern>
-                  <pattern id="dot-arab" patternUnits="userSpaceOnUse" width="10" height="10">
-                    <rect width="10" height="10" fill="#10b981" fillOpacity="0.1" />
-                    <circle cx="5" cy="5" r="2" fill="#10b981" />
-                  </pattern>
-
-                  {/* Patterns for Turkic */}
-                  <pattern id="stripe-turkic" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <rect width="10" height="10" fill="#ea580c" fillOpacity="0.15" />
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#ea580c" strokeWidth="3" />
-                  </pattern>
-                  <pattern id="dot-turkic" patternUnits="userSpaceOnUse" width="10" height="10">
-                    <rect width="10" height="10" fill="#ea580c" fillOpacity="0.1" />
-                    <circle cx="5" cy="5" r="2" fill="#ea580c" />
-                  </pattern>
-
-                  {/* Patterns for Greek */}
-                  <pattern id="stripe-greek" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <rect width="10" height="10" fill="#0ea5e9" fillOpacity="0.15" />
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#0ea5e9" strokeWidth="3" />
-                  </pattern>
-                  <pattern id="dot-greek" patternUnits="userSpaceOnUse" width="10" height="10">
-                    <rect width="10" height="10" fill="#0ea5e9" fillOpacity="0.1" />
-                    <circle cx="5" cy="5" r="2" fill="#0ea5e9" />
-                  </pattern>
-
-                  {/* Patterns for Nomadic */}
-                  <pattern id="stripe-nomadic" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <rect width="10" height="10" fill="#b45309" fillOpacity="0.15" />
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#b45309" strokeWidth="3" />
-                  </pattern>
-                  <pattern id="dot-nomadic" patternUnits="userSpaceOnUse" width="10" height="10">
-                    <rect width="10" height="10" fill="#b45309" fillOpacity="0.1" />
-                    <circle cx="5" cy="5" r="2" fill="#b45309" />
-                  </pattern>
-
-                  {/* Patterns for Foreign */}
-                  <pattern id="stripe-foreign" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <rect width="10" height="10" fill="#e11d48" fillOpacity="0.15" />
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#e11d48" strokeWidth="3" />
-                  </pattern>
-                  <pattern id="dot-foreign" patternUnits="userSpaceOnUse" width="10" height="10">
-                    <rect width="10" height="10" fill="#e11d48" fillOpacity="0.1" />
-                    <circle cx="5" cy="5" r="2" fill="#e11d48" />
-                  </pattern>
-
-                  {/* Patterns for Semitic */}
-                  <pattern id="stripe-semitic" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <rect width="10" height="10" fill="#78350f" fillOpacity="0.15" />
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#78350f" strokeWidth="3" />
-                  </pattern>
-                  <pattern id="dot-semitic" patternUnits="userSpaceOnUse" width="10" height="10">
-                    <rect width="10" height="10" fill="#78350f" fillOpacity="0.1" />
-                    <circle cx="5" cy="5" r="2" fill="#78350f" />
-                  </pattern>
-
-                  <filter id="eventGlow">
-                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  {/* MARKERS: Glow rings around event pins */}
+                  <filter id="eventGlow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
                     <feMerge>
                       <feMergeNode in="coloredBlur"/>
                       <feMergeNode in="SourceGraphic"/>
                     </feMerge>
                   </filter>
 
-                  {/* Noise Filter for Board Game Feel */}
-                  <filter id="noise">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
-                    <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.05 0" />
+                  {/* OCEAN: Deep-space midnight radial */}
+                  <radialGradient id="water-depth" cx="50%" cy="50%" r="70%">
+                    <stop offset="0%" stopColor="#08182b" />
+                    <stop offset="100%" stopColor="#020617" />
+                  </radialGradient>
+
+                  {/* RIVERS: Iridescent thin line gradient */}
+                  <linearGradient id="river-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.6" />
+                    <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.2" />
+                  </linearGradient>
+
+                  {/* WATER BODIES: glass fill + glow */}
+                  <radialGradient id="sea-fill" cx="50%" cy="30%" r="80%">
+                    <stop offset="0%" stopColor="#1e40af" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#0c1a3a" stopOpacity="0.15" />
+                  </radialGradient>
+                  <filter id="sea-glow" x="-15%" y="-15%" width="130%" height="130%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" />
                   </filter>
+
+                  {/* RIVERS: flowing, glossy */}
+                  <filter id="river-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" />
+                  </filter>
+
+                  {/* MOUNTAINS: rough, textured (optional subtle pattern) */}
+                  <pattern id="mountain-texture" patternUnits="userSpaceOnUse" width="4" height="4">
+                    <rect width="4" height="4" fill="#8a7a6e" />
+                    <circle cx="1" cy="1" r="0.5" fill="#7a6a5e" opacity="0.4" />
+                  </pattern>
                 </defs>
 
-                {/* Infinite Background Grid */}
-                <rect x="-5000" y="-5000" width="11000" height="10600" fill="url(#grid)" />
-                
-                {/* Infinite Noise Overlay */}
-                <rect x="-5000" y="-5000" width="11000" height="10600" style={{ pointerEvents: 'none' }} filter="url(#noise)" />
+                {/* GPU acceleration layer */}
+                <g style={{ willChange: 'transform' }}>
 
-                {/* Subtle Latitude/Longitude Grid for Board Game Feel (Extended) */}
-                <g className="opacity-10 pointer-events-none">
-                  {[...Array(111)].map((_, i) => (
-                    <line key={`v-${i}`} x1={(i - 50) * 100} y1={-5000} x2={(i - 50) * 100} y2={5600} stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4" />
-                  ))}
-                  {[...Array(111)].map((_, i) => (
-                    <line key={`h-${i}`} x1={-5000} y1={(i - 50) * 100} x2={6000} y2={(i - 50) * 100} stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4" />
-                  ))}
-                </g>
-
-                {/* Water Bodies */}
-                <g className="pointer-events-none">
-                  {/* Caspian Sea */}
-                  <polygon points="380,100 400,140 480,140 540,160 600,80 560,20 420,20 380,100" fill="#082f49" fillOpacity="0.4" stroke="#0ea5e9" strokeOpacity="0.2" strokeWidth="2" />
-                  <text 
-                    x="480" y="80" 
-                    textAnchor="middle" 
-                    className={`text-[10px] font-serif italic opacity-40 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#38bdf8" 
-                    transform="rotate(-15, 480, 80)"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'Caspian Sea' : 'دریای کاسپین'}
-                  </text>
+                  {/* Base Ocean */}
+                  <rect x="-5000" y="-5000" width="11000" height="10600" fill="url(#water-depth)" />
                   
-                  {/* Persian Gulf */}
-                  <polygon points="160,340 240,380 340,460 480,480 560,520 720,520 720,600 160,600" fill="#082f49" fillOpacity="0.4" stroke="#0ea5e9" strokeOpacity="0.2" strokeWidth="2" />
-                  <text 
-                    x="400" y="520" 
-                    textAnchor="middle" 
-                    className={`text-[12px] font-serif italic opacity-40 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#38bdf8" 
-                    transform="rotate(-10, 400, 520)"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'Persian Gulf' : 'خلیج فارس'}
-                  </text>
+                  {/*
+                    LANDMASS: The physical truth.
+                    filter=subtle-relief = "felt not seen" micro-displacement.
+                    No specular peaks — just organic edge breath.
+                  */}
+                  <path
+                    d="M -5000 -5000 L 6000 -5000 L 6000 6000 L -5000 6000 Z
+                       M 447,22 L 482,8 L 512,16 L 532,32 L 536,44 L 537,56 L 536,66 L 548,72 L 552,96 L 537,102 L 534,120 L 530,138 L 522,154 L 514,170 L 502,180 L 490,184 L 476,189 L 462,185 L 450,176 L 440,168 L 436,155 L 434,142 L 436,116 L 438,100 L 440,80 L 444,64 L 440,46 L 440,34 L 444,26 L 447,22 Z
+                       M 160,340 L 180,360 L 210,380 L 240,390 L 280,400 L 320,440 L 340,460 L 360,480 L 440,490 L 480,480 L 530,470 L 560,510 L 580,530 L 610,550 L 700,530 L 750,530 L 750,600 L -5000,600 L -5000,340 Z
+                       M 0,120 L 20,120 L 35,140 L 45,170 L 55,200 L 80,220 L 120,260 L 0,260 Z"
+                    fill="#0f172a"
+                    fillRule="evenodd"
+                    filter="url(#subtle-relief)"
+                  />
 
-                  {/* Mediterranean Sea */}
-                  <polygon points="0,120 40,120 60,200 120,260 0,260" fill="#082f49" fillOpacity="0.4" stroke="#0ea5e9" strokeOpacity="0.2" strokeWidth="2" />
-                  <text 
-                    x="40" y="200" 
-                    textAnchor="middle" 
-                    className={`text-[10px] font-serif italic opacity-40 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#38bdf8" 
-                    transform="rotate(-60, 40, 200)"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'Mediterranean' : 'مدیترانه'}
-                  </text>
-                </g>
+                  {/*
+                    ═══════════════════════════════════════════════════
+                    WATER BODIES — Geographically faithful, glass aesthetic
+                    Calibration (1000×600 viewport, ~26 SVG/deg lon, ~27 SVG/deg lat):
+                      Caspian: 37°N–47.5°N, 49.5°E–54°E
+                        → map x: 434–552, y: 8–188  (tall rectangle, Kara-Bogaz Bay at NE)
+                      Persian Gulf + Gulf of Oman:
+                        PG (NW→SE): x: 308–532, y: 436–530
+                        GoO (E): x: 532–718, y: 450–536
+                    ═══════════════════════════════════════════════════
+                  */}
 
-                {/* Neighboring Regions (Faded) */}
-                <g className="pointer-events-none opacity-40">
-                  {/* Europe / Balkans */}
-                  <polygon points="0,0 160,0 160,100 40,120 0,120" fill="#0f172a" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
-                  <text 
-                    x="60" y="60" 
-                    textAnchor="middle" 
-                    className={`text-[10px] font-bold opacity-50 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#94a3b8"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'EUROPE' : 'اروپا'}
-                  </text>
+                  {/* Marginalia: regional labels that fall outside regions */}
 
-                  {/* Steppes */}
-                  <polygon points="160,0 1000,0 1000,60 740,60 600,80 560,20 420,20 380,100 320,80 240,120 160,100" fill="#0f172a" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
-                  <text 
-                    x="500" y="40" 
-                    textAnchor="middle" 
-                    className={`text-[12px] font-bold opacity-50 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#94a3b8"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'THE STEPPES' : 'استپ‌ها'}
-                  </text>
+                  {/* Marginalia: Handled directly through neighborhood polygons */}
 
-                  {/* Levant / Egypt */}
-                  <polygon points="0,260 120,260 160,340 0,340" fill="#0f172a" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
-                  <text 
-                    x="60" y="300" 
-                    textAnchor="middle" 
-                    className={`text-[10px] font-bold opacity-50 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#94a3b8"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'LEVANT & EGYPT' : 'شام و مصر'}
-                  </text>
 
-                  {/* Arabia */}
-                  <polygon points="0,340 160,340 240,380 340,460 480,480 560,520 720,520 720,600 0,600" fill="#0f172a" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
-                  <text 
-                    x="200" y="480" 
-                    textAnchor="middle" 
-                    className={`text-[12px] font-bold opacity-50 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#94a3b8"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'ARABIA' : 'عربستان'}
-                  </text>
-
-                  {/* India */}
-                  <polygon points="980,340 920,220 1000,220 1000,600 900,560" fill="#0f172a" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
-                  <text 
-                    x="960" y="400" 
-                    textAnchor="middle" 
-                    className={`text-[12px] font-bold opacity-50 ${lang === 'fa' ? '' : 'tracking-widest'}`} 
-                    fill="#94a3b8" 
-                    transform="rotate(70, 960, 400)"
-                    style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
-                  >
-                    {lang === 'en' ? 'INDIA' : 'هند'}
-                  </text>
-                </g>
-
-                {regions.map((region) => {
-                  const style = getRegionStyle(region.id);
-                  const regionEvents = activeEvents.filter((e) => e.regionId === region.id);
-                  const primaryEvent = regionEvents.find(e => e.status === 'Direct Control') || regionEvents[0];
-                  const ruler = primaryEvent ? rulers[primaryEvent.rulerId] : null;
-                  const dynasty = ruler ? dynasties[ruler.dynastyId] : null;
-                  const controlText = dynasty ? `${dynasty.name[lang]} - ${primaryEvent.status}` : '';
-
-                  return (
-                    <g 
-                      key={region.id} 
-                      onClick={() => onRegionClick(region.id)} 
-                      onMouseMove={(e) => {
-                        setTooltip({
-                          x: e.clientX,
-                          y: e.clientY,
-                          text: region.name[lang],
-                          subtext: controlText
-                        });
-                      }}
-                      onMouseLeave={() => setTooltip(null)}
-                      className="cursor-pointer hover:brightness-125 transition-all duration-300 group"
-                    >
-                      <polygon
-                        points={region.polygon}
-                        style={{
-                          fill: style.fill,
-                          stroke: style.stroke,
-                          strokeWidth: style.strokeWidth,
-                          strokeDasharray: style.strokeDasharray,
-                          filter: style.filter,
-                          transition: 'all 0.5s ease'
-                        }}
+                  {/* Physical Geography */}
+                  {/* DISABLED FOR NOW: The user requested to disable rivers and mountains temporarily. We will get back to them later.
+                  <g className="pointer-events-none">
+                    {mountains.map((mountain) => (
+                      <g key={mountain.id} opacity="0.6">
+                        {mountain.contours.map((contour, idx) => (
+                          <g key={idx}>
+                            <path
+                              d={createSharpLine(contour, true)}
+                              fill="#7a6a5e"
+                              opacity="0.1"
+                              stroke="none"
+                            />
+                            <path
+                              d={createSharpLine(contour)}
+                              fill="none"
+                              stroke="#8a7a6e"
+                              strokeWidth="1"
+                              strokeLinecap="square"
+                              strokeLinejoin="miter"
+                              strokeDasharray="3,2"
+                              opacity="0.8"
+                            />
+                          </g>
+                        ))}
+                      </g>
+                    ))}
+                    
+                    {rivers.map((river) => (
+                      <path
+                        key={river.id}
+                        d={createSmoothLine(river.path)}
+                        fill="none"
+                        stroke="#38bdf8"
+                        strokeWidth="1.3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        opacity="0.75"
+                        filter="url(#river-glow)"
                       />
-                      <text
-                        x={region.center[0]}
-                        y={region.center[1]}
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        className={`text-xs font-bold pointer-events-none calm-transition ${
-                          lang === 'fa' ? '' : 'tracking-wider'
-                        } ${scale > 2.5 ? 'opacity-0' : 'opacity-60 group-hover:opacity-100'}`}
-                        fill="#f8fafc"
-                        style={{ 
-                          textShadow: '0px 2px 4px rgba(0,0,0,0.9), 0px 0px 8px rgba(0,0,0,0.5)',
-                          direction: lang === 'fa' ? 'rtl' : 'ltr'
+                    ))}
+                  </g>
+                  */}
+
+                  {/* Political Regions — glass hologram over terrain */}
+                  {regions.map((region) => {
+                    const style = getRegionStyle(region.id);
+                    const regionEvents = activeEvents.filter((e) => e.regionId === region.id);
+                    const primaryEvent = regionEvents.find(e => e.status === 'Direct Control') || regionEvents[0];
+                    const ruler = primaryEvent ? rulers[primaryEvent.rulerId] : null;
+                    const dynasty = ruler ? dynasties[ruler.dynastyId] : null;
+                    const controlText = dynasty ? `${dynasty.name[lang]} - ${primaryEvent.status}` : '';
+                    const atmosphericOpacity = style.active ? 0.88 + (region.center[1] / 600) * 0.12 : 1;
+                    const d = createSmoothPath(region.polygon);
+
+                    return (
+                      <g
+                        key={region.id}
+                        onClick={() => onRegionClick(region.id)}
+                        onMouseMove={(e) => {
+                          setTooltip({ x: e.clientX, y: e.clientY, text: region.name[lang], subtext: controlText });
                         }}
+                        onMouseLeave={() => setTooltip(null)}
+                        className="cursor-pointer transition-all duration-300 group"
+                        opacity={atmosphericOpacity}
                       >
-                        {region.name[lang]}
-                      </text>
-                      
-                      {/* Render Cities */}
+                        {/* ALWAYS-ON geographic skeleton — visible at all times */}
+                        <path
+                          d={d}
+                          fill="transparent"
+                          stroke="rgba(255,255,255,0.10)"
+                          strokeWidth="0.5"
+                          strokeLinejoin="miter"
+                          strokeLinecap="square"
+                        />
+
+                        {style.active && (<>
+                          {/* Glass fill */}
+                          <path
+                            d={d}
+                            fill={style.fill}
+                            fillOpacity={style.fillOpacity}
+                            stroke="none"
+                            style={{ mixBlendMode: style.mixBlendMode, transition: 'fill 0.5s ease' }}
+                          />
+                          {/* Tapered glow halo (blurred outer stroke) */}
+                          <path
+                            d={d}
+                            fill="none"
+                            stroke={style.stroke}
+                            strokeWidth={style.strokeWidth * 1.8}
+                            strokeOpacity={0.25}
+                            strokeLinejoin="miter"
+                            filter="url(#glass-edge)"
+                          />
+                          {/* Authoritative crisp hairline — the real border */}
+                          <path
+                            d={d}
+                            fill="none"
+                            stroke={style.stroke}
+                            strokeWidth={style.strokeWidth}
+                            strokeOpacity={0.75}
+                            strokeLinejoin="miter"
+                            strokeLinecap="square"
+                            style={{ transition: 'stroke 0.5s ease' }}
+                          />
+                        </>)}
+
+                        <text
+                          x={region.center[0]}
+                          y={region.center[1]}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          fontSize="7"
+                          fontWeight="600"
+                          direction={lang === 'fa' ? 'rtl' : 'ltr'}
+                          unicodeBidi="embed"
+                          className={`pointer-events-none transition-all duration-500 ${
+                            scale > 2.5 
+                              ? 'opacity-0' 
+                              : style.active 
+                                ? 'opacity-80 group-hover:opacity-100' 
+                                : 'opacity-25 group-hover:opacity-60'
+                          }`}
+                          fill={style.active ? '#ffffff' : '#64748b'}
+                          style={{ 
+                            fontFamily: 'Vazirmatn, Inter, system-ui, sans-serif',
+                            filter: style.active 
+                              ? 'drop-shadow(0px 2px 4px rgba(0,0,0,0.9)) drop-shadow(0px 0px 6px rgba(255,255,255,0.3))' 
+                              : 'drop-shadow(0px 2px 4px rgba(0,0,0,0.8))',
+                            letterSpacing: lang === 'fa' ? '0' : '2'
+                          }}
+                        >
+                          {lang === 'en' ? region.name[lang].toUpperCase() : region.name[lang]}
+                        </text>
+
+                      {/* Cities */}
                       {region.cities?.map(city => (
                         <g key={city.id} className="pointer-events-none calm-transition">
                           <circle 
                             cx={city.coordinates[0]} 
                             cy={city.coordinates[1]} 
-                            r="3" 
-                            fill="#cbd5e1" 
-                            stroke="#0f172a" 
-                            strokeWidth="1"
-                            className={`drop-shadow-md transition-opacity duration-300 ${scale > 1.2 ? 'opacity-100' : 'opacity-0'}`}
+                            r="1.2" 
+                            fill="#ffffff" 
+                            className={`transition-opacity duration-300 ${scale > 1.2 ? 'opacity-60' : 'opacity-0'}`}
                           />
                           <text
                             x={city.coordinates[0]}
-                            y={city.coordinates[1] - 8}
+                            y={city.coordinates[1] - 6}
                             textAnchor="middle"
                             dominantBaseline="central"
-                            className={`text-[8px] font-medium transition-opacity duration-300 ${scale > 1.5 ? 'opacity-100' : 'opacity-0'}`}
-                            fill="#94a3b8"
+                            direction={lang === 'fa' ? 'rtl' : 'ltr'}
+                            unicodeBidi="embed"
+                            className={`text-[6px] font-medium transition-opacity duration-300 ${scale > 1.5 ? 'opacity-40' : 'opacity-0'}`}
+                            fill="#ffffff"
                             style={{ 
-                              textShadow: '0px 1px 2px rgba(0,0,0,0.9)',
-                              direction: lang === 'fa' ? 'rtl' : 'ltr'
+                              fontFamily: 'Vazirmatn, Inter, system-ui, sans-serif',
+                              textShadow: '0px 1px 4px rgba(0,0,0,0.8)',
+                              letterSpacing: lang === 'fa' ? '0' : '0.5'
                             }}
                           >
                             {city.name[lang]}
@@ -471,10 +533,10 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                       cx={event.coordinates![0]}
                       cy={event.coordinates![1]}
                       r="12"
-                      fill="#0f172a"
+                      fill="rgba(15, 23, 42, 0.6)"
                       stroke={event.type === 'battle' ? '#f43f5e' : event.type === 'downfall' ? '#c084fc' : event.type === 'political' ? '#38bdf8' : '#34d399'}
                       strokeWidth="1.5"
-                      className="opacity-80 group-hover:opacity-100 transition-all duration-300"
+                      className="transition-all duration-300 backdrop-blur-md"
                       style={{ filter: 'url(#eventGlow)' }}
                     />
                     <circle
@@ -504,8 +566,12 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                       textAnchor="middle"
                       dominantBaseline="central"
                       fill="white"
-                      className={`text-[8px] font-sans font-bold transition-opacity drop-shadow-md bg-slate-900/80 px-1 rounded ${scale > 2.0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                      style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
+                      direction={lang === 'fa' ? 'rtl' : 'ltr'}
+                      unicodeBidi="embed"
+                      className={`text-[8px] font-bold transition-opacity drop-shadow-md bg-slate-900/80 px-1 rounded ${scale > 2.0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                      style={{ 
+                        fontFamily: 'Vazirmatn, Inter, system-ui, sans-serif',
+                      }}
                     >
                       {event.title[lang]}
                     </text>
@@ -526,10 +592,10 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                       cx={artifact.coordinates![0]}
                       cy={artifact.coordinates![1]}
                       r="10"
-                      fill="#0f172a"
+                      fill="rgba(15, 23, 42, 0.6)"
                       stroke="#fbbf24"
                       strokeWidth="1.5"
-                      className="opacity-80 group-hover:opacity-100 transition-all duration-300"
+                      className="transition-all duration-300 backdrop-blur-md"
                       style={{ filter: 'url(#eventGlow)' }}
                     />
                     <circle
@@ -559,13 +625,21 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                       textAnchor="middle"
                       dominantBaseline="central"
                       fill="white"
-                      className={`text-[8px] font-sans font-bold transition-opacity drop-shadow-md bg-slate-900/80 px-1 rounded ${scale > 2.0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                      style={{ direction: lang === 'fa' ? 'rtl' : 'ltr' }}
+                      direction={lang === 'fa' ? 'rtl' : 'ltr'}
+                      unicodeBidi="embed"
+                      className={`text-[8px] font-bold transition-opacity drop-shadow-md bg-slate-900/80 px-1 rounded ${scale > 2.0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                      style={{ 
+                        fontFamily: 'Vazirmatn, Inter, system-ui, sans-serif',
+                      }}
                     >
                       {artifact.name[lang]}
                     </text>
                   </g>
                 ))}
+                  {/* Atmospheric Vignette */}
+                  <rect x="-5000" y="-5000" width="11000" height="10600" fill="url(#water-depth)" fillOpacity="0.2" pointerEvents="none" />
+
+                </g>{/* end GPU layer */}
               </svg>
             </TransformComponent>
           </>
@@ -579,7 +653,7 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className={`absolute left-4 sm:left-6 liquid-glass p-3 sm:p-5 rounded-2xl sm:rounded-3xl text-[9px] sm:text-xs flex flex-col gap-1.5 sm:gap-3 text-slate-300 pointer-events-auto z-10 calm-transition shadow-2xl ${!showLegend && 'hidden sm:flex'}`}
+            className={`absolute left-4 sm:left-6 liquid-glass p-3 sm:p-5 rounded-2xl sm:rounded-3xl text-[9px] sm:text-xs font-vazirmatn flex flex-col gap-1.5 sm:gap-3 text-slate-300 pointer-events-auto z-10 calm-transition shadow-2xl ${!showLegend && 'hidden sm:flex'}`}
             style={{ top: 'calc(var(--safe-top, 0px) + 112px)' }}
           >
             <div className="flex justify-between items-center mb-1">
@@ -613,7 +687,7 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
       {/* Custom Tooltip */}
       {tooltip && (
         <div 
-          className="fixed z-50 pointer-events-none bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white px-3 py-2 rounded-xl shadow-2xl transform -translate-x-1/2 -translate-y-[120%]"
+          className="fixed z-50 pointer-events-none bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white px-3 py-2 rounded-xl shadow-2xl transform -translate-x-1/2 -translate-y-[120%] font-sans"
           style={{ left: tooltip.x, top: tooltip.y }}
         >
           <div className="font-bold text-sm">{tooltip.text}</div>

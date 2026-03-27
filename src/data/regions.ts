@@ -10,6 +10,8 @@ export interface Region {
   polygon: string; // SVG points
   center: [number, number]; // [x, y]
   cities?: City[];
+  isWater?: boolean;
+  isNeighbor?: boolean;
 }
 
 export const regions: Region[] = [
@@ -127,4 +129,53 @@ export const regions: Region[] = [
       { id: 'mohenjo_daro', name: { en: 'Mohenjo-daro', fa: 'موهنجودارو' }, coordinates: [840, 480] }
     ]
   },
+  {
+    id: 'caspian',
+    name: { en: 'Caspian Sea', fa: 'دریای کاسپین' },
+    polygon: '240,120 320,80 380,100 400,140 480,140 540,160 600,80 500,40 340,40',
+    center: [450, 90],
+    isWater: true
+  },
+  {
+    id: 'persian_gulf',
+    name: { en: 'Persian Gulf', fa: 'خلیج فارس' },
+    polygon: '120,260 160,340 240,380 340,460 480,480 480,520 440,500 360,520 240,440 180,380 140,300',
+    center: [320, 420],
+    isWater: true
+  },
+  {
+    id: 'sea_of_oman',
+    name: { en: 'Sea of Oman', fa: 'دریای عمان' },
+    polygon: '480,480 560,520 720,520 900,560 900,600 720,600 620,580 560,560 480,520',
+    center: [680, 540],
+    isWater: true
+  },
+  {
+    id: 'levant',
+    name: { en: 'Levant', fa: 'شام' },
+    polygon: '120,260 160,340 120,400 60,400 20,380 20,300 60,200',
+    center: [80, 280],
+    isNeighbor: true
+  },
+  {
+    id: 'arabia',
+    name: { en: 'Arabia', fa: 'عربستان' },
+    polygon: '120,260 140,300 180,380 240,440 360,520 440,500 480,520 560,560 620,580 620,600 60,600 60,400 120,400 160,340',
+    center: [300, 560],
+    isNeighbor: true
+  },
+  {
+    id: 'steppes',
+    name: { en: 'The Steppes', fa: 'استپ‌ها' },
+    polygon: '240,120 340,40 500,40 600,80 740,60 840,140 900,100 900,-20 -20,-20 -20,100',
+    center: [550, 0],
+    isNeighbor: true
+  },
+  {
+    id: 'india',
+    name: { en: 'India', fa: 'هند' },
+    polygon: '920,220 980,340 900,560 1050,560 1050,220',
+    center: [980, 400],
+    isNeighbor: true
+  }
 ];
