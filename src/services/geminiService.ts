@@ -704,8 +704,10 @@ export async function chatWithAssistant(history: { role: 'user' | 'model', text:
 
 const QUIZ_GENERATION_PROMPT = `
 You are creating a highly specific, intriguing history trivia question 
-about Iranian/Greater Iranian history (e.g. surprising facts, unexpected timeline overlaps).
+about Iranian/Greater Iranian history.
 Generate ONE trivia myth/fact for the era around year {YEAR} in THIS LANGUAGE: {LANG}.
+
+The fact MUST be specifically about: {ANGLE}
 
 Output JSON EXACTLY like this:
 {
@@ -722,14 +724,29 @@ Rules:
 - Output ONLY valid JSON, no markdown.
 `;
 
-export async function generateQuizQuestion(year: number, lang: 'en' | 'fa'): Promise<QuizQuestion | null> {
-  try {
-    const prompt = QUIZ_GENERATION_PROMPT
-      .replace('{YEAR}', year.toString())
-      .replace('{LANG}', lang === 'en' ? 'English' : 'Persian (Farsi)');
+const ANGLES = [
+  "Major Military or Political Events",
+  "Specific Historical Figures or Rulers",
+  "Cultural and Literary Figures (Poets, Thinkers, Artists)",
+  "Heritage, Architecture, or Famous Artifacts",
+  "Scientific Discoveries or Ancient Innovations",
+  "Daily Life, Strange Customs, or Economics"
+];
 
-    const response = await (await getAiAsync()).models.generateContent({
-      model: "gemini-3-flash-preview",
+export async function generateQuizQuestion(year: number, lang: 'en' | 'fa', askedMyths: string[] = []): Promise<QuizQuestion | null> {
+  try {
+    const randomAngle = ANGLES[Math.floor(Math.random() * ANGLES.length)];
+    
+    let prompt = QUIZ_GENERATION_PROMPT
+      .replace('{YEAR}', year.toString())
+      .replace('{LANG}', lang === 'en' ? 'English' : 'Persian (Farsi)')
+      .replace('{ANGLE}', randomAngle);
+
+    if (askedMyths.length > 0) {
+      prompt += `\n\nCRITICAL: DO NOT generate any of these myths or variations of them:\n${askedMyths.map(m => `- ${m}`).join('\n')}`;
+    }
+
+    const requestPayload = {
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -745,7 +762,25 @@ export async function generateQuizQuestion(year: number, lang: 'en' | 'fa'): Pro
           required: ["myth", "answer", "reality", "reveal_hook", "era_link"]
         }
       }
-    });
+    };
+
+    let response;
+    try {
+      response = await (await getAiAsync()).models.generateContent({
+        ...requestPayload,
+        model: "gemini-3-flash-preview"
+      });
+    } catch (primaryError: any) {
+      if (primaryError?.message?.includes("503") || primaryError?.message?.includes("high demand") || primaryError?.status === "UNAVAILABLE" || primaryError?.message?.includes("not found")) {
+        console.warn("Gemini 3 Flash is experiencing issues, falling back to stable 1.5 Flash...", primaryError);
+        response = await (await getAiAsync()).models.generateContent({
+          ...requestPayload,
+          model: "gemini-1.5-flash"
+        });
+      } else {
+        throw primaryError;
+      }
+    }
 
     const text = response.text || "{}";
     const data = JSON.parse(text);

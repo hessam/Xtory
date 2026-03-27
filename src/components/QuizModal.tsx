@@ -4,32 +4,72 @@ import { X, HelpCircle, CheckCircle, XCircle, Share2, Send, ExternalLink, Sparkl
 import { QuizQuestion } from '../types/quiz';
 
 interface QuizModalProps {
+  year: number;
   questions: QuizQuestion[];
   hasApiKey: boolean;
   lang: 'en' | 'fa';
+  isOpen: boolean;
   onClose: () => void;
   onJumpToYear: (year: number) => void;
-  onRequestAiQuestion: (year: number) => Promise<QuizQuestion | null>;
+  onRequestAiQuestion: (year: number, askedMyths: string[]) => Promise<QuizQuestion | null>;
+  onEndQuiz?: () => void;
 }
 
 export const QuizModal: React.FC<QuizModalProps> = ({ 
+  year,
+  isOpen,
   questions: initialQuestions, 
   hasApiKey, 
   lang, 
   onClose, 
   onJumpToYear,
-  onRequestAiQuestion
+  onRequestAiQuestion,
+  onEndQuiz
 }) => {
   const [questions, setQuestions] = useState<QuizQuestion[]>(initialQuestions);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [state, setState] = useState<'question' | 'reveal' | 'summary' | 'loading'>('question');
+  const [state, setState] = useState<'question' | 'reveal' | 'summary' | 'loading'>(
+    initialQuestions.length === 0 ? 'loading' : 'question'
+  );
   const [userAnswer, setUserAnswer] = useState<QuizQuestion['answer'] | null>(null);
   const [isLoadingNext, setIsLoadingNext] = useState(false);
 
-  const currentQuestion = questions[currentIndex];
+  // Sync incoming new quiz seeds if changing sessions
+  React.useEffect(() => {
+    if (initialQuestions.length > 0 && questions[0]?.id !== initialQuestions[0]?.id) {
+      setQuestions(initialQuestions);
+      setCurrentIndex(0);
+      setScore(0);
+      setState('question');
+      setUserAnswer(null);
+    }
+  }, [initialQuestions]);
+
+  // Initial fetch if empty
+  React.useEffect(() => {
+    let active = true;
+    if (initialQuestions.length === 0 && hasApiKey && state === 'loading') {
+      setIsLoadingNext(true);
+      onRequestAiQuestion(year, []).then(nextAi => {
+        if (!active) return;
+        setIsLoadingNext(false);
+        if (nextAi) {
+          setQuestions([nextAi]);
+          setState('question');
+        } else {
+          onClose();
+          if (onEndQuiz) onEndQuiz();
+        }
+      });
+    }
+    return () => { active = false; };
+  }, [initialQuestions.length, hasApiKey, year, state]); // remove onRequestAiQuestion from deps to avoid infinite loop safely
+
+  const currentQuestion = questions[currentIndex] as QuizQuestion | undefined;
 
   const handleAnswer = (answer: QuizQuestion['answer']) => {
+    if (!currentQuestion) return;
     setUserAnswer(answer);
     if (answer === currentQuestion.answer) {
       setScore(prev => prev + 1);
@@ -38,11 +78,22 @@ export const QuizModal: React.FC<QuizModalProps> = ({
   };
 
   const handleNext = async () => {
-    if (currentIndex >= 4 || currentIndex >= questions.length - 1) {
-      if (hasApiKey) {
+    // Hard limit: stop at 5 questions
+    if (currentIndex >= 4) {
+      setState('summary');
+      return;
+    }
+
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      setState('question');
+      setUserAnswer(null);
+    } else {
+      if (hasApiKey && currentQuestion) {
         setIsLoadingNext(true);
         setState('loading');
-        const nextAi = await onRequestAiQuestion(currentQuestion.era_link);
+        const askedMyths = questions.map(q => q.myth);
+        const nextAi = await onRequestAiQuestion(year, askedMyths);
         setIsLoadingNext(false);
         if (nextAi) {
           setQuestions(prev => [...prev, nextAi]);
@@ -52,16 +103,19 @@ export const QuizModal: React.FC<QuizModalProps> = ({
           return;
         }
       }
-      setState('summary');
-    } else {
-      setCurrentIndex(prev => prev + 1);
-      setState('question');
-      setUserAnswer(null);
+      
+      if (questions.length === 0) {
+        onClose();
+        if (onEndQuiz) onEndQuiz();
+      } else {
+        setState('summary');
+      }
     }
   };
 
   const handleShare = (platform: 'twitter' | 'telegram') => {
     const bestQuestion = questions.find(q => q.answer !== 'TRUE') || questions[0];
+    if (!bestQuestion) return;
     const text = lang === 'en' 
       ? `I scored ${score}/5 on an Xtory history challenge! I learned that "${bestQuestion.myth}" is actually false. The real story is wild. Test yourself → https://xtroy.sbs`
       : `در چالش تاریخی اکس‌توری ${score} از ۵ گرفتم! تازه فهمیدم که "${bestQuestion.myth_fa}" درست نیست. داستان واقعی خیلی جالب‌تره. تو هم امتحان کن ← https://xtroy.sbs`;
@@ -75,15 +129,16 @@ export const QuizModal: React.FC<QuizModalProps> = ({
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
-        onClick={onClose}
-      >
+      {isOpen && (
         <motion.div
-          initial={{ scale: 0.95, y: 20 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.95, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.95, y: 20 }}
           onClick={(e) => e.stopPropagation()}
@@ -96,12 +151,12 @@ export const QuizModal: React.FC<QuizModalProps> = ({
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-amber-500/20 text-amber-300 border-amber-500/30">
                   <HelpCircle className="w-3 h-3" />
-                  {lang === 'en' ? 'Myth vs Reality' : 'افسانه در مقابل واقعیت'}
+                  {lang === 'en' ? 'History Challenge' : 'چالش تاریخ'}
                 </span>
-                {state !== 'summary' && currentQuestion.is_ai_generated && (
+                {state !== 'summary' && currentQuestion?.is_ai_generated && (
                   <span className="flex items-center gap-1 text-[10px] text-amber-400/50 italic">
                     <Sparkles className="w-3 h-3" />
-                    {lang === 'en' ? 'AI Infused' : 'تولید شده توسط هوش مصنوعی'}
+                    {lang === 'en' ? 'AI Generated' : 'تولید شده توسط هوش مصنوعی'}
                   </span>
                 )}
               </div>
@@ -129,7 +184,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
-            {state === 'question' && (
+            {state === 'question' && currentQuestion && (
               <motion.div 
                 key="question"
                 initial={{ opacity: 0, x: 20 }}
@@ -156,7 +211,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
               </motion.div>
             )}
 
-            {state === 'reveal' && (
+            {state === 'reveal' && currentQuestion && (
               <motion.div 
                 key="reveal"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -256,11 +311,11 @@ export const QuizModal: React.FC<QuizModalProps> = ({
 
 
           {/* Action Buttons Footer */}
-          {state === 'reveal' && (
+          {state === 'reveal' && currentQuestion && (
             <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-2 gap-3">
               <button
                 onClick={() => {
-                  onJumpToYear(currentQuestion.era_link);
+                  onJumpToYear(currentQuestion.era_link || year);
                   onClose();
                 }}
                 className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-[11px] font-bold liquid-glass border border-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-all"
@@ -282,7 +337,10 @@ export const QuizModal: React.FC<QuizModalProps> = ({
           {state === 'summary' && (
             <div className="mt-6 pt-6 border-t border-white/5">
               <button
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  if (onEndQuiz) onEndQuiz();
+                }}
                 className="w-full py-4 px-6 liquid-glass border border-amber-500/30 rounded-2xl text-sm font-bold text-amber-300 hover:text-white transition-all"
               >
                 {lang === 'en' ? 'Explore the Map' : 'کاوش روی نقشه'}
@@ -291,6 +349,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
           )}
         </motion.div>
       </motion.div>
+      )}
     </AnimatePresence>
   );
 };

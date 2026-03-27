@@ -524,13 +524,14 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             >
               {activeTab === 'events' && (
                 <>
-                  {mythsForEra.length > 0 && (
-                    <MythCard 
-                      question={mythsForEra[0]} 
-                      lang={lang} 
-                      onOpenQuiz={() => onOpenQuiz(mythsForEra)} 
-                    />
-                  )}
+                  <MythCard 
+                    question={mythsForEra.length > 0 ? mythsForEra[0] : undefined} 
+                    lang={lang} 
+                    year={year}
+                    hasApiKey={!!apiKey}
+                    onOpenQuiz={() => onOpenQuiz(mythsForEra)}
+                    onOpenSettings={() => setShowSettings && setShowSettings(true)}
+                  />
                   {activeEvents.length > 0 ? activeEvents.map(event => (
                 <button
                   key={event.id}

@@ -45,10 +45,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, lang }) =
       // Lightweight validation call
       const { GoogleGenAI } = await import('@google/genai');
       const testAi = new GoogleGenAI({ apiKey: inputKey.trim() });
-      await testAi.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: 'reply "ok"',
-      });
+      try {
+        await testAi.models.generateContent({
+          model: 'gemini-3-flash-preview',
+          contents: 'reply "ok"',
+        });
+      } catch (validationErr: any) {
+        // Fallback validation if 3-flash-preview is overloaded (503)
+        if (validationErr?.message?.includes("503") || validationErr?.status === "UNAVAILABLE") {
+          console.warn('Gemini 3 Flash busy, validating with 1.5 Flash instead...');
+          await testAi.models.generateContent({
+            model: 'gemini-1.5-flash',
+            contents: 'reply "ok"',
+          });
+        } else {
+          throw validationErr;
+        }
+      }
 
       setApiKey(inputKey.trim(), localPersist ? 'local' : 'memory');
       setSuccess(true);

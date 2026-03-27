@@ -24,10 +24,11 @@ interface EventsPanelProps {
   isLoadingAI: boolean;
    isLoadingAIFigures: boolean;
   isLoadingAIArtifacts: boolean;
+  setShowSettings?: (show: boolean) => void;
   onOpenQuiz: (questions: QuizQuestion[]) => void;
 }
 
-export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, onOpenQuiz }) => {
+export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
   const { apiKey } = useApiKey();
@@ -200,13 +201,14 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-3 custom-scrollbar">
               {activeTab === 'events' && (
                 <>
-                  {mythsForEra.length > 0 && (
-                    <MythCard 
-                      question={mythsForEra[0]} 
-                      lang={lang} 
-                      onOpenQuiz={() => onOpenQuiz(mythsForEra)} 
-                    />
-                  )}
+                  <MythCard 
+                    question={mythsForEra.length > 0 ? mythsForEra[0] : undefined} 
+                    lang={lang} 
+                    year={year}
+                    hasApiKey={!!apiKey}
+                    onOpenQuiz={() => onOpenQuiz(mythsForEra)}
+                    onOpenSettings={() => setShowSettings && setShowSettings(true)}
+                  />
                   {activeEvents.length > 0 ? (
                   activeEvents.map(event => (
                     <motion.div

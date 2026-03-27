@@ -1,4 +1,5 @@
 import React, { useState, useMemo, Suspense, lazy, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Map } from './components/Map';
 import { Timeline } from './components/Timeline';
 import { BottomSheet } from './components/BottomSheet';
@@ -44,6 +45,7 @@ export default function App() {
   const [showSupport, setShowSupport] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [activeQuizQuestions, setActiveQuizQuestions] = useState<QuizQuestion[] | null>(null);
+  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
 
   // Keyboard shortcut for search (Cmd+K)
   useEffect(() => {
@@ -248,7 +250,10 @@ export default function App() {
     isLoadingAIFigures,
     isLoadingAIArtifacts,
     setShowSettings,
-    onOpenQuiz: (questions: QuizQuestion[]) => setActiveQuizQuestions(questions),
+    onOpenQuiz: (questions: QuizQuestion[]) => {
+      setActiveQuizQuestions(questions);
+      setIsQuizModalOpen(true);
+    },
     onJumpToYear: (y: number) => { setYear(y); }
   };
 
@@ -503,16 +508,39 @@ export default function App() {
       
       {activeQuizQuestions && (
         <QuizModal
+          year={year}
+          isOpen={isQuizModalOpen}
           questions={activeQuizQuestions}
           hasApiKey={!!apiKey}
           lang={lang}
-          onClose={() => setActiveQuizQuestions(null)}
+          onClose={() => setIsQuizModalOpen(false)}
+          onEndQuiz={() => setActiveQuizQuestions(null)}
           onJumpToYear={(y) => { setYear(y); clearSelection(); }}
-          onRequestAiQuestion={async (eraYear) => {
-            return await generateQuizQuestion(eraYear, lang);
+          onRequestAiQuestion={async (eraYear, askedMyths) => {
+            return await generateQuizQuestion(eraYear, lang, askedMyths);
           }}
         />
       )}
+
+      {/* Floating Resume Quiz Badge */}
+      <AnimatePresence>
+        {!isQuizModalOpen && activeQuizQuestions && (
+          <motion.div
+            initial={{ y: 50, opacity: 0, scale: 0.9 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 50, opacity: 0, scale: 0.9 }}
+            className="fixed bottom-24 right-4 z-40 sm:bottom-8 sm:right-[340px]"
+          >
+            <button
+              onClick={() => setIsQuizModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-900 shadow-2xl rounded-full font-bold shadow-amber-500/20 active:scale-95 transition-all animate-bounce"
+            >
+              <HelpCircle className="w-4 h-4 shrink-0" />
+              <span className="text-sm">{lang === 'en' ? 'Resume Challenge' : 'ادامه چالش'}</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
