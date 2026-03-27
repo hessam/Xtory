@@ -5,6 +5,9 @@ import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
 import { Swords, Skull, Globe2, Landmark, Sparkles, ChevronRight, ChevronLeft, Loader2, User, Book, Lightbulb, Palette, HelpCircle, Building2, MapPin } from 'lucide-react';
 import { useApiKey } from '../context/ApiKeyContext';
+import { MythCard } from './MythCard';
+import { getQuestionsForYear } from '../data/quizQuestions';
+import { QuizQuestion } from '../types/quiz';
 
 interface EventsPanelProps {
   year: number;
@@ -19,11 +22,12 @@ interface EventsPanelProps {
   onFetchAIFigures: (year: number) => void;
   onFetchAIArtifacts: (year: number) => void;
   isLoadingAI: boolean;
-  isLoadingAIFigures: boolean;
+   isLoadingAIFigures: boolean;
   isLoadingAIArtifacts: boolean;
+  onOpenQuiz: (questions: QuizQuestion[]) => void;
 }
 
-export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts }) => {
+export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, onOpenQuiz }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
   const { apiKey } = useApiKey();
@@ -42,6 +46,10 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
   const activeArtifacts = useMemo(() => {
     return artifacts.filter(a => Math.abs(a.year - year) <= 100).sort((a, b) => a.year - b.year);
   }, [year, artifacts]);
+
+  const mythsForEra = useMemo(() => {
+    return getQuestionsForYear(year);
+  }, [year]);
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -191,7 +199,15 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-3 custom-scrollbar">
               {activeTab === 'events' && (
-                activeEvents.length > 0 ? (
+                <>
+                  {mythsForEra.length > 0 && (
+                    <MythCard 
+                      question={mythsForEra[0]} 
+                      lang={lang} 
+                      onOpenQuiz={() => onOpenQuiz(mythsForEra)} 
+                    />
+                  )}
+                  {activeEvents.length > 0 ? (
                   activeEvents.map(event => (
                     <motion.div
                       key={event.id}
@@ -215,12 +231,15 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                         </div>
                       </div>
                     </motion.div>
-                  ))
-                ) : (
-                  <div className="text-center py-12 text-slate-500 text-sm italic">
-                    {lang === 'en' ? 'No major events recorded in this era.' : 'هیچ رویداد مهمی در این دوره ثبت نشده است.'}
-                  </div>
-                )
+                    ))
+                  ) : (
+                    !mythsForEra.length && (
+                      <div className="text-center py-12 text-slate-500 text-sm italic">
+                        {lang === 'en' ? 'No major events recorded in this era.' : 'هیچ رویداد مهمی در این دوره ثبت نشده است.'}
+                      </div>
+                    )
+                  )}
+                </>
               )}
               
               {activeTab === 'figures' && (

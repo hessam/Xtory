@@ -5,6 +5,9 @@ import { HistoricalEvent } from '../data/historicalEvents';
 import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
 import { useApiKey } from '../context/ApiKeyContext';
+import { MythCard } from './MythCard';
+import { getQuestionsForYear } from '../data/quizQuestions';
+import { QuizQuestion } from '../types/quiz';
 
 // ── Snap definitions ────────────────────────────────────────────────────────
 // COLLAPSED  = handle bar only (drag-up chip). Height = 44px (handle) + 1px border
@@ -89,8 +92,9 @@ interface BottomSheetProps {
   onFetchAIArtifacts: (year: number) => void;
   isLoadingAI:         boolean;
   isLoadingAIFigures:  boolean;
-  isLoadingAIArtifacts:boolean;
+   isLoadingAIArtifacts:boolean;
   setShowSettings?:    (show: boolean) => void;
+  onOpenQuiz: (questions: QuizQuestion[]) => void;
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -100,6 +104,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts,
   isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts,
   setShowSettings,
+  onOpenQuiz
 }) => {
   const [snap, setSnap] = useState<SnapPoint>('collapsed');
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
@@ -402,6 +407,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   const activeFigures   = figures.filter(f => year >= f.birthYear - 10 && year <= f.deathYear + 10).sort((a,b)=>a.birthYear-b.birthYear);
   const activeArtifacts = artifacts.filter(a => Math.abs(a.year - year) <= 100).sort((a,b)=>a.year-b.year);
 
+  const mythsForEra = React.useMemo(() => {
+    return getQuestionsForYear(year);
+  }, [year]);
+
   const isLoading = activeTab === 'events' ? isLoadingAI : activeTab === 'figures' ? isLoadingAIFigures : isLoadingAIArtifacts;
   const handleFetch = () => {
     if (activeTab === 'events')    onFetchAIEvents(year);
@@ -513,7 +522,16 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               onTouchEnd={snap === 'full' ? onFullScrollTouchEnd : undefined}
               onTouchCancel={snap === 'full' ? onFullScrollTouchEnd : undefined}
             >
-              {activeTab === 'events' && (activeEvents.length > 0 ? activeEvents.map(event => (
+              {activeTab === 'events' && (
+                <>
+                  {mythsForEra.length > 0 && (
+                    <MythCard 
+                      question={mythsForEra[0]} 
+                      lang={lang} 
+                      onOpenQuiz={() => onOpenQuiz(mythsForEra)} 
+                    />
+                  )}
+                  {activeEvents.length > 0 ? activeEvents.map(event => (
                 <button
                   key={event.id}
                   onClick={() => onEventClick(event)}
@@ -530,11 +548,15 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                     </div>
                   </div>
                 </button>
-              )) : (
-                <p className="text-center py-12 text-slate-500 text-sm italic">
-                  {lang === 'en' ? 'No major events in this era.' : 'رویداد مهمی در این دوره ثبت نشده است.'}
-                </p>
-              ))}
+                  )) : (
+                    !mythsForEra.length && (
+                      <p className="text-center py-12 text-slate-500 text-sm italic">
+                        {lang === 'en' ? 'No major events in this era.' : 'رویداد مهمی در این دوره ثبت نشده است.'}
+                      </p>
+                    )
+                  )}
+                </>
+              )}
 
               {activeTab === 'figures' && (activeFigures.length > 0 ? activeFigures.map(figure => (
                 <button

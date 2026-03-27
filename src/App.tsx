@@ -9,6 +9,10 @@ import { SearchBar } from './components/SearchBar';
 import { SearchModal } from './components/SearchModal';
 import { AIKeyButton } from './components/AIKeyButton';
 import { TourGuide } from './components/TourGuide';
+import { QuizModal } from './components/QuizModal';
+import { generateQuizQuestion } from './services/geminiService';
+import { getQuestionsForYear } from './data/quizQuestions';
+import { QuizQuestion } from './types/quiz';
 import { Globe, Languages, HelpCircle, Key, AlertCircle, Heart, Search } from 'lucide-react';
 import { formatYear } from './utils/format';
 import { events as initialEvents, ReignEvent } from './data/events';
@@ -39,6 +43,7 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [activeQuizQuestions, setActiveQuizQuestions] = useState<QuizQuestion[] | null>(null);
 
   // Keyboard shortcut for search (Cmd+K)
   useEffect(() => {
@@ -243,6 +248,8 @@ export default function App() {
     isLoadingAIFigures,
     isLoadingAIArtifacts,
     setShowSettings,
+    onOpenQuiz: (questions: QuizQuestion[]) => setActiveQuizQuestions(questions),
+    onJumpToYear: (y: number) => { setYear(y); }
   };
 
   return (
@@ -493,6 +500,19 @@ export default function App() {
         onSearchResult={handleSearchResult} 
         lang={lang} 
       />
+      
+      {activeQuizQuestions && (
+        <QuizModal
+          questions={activeQuizQuestions}
+          hasApiKey={!!apiKey}
+          lang={lang}
+          onClose={() => setActiveQuizQuestions(null)}
+          onJumpToYear={(y) => { setYear(y); clearSelection(); }}
+          onRequestAiQuestion={async (eraYear) => {
+            return await generateQuizQuestion(eraYear, lang);
+          }}
+        />
+      )}
     </div>
   );
 }

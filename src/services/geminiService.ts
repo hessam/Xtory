@@ -2,6 +2,7 @@ import type { GoogleGenAI } from "@google/genai";
 import { HistoricalEvent } from '../data/historicalEvents';
 import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
+import { QuizQuestion } from '../types/quiz';
 
 // --- IN-MEMORY SESSION CACHE (LRU) ---
 const CACHE_MAP = new Map<string, any>();
@@ -698,5 +699,73 @@ export async function chatWithAssistant(history: { role: 'user' | 'model', text:
     return text;
   } catch (error) {
     return handleAIError(error, lang);
+  }
+}
+
+const QUIZ_GENERATION_PROMPT = `
+You are creating a highly specific, intriguing history trivia question 
+about Iranian/Greater Iranian history (e.g. surprising facts, unexpected timeline overlaps).
+Generate ONE trivia myth/fact for the era around year {YEAR} in THIS LANGUAGE: {LANG}.
+
+Output JSON EXACTLY like this:
+{
+  "myth": "myth or false assumption",
+  "answer": "TRUE" | "FALSE" | "IT'S COMPLICATED",
+  "reality": "1-2 sentence shocking reality",
+  "reveal_hook": "1 short punchy sentence hook",
+  "era_link": year
+}
+
+Rules:
+- MUST be highly specific and random.
+- Keep output extremely concise to save tokens.
+- Output ONLY valid JSON, no markdown.
+`;
+
+export async function generateQuizQuestion(year: number, lang: 'en' | 'fa'): Promise<QuizQuestion | null> {
+  try {
+    const prompt = QUIZ_GENERATION_PROMPT
+      .replace('{YEAR}', year.toString())
+      .replace('{LANG}', lang === 'en' ? 'English' : 'Persian (Farsi)');
+
+    const response = await (await getAiAsync()).models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            myth: { type: "STRING" },
+            answer: { type: "STRING", enum: ["TRUE", "FALSE", "IT'S COMPLICATED"] },
+            reality: { type: "STRING" },
+            reveal_hook: { type: "STRING" },
+            era_link: { type: "INTEGER" }
+          },
+          required: ["myth", "answer", "reality", "reveal_hook", "era_link"]
+        }
+      }
+    });
+
+    const text = response.text || "{}";
+    const data = JSON.parse(text);
+    return {
+      id: `ai_quiz_${year}_${Date.now()}`,
+      myth: data.myth,
+      myth_fa: data.myth,
+      answer: data.answer,
+      reality: data.reality,
+      reality_fa: data.reality,
+      reveal_hook: data.reveal_hook,
+      reveal_hook_fa: data.reveal_hook,
+      era_link: data.era_link,
+      difficulty: "MEDIUM",
+      sources: [],
+      certainty: "HIGH",
+      is_ai_generated: true
+    } as QuizQuestion;
+  } catch (error) {
+    console.error("Error generating quiz question:", error);
+    return null;
   }
 }
