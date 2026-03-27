@@ -270,7 +270,9 @@ export default function App() {
       className={`w-screen h-[100dvh] bg-[#020617] text-slate-200 overflow-hidden selection:bg-indigo-500/30 ${lang === 'fa' ? 'font-vazirmatn' : 'font-sans'}`}
       dir={lang === 'fa' ? 'rtl' : 'ltr'}
     >
-      <TourGuide lang={lang} run={runTour} onFinish={() => setRunTour(false)} />
+      <Suspense fallback={null}>
+        <TourGuide lang={lang} run={runTour} onFinish={() => setRunTour(false)} />
+      </Suspense>
 
       {/* ════════════════════════════════════════════════════════════════════
           MOBILE LAYOUT  (flex column, no absolute children compete)
@@ -371,7 +373,7 @@ export default function App() {
         {/* translateY then slides it DOWN to reveal only the collapsed handle.         */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 20 }}>
           <div className="absolute bottom-0 left-0 right-0 pointer-events-auto">
-            <Suspense fallback={null}>
+            <Suspense fallback={<div style={{ height: 60, width: '100%' }} />}>
               <BottomSheet {...panelProps} setShowSettings={setShowSettings} />
             </Suspense>
           </div>
