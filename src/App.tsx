@@ -1,19 +1,5 @@
 import React, { useState, useMemo, Suspense, lazy, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Map } from './components/Map';
-import { Timeline } from './components/Timeline';
-import { BottomSheet } from './components/BottomSheet';
-const DetailModal = lazy(() => import('./components/DetailModal').then(module => ({ default: module.DetailModal })));
-const Chatbot = lazy(() => import('./components/Chatbot').then(module => ({ default: module.Chatbot })));
-import { EventsPanel } from './components/EventsPanel';
-import { SearchBar } from './components/SearchBar';
-import { SearchModal } from './components/SearchModal';
-import { AIKeyButton } from './components/AIKeyButton';
-import { TourGuide } from './components/TourGuide';
-import { QuizModal } from './components/QuizModal';
-import { generateQuizQuestion } from './services/geminiService';
-import { getQuestionsForYear } from './data/quizQuestions';
-import { QuizQuestion } from './types/quiz';
 import { Globe, Languages, HelpCircle, Key, AlertCircle, Heart, Search } from 'lucide-react';
 import { formatYear } from './utils/format';
 import { events as initialEvents, ReignEvent } from './data/events';
@@ -24,8 +10,24 @@ import { historicalFigures, HistoricalFigure } from './data/figures';
 import { artifacts as initialArtifacts, Artifact } from './data/artifacts';
 import { DynamicRulerData, fetchHistoricalDataForYear, fetchHistoricalEventsForYear, fetchHistoricalFiguresForYear, fetchArtifactsForYear, SearchResult } from './services/geminiService';
 import { useApiKey } from './context/ApiKeyContext';
-import { SettingsModal } from './components/SettingsModal';
-import { SupportModal } from './components/SupportModal';
+import { generateQuizQuestion } from './services/geminiService';
+import { getQuestionsForYear } from './data/quizQuestions';
+import { QuizQuestion } from './types/quiz';
+import { AIKeyButton } from './components/AIKeyButton';
+import { SearchBar } from './components/SearchBar';
+
+// Heavy components — lazy loaded so they never block first paint
+const Map        = lazy(() => import('./components/Map').then(m => ({ default: m.Map })));
+const Timeline   = lazy(() => import('./components/Timeline').then(m => ({ default: m.Timeline })));
+const EventsPanel = lazy(() => import('./components/EventsPanel').then(m => ({ default: m.EventsPanel })));
+const BottomSheet = lazy(() => import('./components/BottomSheet').then(m => ({ default: m.BottomSheet })));
+const TourGuide   = lazy(() => import('./components/TourGuide').then(m => ({ default: m.TourGuide })));
+const DetailModal = lazy(() => import('./components/DetailModal').then(m => ({ default: m.DetailModal })));
+const Chatbot     = lazy(() => import('./components/Chatbot').then(m => ({ default: m.Chatbot })));
+const SettingsModal = lazy(() => import('./components/SettingsModal').then(m => ({ default: m.SettingsModal })));
+const SupportModal  = lazy(() => import('./components/SupportModal').then(m => ({ default: m.SupportModal })));
+const SearchModal   = lazy(() => import('./components/SearchModal').then(m => ({ default: m.SearchModal })));
+const QuizModal     = lazy(() => import('./components/QuizModal').then(m => ({ default: m.QuizModal })));
 
 export default function App() {
   const [year, setYear] = useState<number>(-500);
