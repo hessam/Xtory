@@ -82,6 +82,10 @@ export default function App() {
   };
   const { apiKey, isReady } = useApiKey();
 
+  React.useEffect(() => {
+    import('./services/geminiService').then(m => m.setApiKey(apiKey)).catch(console.error);
+  }, [apiKey]);
+
   // Check if it's the first visit
   React.useEffect(() => {
     const hasVisited = localStorage.getItem('hasVisitedPolySovereignty');

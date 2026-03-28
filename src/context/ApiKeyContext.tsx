@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { setApiKey as setGeminiApiKey } from '../services/geminiService';
+
 
 type PersistMode = 'memory' | 'local';
 
@@ -22,7 +22,6 @@ export const ApiKeyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (storedKey) {
       setApiKeyState(storedKey);
       setPersistModeState('local');
-      setGeminiApiKey(storedKey);
     }
     setIsReady(true);
   }, []);
@@ -30,7 +29,6 @@ export const ApiKeyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const setApiKey = (key: string, newPersistMode: PersistMode = 'memory') => {
     setApiKeyState(key);
     setPersistModeState(newPersistMode);
-    setGeminiApiKey(key);
 
     if (newPersistMode === 'local' && key) {
       localStorage.setItem('user_gemini_key', key);
