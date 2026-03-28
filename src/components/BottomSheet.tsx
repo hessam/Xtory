@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect, useLayoutEffect, startTransition } from 'react';
 import { Sparkles, Loader2, Swords, Skull, Landmark, Globe2, User, Book, Lightbulb, Palette, Building2, MapPin, ChevronUp, AlertCircle } from 'lucide-react';
+import { Virtuoso } from 'react-virtuoso';
 import { HistoricalEvent } from '../data/historicalEvents';
 import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
@@ -182,8 +183,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       document.documentElement.style.setProperty(CSS_VAR, '0px');
       return;
     }
-    const snapPx = snapHeightsCache.current[snap] + dragOffset;
-    document.documentElement.style.setProperty(CSS_VAR, `${Math.max(60, snapPx)}px`);
+    const raf = requestAnimationFrame(() => {
+      const snapPx = snapHeightsCache.current[snap] + dragOffset;
+      document.documentElement.style.setProperty(CSS_VAR, `${Math.max(60, snapPx)}px`);
+    });
+    return () => cancelAnimationFrame(raf);
   }, [snap, isDragging, dragOffset]);
 
   // Layer 3: non-passive touchmove listener to block pull-to-refresh on Safari.
@@ -560,102 +564,143 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             </div>
 
             <div
-              ref={scrollRef}
-              onScroll={onScrollContent}
-              className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2 custom-scrollbar"
-              style={{ overscrollBehaviorY: 'contain' }}
+              className="flex-1 overflow-hidden"
               onTouchStart={snap === 'full' ? onFullScrollTouchStart : undefined}
               onTouchMove={snap === 'full' ? onFullScrollTouchMove : undefined}
               onTouchEnd={snap === 'full' ? onFullScrollTouchEnd : undefined}
               onTouchCancel={snap === 'full' ? onFullScrollTouchEnd : undefined}
             >
               {activeTab === 'events' && (
-                <>
-                  <MythCard 
-                    question={mythsForEra.length > 0 ? mythsForEra[0] : undefined} 
-                    lang={lang} 
-                    year={year}
-                    hasApiKey={!!apiKey}
-                    onOpenQuiz={() => onOpenQuiz(mythsForEra)}
-                    onOpenSettings={() => setShowSettings && setShowSettings(true)}
-                  />
-                  {activeEvents.length > 0 ? activeEvents.map(event => (
-                <button
-                  key={event.id}
-                  onClick={() => onEventClick(event)}
-                  className={`w-full text-left rtl:text-right p-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.98] min-h-[56px] shrink-0 ${getEventColor(event.type)}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 p-2 bg-black/20 rounded-full shrink-0">{getEventIcon(event.type)}</div>
-                    <div className="flex-1 min-w-0 overflow-hidden">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{event.title[lang]}</h4>
-                        <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{Math.abs(event.year)} {event.year < 0 ? 'BC' : 'AD'}</span>
+                <Virtuoso
+                  style={{ height: '100%', width: '100%' }}
+                  className="custom-scrollbar"
+                  scrollerRef={(r) => { if (r) scrollRef.current = r as HTMLDivElement; }}
+                  onScroll={onScrollContent}
+                  data={activeEvents}
+                  components={{
+                    Header: () => (
+                      <div className="px-4 pt-3 pb-2 flex flex-col gap-2">
+                        <MythCard 
+                          question={mythsForEra.length > 0 ? mythsForEra[0] : undefined} 
+                          lang={lang} 
+                          year={year}
+                          hasApiKey={!!apiKey}
+                          onOpenQuiz={() => onOpenQuiz(mythsForEra)}
+                          onOpenSettings={() => setShowSettings && setShowSettings(true)}
+                        />
+                        {activeEvents.length === 0 && !mythsForEra.length && (
+                          <div className="text-center py-12 text-slate-500 text-sm italic">
+                            {lang === 'en' ? 'No major events in this era.' : 'رویداد مهمی در این دوره ثبت نشده است.'}
+                          </div>
+                        )}
                       </div>
-                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{event.description[lang]}</p>
-                    </div>
-                  </div>
-                </button>
-                  )) : (
-                    !mythsForEra.length && (
-                      <p className="text-center py-12 text-slate-500 text-sm italic">
-                        {lang === 'en' ? 'No major events in this era.' : 'رویداد مهمی در این دوره ثبت نشده است.'}
-                      </p>
                     )
+                  }}
+                  itemContent={(index, event) => (
+                    <div className="px-4 pb-2">
+                      <button
+                        key={event.id}
+                        onClick={() => onEventClick(event)}
+                        className={`w-full text-left rtl:text-right p-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.98] min-h-[56px] shrink-0 ${getEventColor(event.type)}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 p-2 bg-black/20 rounded-full shrink-0">{getEventIcon(event.type)}</div>
+                          <div className="flex-1 min-w-0 overflow-hidden">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{event.title[lang]}</h4>
+                              <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{Math.abs(event.year)} {event.year < 0 ? 'BC' : 'AD'}</span>
+                            </div>
+                            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{event.description[lang]}</p>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
                   )}
-                </>
+                />
               )}
 
-              {activeTab === 'figures' && (activeFigures.length > 0 ? activeFigures.map(figure => (
-                <button
-                  key={figure.id}
-                  onClick={() => onFigureClick(figure)}
-                  className={`w-full text-left rtl:text-right p-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.98] min-h-[56px] shrink-0 ${getFigureColor(figure.type)}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 p-2 bg-black/20 rounded-full shrink-0">{getFigureIcon(figure.type)}</div>
-                    <div className="flex-1 min-w-0 overflow-hidden">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{figure.name[lang]}</h4>
-                        <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">
-                          {Math.abs(figure.birthYear)}{figure.birthYear < 0 ? ' BC' : ''} – {Math.abs(figure.deathYear)}{figure.deathYear < 0 ? ' BC' : ''}
-                        </span>
+              {activeTab === 'figures' && (
+                <Virtuoso
+                  style={{ height: '100%', width: '100%' }}
+                  className="custom-scrollbar"
+                  scrollerRef={(r) => { if (r) scrollRef.current = r as HTMLDivElement; }}
+                  onScroll={onScrollContent}
+                  data={activeFigures}
+                  components={{
+                    Header: activeFigures.length === 0 ? () => (
+                      <div className="px-4 pt-3">
+                        <div className="text-center py-12 text-slate-500 text-sm italic">
+                          {lang === 'en' ? 'No major figures in this era.' : 'شخصیت مهمی در این دوره ثبت نشده است.'}
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{figure.description[lang]}</p>
+                    ) : () => <div className="h-3" />
+                  }}
+                  itemContent={(index, figure) => (
+                    <div className="px-4 pb-2">
+                      <button
+                        key={figure.id}
+                        onClick={() => onFigureClick(figure)}
+                        className={`w-full text-left rtl:text-right p-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.98] min-h-[56px] shrink-0 ${getFigureColor(figure.type)}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 p-2 bg-black/20 rounded-full shrink-0">{getFigureIcon(figure.type)}</div>
+                          <div className="flex-1 min-w-0 overflow-hidden">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{figure.name[lang]}</h4>
+                              <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">
+                                {Math.abs(figure.birthYear)}{figure.birthYear < 0 ? ' BC' : ''} – {Math.abs(figure.deathYear)}{figure.deathYear < 0 ? ' BC' : ''}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{figure.description[lang]}</p>
+                          </div>
+                        </div>
+                      </button>
                     </div>
-                  </div>
-                </button>
-              )) : (
-                <p className="text-center py-12 text-slate-500 text-sm italic">
-                  {lang === 'en' ? 'No major figures in this era.' : 'شخصیت مهمی در این دوره ثبت نشده است.'}
-                </p>
-              ))}
+                  )}
+                />
+              )}
 
-              {activeTab === 'artifacts' && (activeArtifacts.length > 0 ? activeArtifacts.map(artifact => (
-                <button
-                  key={artifact.id}
-                  onClick={() => onArtifactClick(artifact)}
-                  className={`w-full text-left rtl:text-right p-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.98] min-h-[56px] shrink-0 ${getArtifactColor(artifact.type)}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 p-2 bg-black/20 rounded-full shrink-0">{getArtifactIcon(artifact.type)}</div>
-                    <div className="flex-1 min-w-0 overflow-hidden">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{artifact.name[lang]}</h4>
-                        <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{Math.abs(artifact.year)}{artifact.year < 0 ? ' BC' : ' AD'}</span>
+              {activeTab === 'artifacts' && (
+                <Virtuoso
+                  style={{ height: '100%', width: '100%' }}
+                  className="custom-scrollbar"
+                  scrollerRef={(r) => { if (r) scrollRef.current = r as HTMLDivElement; }}
+                  onScroll={onScrollContent}
+                  data={activeArtifacts}
+                  components={{
+                    Header: activeArtifacts.length === 0 ? () => (
+                      <div className="px-4 pt-3">
+                        <div className="text-center py-12 text-slate-500 text-sm italic">
+                          {lang === 'en' ? 'No major heritage in this era.' : 'میراث مهمی در این دوره ثبت نشده است.'}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-slate-400">
-                        <MapPin className="w-3 h-3 shrink-0" />
-                        <span className="truncate">{artifact.currentLocation[lang]}</span>
-                      </div>
+                    ) : () => <div className="h-3" />
+                  }}
+                  itemContent={(index, artifact) => (
+                    <div className="px-4 pb-2">
+                      <button
+                        key={artifact.id}
+                        onClick={() => onArtifactClick(artifact)}
+                        className={`w-full text-left rtl:text-right p-4 rounded-2xl border cursor-pointer transition-all active:scale-[0.98] min-h-[56px] shrink-0 ${getArtifactColor(artifact.type)}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 p-2 bg-black/20 rounded-full shrink-0">{getArtifactIcon(artifact.type)}</div>
+                          <div className="flex-1 min-w-0 overflow-hidden">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{artifact.name[lang]}</h4>
+                              <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{Math.abs(artifact.year)}{artifact.year < 0 ? ' BC' : ' AD'}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-slate-400">
+                              <MapPin className="w-3 h-3 shrink-0" />
+                              <span className="truncate">{artifact.currentLocation[lang]}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </button>
                     </div>
-                  </div>
-                </button>
-              )) : (
-                <p className="text-center py-12 text-slate-500 text-sm italic">
-                  {lang === 'en' ? 'No major heritage in this era.' : 'میراث مهمی در این دوره ثبت نشده است.'}
-                </p>
-              ))}
+                  )}
+                />
+              )}
             </div>
 
             <div 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, Suspense, lazy, useEffect } from 'react';
+import React, { useState, useMemo, Suspense, lazy, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Globe, Languages, HelpCircle, Key, AlertCircle, Heart, Search } from 'lucide-react';
 import { formatYear } from './utils/format';
@@ -188,20 +188,22 @@ export default function App() {
   const allArtifacts        = useMemo(() => [...initialArtifacts,        ...dynamicData.artifacts],       [dynamicData.artifacts]);
 
   const clearSelection = () => {
-    setSelectedEventId(null);
-    setSelectedRegionId(null);
-    setSelectedHistoricalEvent(null);
-    setSelectedFigure(null);
-    setSelectedArtifact(null);
-    setSelectedSearchResult(null);
+    startTransition(() => {
+      setSelectedEventId(null);
+      setSelectedRegionId(null);
+      setSelectedHistoricalEvent(null);
+      setSelectedFigure(null);
+      setSelectedArtifact(null);
+      setSelectedSearchResult(null);
+    });
   };
 
-  const handleRegionClick          = (regionId: string)        => { clearSelection(); setSelectedRegionId(regionId); };
-  const handleEventClick           = (eventId: string)         => { clearSelection(); setSelectedEventId(eventId); };
-  const handleHistoricalEventClick = (event: HistoricalEvent) => { clearSelection(); setSelectedHistoricalEvent(event); };
-  const handleFigureClick          = (figure: HistoricalFigure)=> { clearSelection(); setSelectedFigure(figure); };
-  const handleArtifactClick        = (artifact: Artifact)      => { clearSelection(); setSelectedArtifact(artifact); };
-  const handleSearchResult         = (result: SearchResult)    => { clearSelection(); setYear(result.year); setSelectedSearchResult(result); };
+  const handleRegionClick          = (regionId: string)        => { startTransition(() => { clearSelection(); setSelectedRegionId(regionId); }); };
+  const handleEventClick           = (eventId: string)         => { startTransition(() => { clearSelection(); setSelectedEventId(eventId); }); };
+  const handleHistoricalEventClick = (event: HistoricalEvent) => { startTransition(() => { clearSelection(); setSelectedHistoricalEvent(event); }); };
+  const handleFigureClick          = (figure: HistoricalFigure)=> { startTransition(() => { clearSelection(); setSelectedFigure(figure); }); };
+  const handleArtifactClick        = (artifact: Artifact)      => { startTransition(() => { clearSelection(); setSelectedArtifact(artifact); }); };
+  const handleSearchResult         = (result: SearchResult)    => { startTransition(() => { clearSelection(); setYear(result.year); setSelectedSearchResult(result); }); };
 
   const handleYearContextClick = async (y: number) => {
     setIsLoadingAI(true);
