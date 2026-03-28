@@ -380,7 +380,7 @@ export default function App() {
         {/* ── Bottom Sheet: absolute overlay, GPU translateY animates snap positions ── */}
         {/* zIndex 35 puts it above Timeline (30) but below TopBar (40) */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 35 }}>
-          <div className="absolute bottom-0 left-0 right-0 pointer-events-auto">
+          <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
             <Suspense fallback={<div style={{ height: 60, width: '100%' }} />}>
               <BottomSheet {...panelProps} setShowSettings={setShowSettings} />
             </Suspense>
