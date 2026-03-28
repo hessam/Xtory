@@ -466,10 +466,17 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   const extraHeight = Math.max(0, collapsedTranslateY - translateY);
   const transitionStr = isDragging ? 'none' : 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1)';
 
-  useLayoutEffect(() => {
-    document.documentElement.style.setProperty('--sheet-extra-height', `${extraHeight}`);
-    document.documentElement.style.setProperty('--sheet-transition', transitionStr);
-  }, [extraHeight, transitionStr]);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      // Only update the extra height offset when NOT dragging to prevent 
+      // layout thrashing. The Timeline will snap to position when the drag ends.
+      if (!isDragging) {
+        document.documentElement.style.setProperty('--sheet-extra-height', `${extraHeight}`);
+      }
+      document.documentElement.style.setProperty('--sheet-transition', transitionStr);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [extraHeight, transitionStr, isDragging]);
 
   return (
     <div
