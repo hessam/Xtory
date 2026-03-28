@@ -131,15 +131,26 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     safeTop: 0,
     safeBottom: 0
   });
+  
+  const snapHeightsCache = useRef({
+    collapsed: 60,
+    half: typeof window !== 'undefined' ? window.innerHeight * 0.5 : 300,
+    full: typeof window !== 'undefined' ? window.innerHeight - 48 : 552
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const updateCache = () => {
       const style = getComputedStyle(document.documentElement);
-      layoutCache.current = {
-        windowHeight: window.innerHeight,
-        safeTop: parseInt(style.getPropertyValue('--safe-top') || '0'),
-        safeBottom: parseInt(style.getPropertyValue('--safe-bottom') || '0')
+      const safeTop = parseInt(style.getPropertyValue('--safe-top') || '0');
+      const safeBottom = parseInt(style.getPropertyValue('--safe-bottom') || '0');
+      const windowHeight = window.innerHeight;
+      
+      layoutCache.current = { windowHeight, safeTop, safeBottom };
+      snapHeightsCache.current = {
+        collapsed: 60 + safeBottom,
+        half: windowHeight * 0.5,
+        full: windowHeight - 48 - safeTop
       };
     };
     updateCache();
@@ -149,29 +160,21 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
   // Full sheet height — always rendered at this size
   const getFullHeight = useCallback((): number => {
-    if (typeof window === 'undefined') return 600;
-    return layoutCache.current.windowHeight - 48 - layoutCache.current.safeTop;
+    return snapHeightsCache.current.full;
   }, []);
 
   // Get pixel height for each snap detent
   const getDetentPixels = useCallback((point: SnapPoint): number => {
-    if (typeof window === 'undefined') return 60;
-    const { windowHeight, safeTop, safeBottom } = layoutCache.current;
-    switch (point) {
-      case 'collapsed': return 60 + safeBottom;
-      case 'half': return windowHeight * 0.5;
-      case 'full': return windowHeight - 48 - safeTop;
-      default: return 60;
-    }
+    return snapHeightsCache.current[point];
   }, []);
 
   // translateY offset: how far DOWN from full to show the current snap
   const getTranslateY = useCallback((point: SnapPoint, extraDrag = 0): number => {
-    const full = getFullHeight();
-    const snap = getDetentPixels(point);
-    const offset = full - snap - extraDrag; // positive = translated down
+    const full = snapHeightsCache.current.full;
+    const snapPx = snapHeightsCache.current[point];
+    const offset = full - snapPx - extraDrag; // positive = translated down
     return Math.max(0, offset);
-  }, [getFullHeight, getDetentPixels]);
+  }, []);
 
   // Update CSS var for the Chatbot FAB offset
   useEffect(() => {
@@ -179,9 +182,9 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       document.documentElement.style.setProperty(CSS_VAR, '0px');
       return;
     }
-    const snapPx = getDetentPixels(snap) + dragOffset;
+    const snapPx = snapHeightsCache.current[snap] + dragOffset;
     document.documentElement.style.setProperty(CSS_VAR, `${Math.max(60, snapPx)}px`);
-  }, [snap, isDragging, dragOffset, getDetentPixels]);
+  }, [snap, isDragging, dragOffset]);
 
   // Layer 3: non-passive touchmove listener to block pull-to-refresh on Safari.
   // React synthetic events are always passive and cannot call preventDefault().
