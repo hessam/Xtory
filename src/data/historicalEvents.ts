@@ -20,6 +20,7 @@ export const historicalEvents: HistoricalEvent[] = [
     coordinates: [340, 280],
     regionId: 'mesopotamia'
   },
+  {
     id: 'ev_moses_exodus',
     year: -1300,
     title: { en: 'The Exodus', fa: 'خروج از مصر' },
