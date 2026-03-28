@@ -36,53 +36,11 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 600,
       sourcemap: true,
       rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'CIRCULAR_DEPENDENCY') console.warn(warning.message);
+          warn(warning);
+        },
         output: {
-          // Manual chunk splitting: isolate heavy vendor libs for independent caching
-          manualChunks(id) {
-            // D3 is huge — isolate it completely
-            if (id.includes('node_modules/d3') || id.includes('node_modules/d3-')) {
-              return 'vendor-d3';
-            }
-            // Motion/Framer is heavy — isolate it
-            if (id.includes('node_modules/motion') || id.includes('node_modules/framer-motion')) {
-              return 'vendor-motion';
-            }
-            // Zoom/pan library — isolate it
-            if (id.includes('node_modules/react-zoom-pan-pinch')) {
-              return 'vendor-zoom';
-            }
-            // React core — always cached separately
-            if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) {
-              return 'vendor-react';
-            }
-            // React markdown + remark (only used in modals)
-            if (
-              id.includes('node_modules/react-markdown') ||
-              id.includes('node_modules/remark') ||
-              id.includes('node_modules/micromark') ||
-              id.includes('node_modules/mdast') ||
-              id.includes('node_modules/unified') ||
-              id.includes('node_modules/hast')
-            ) {
-              return 'vendor-markdown';
-            }
-            // Lucide icons — tree-shaken but still a separate cache unit
-            if (id.includes('node_modules/lucide-react')) {
-              return 'vendor-lucide';
-            }
-            // React Joyride (tour) — rarely needed, load separately
-            if (id.includes('node_modules/react-joyride')) {
-              return 'vendor-joyride';
-            }
-            // Google Genai SDK — only used when API key is set
-            if (id.includes('node_modules/@google/genai')) {
-              return 'vendor-genai';
-            }
-            // Everything else in node_modules
-            if (id.includes('node_modules')) {
-              return 'vendor-misc';
-            }
-          },
           // Content-hash filenames for permanent cache busting
           entryFileNames: 'assets/[name]-[hash].js',
           chunkFileNames: 'assets/[name]-[hash].js',
