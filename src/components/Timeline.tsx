@@ -245,7 +245,8 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
       case 'downfall': return <Skull className="w-3 h-3 text-purple-400" />;
       case 'political': return <Landmark className="w-3 h-3 text-sky-400" />;
       case 'cultural': return <Globe2 className="w-3 h-3 text-emerald-400" />;
-      default: return <Sparkles className="w-3 h-3 text-amber-400" />;
+      case 'tradition': return <Sparkles className="w-3 h-3 text-amber-400" />;
+      default: return <Sparkles className="w-3 h-3 text-slate-400" />;
     }
   };
 
@@ -255,7 +256,8 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
       case 'downfall': return 'bg-purple-500/30 border-purple-400/50';
       case 'political': return 'bg-sky-500/30 border-sky-400/50';
       case 'cultural': return 'bg-emerald-500/30 border-emerald-400/50';
-      default: return 'bg-amber-500/30 border-amber-400/50';
+      case 'tradition': return 'bg-amber-500/30 border-amber-400/50';
+      default: return 'bg-slate-500/30 border-slate-400/50';
     }
   };
 

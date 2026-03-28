@@ -9,8 +9,8 @@ export interface HistoricalFigure {
 
 export const historicalFigures: HistoricalFigure[] = [
   {
-    id: 'zoroaster',
-    name: { en: 'Zoroaster (Zarathustra)', fa: 'زرتشت' },
+    id: 'zarathushtra',
+    name: { en: 'Zarathushtra', fa: 'زرتشت' },
     birthYear: -1000,
     deathYear: -930,
     description: {
@@ -150,5 +150,27 @@ export const historicalFigures: HistoricalFigure[] = [
       fa: 'فیلسوف و فقیه مشهور اوایل اسلام که در زمینه‌های فلسفه سیاسی، متافیزیک، اخلاق و منطق می‌نوشت.'
     },
     type: 'philosopher'
+  },
+  {
+    id: 'jesus',
+    name: { en: 'Jesus of Nazareth', fa: 'عیسی مسیح' },
+    birthYear: -4,
+    deathYear: 30,
+    description: {
+      en: 'First-century Jewish preacher and religious leader, the central figure of Christianity.',
+      fa: 'واعظ و رهبر مذهبی یهود در قرن اول، شخصیت محوری مسیحیت.'
+    },
+    type: 'other'
+  },
+  {
+    id: 'moses',
+    name: { en: 'Moses', fa: 'موسی' },
+    birthYear: -1391,
+    deathYear: -1271,
+    description: {
+      en: 'The most important prophet in Judaism, also an important prophet in Christianity, Islam, the Baháʼí Faith, and other Abrahamic religions.',
+      fa: 'مهم‌ترین پیامبر در یهودیت، و همچنین پیامبری مهم در مسیحیت، اسلام، دیانت بهایی و سایر ادیان ابراهیمی.'
+    },
+    type: 'other'
   }
 ];

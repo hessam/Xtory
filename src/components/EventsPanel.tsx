@@ -58,7 +58,8 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
       case 'downfall': return <Skull className="w-4 h-4 text-purple-400" />;
       case 'political': return <Landmark className="w-4 h-4 text-sky-400" />;
       case 'cultural': return <Globe2 className="w-4 h-4 text-emerald-400" />;
-      default: return <Sparkles className="w-4 h-4 text-amber-400" />;
+      case 'tradition': return <Sparkles className="w-4 h-4 text-amber-400" />;
+      default: return <HelpCircle className="w-4 h-4 text-slate-400" />;
     }
   };
 
@@ -68,7 +69,8 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
       case 'downfall': return 'border-purple-500/30 bg-purple-500/10';
       case 'political': return 'border-sky-500/30 bg-sky-500/10';
       case 'cultural': return 'border-emerald-500/30 bg-emerald-500/10';
-      default: return 'border-amber-500/30 bg-amber-500/10';
+      case 'tradition': return 'border-amber-500/30 bg-amber-500/10';
+      default: return 'border-slate-500/30 bg-slate-500/10';
     }
   };
 

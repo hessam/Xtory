@@ -163,7 +163,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
   if (searchResult) {
     const getIcon = (type: string) => {
       switch (type) {
-        case 'event': return <Sparkles className="w-5 h-5 text-amber-400" />;
+        case 'event': 
+        case 'tradition': return <Sparkles className="w-5 h-5 text-amber-400" />;
         case 'figure': return <BookOpen className="w-5 h-5 text-purple-400" />;
         case 'ruler': return <Crown className="w-5 h-5 text-emerald-400" />;
         case 'dynasty': return <Shield className="w-5 h-5 text-rose-400" />;
@@ -174,6 +175,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
 
     const typeColorMap: Record<string, string> = {
       event: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+      tradition: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
       figure: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
       ruler: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
       dynasty: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
@@ -477,8 +479,17 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
         case 'downfall': return <Skull className="w-5 h-5 text-purple-400" />;
         case 'political': return <Landmark className="w-5 h-5 text-sky-400" />;
         case 'cultural': return <Globe2 className="w-5 h-5 text-emerald-400" />;
+        case 'tradition': return <Sparkles className="w-5 h-5 text-amber-400" />;
         default: return <Sparkles className="w-5 h-5 text-amber-400" />;
       }
+    };
+
+    const historicalEventColorMap: Record<string, string> = {
+      battle: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+      downfall: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      political: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
+      cultural: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      tradition: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
     };
 
     content = (
@@ -488,7 +499,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
         <div className="flex items-start justify-between mb-5">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border bg-rose-500/20 text-rose-300 border-rose-500/30">
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${historicalEventColorMap[historicalEvent.type] || 'bg-slate-500/20 text-slate-300 border-slate-500/30'}`}>
                 {getIcon(historicalEvent.type)}
                 <span className="capitalize">{historicalEvent.type}</span>
               </span>
