@@ -165,7 +165,8 @@ export const TourGuide: React.FC<TourGuideProps> = ({ lang, run, onFinish }) => 
         disableAnimation: true,
         styles: {
           floater: {
-            direction: 'ltr' // Force floater positioning logic to LTR to fix RTL offset bugs
+            direction: 'ltr', // Force floater positioning logic to LTR to fix RTL offset bugs
+            zIndex: 10000
           }
         }
       }}
@@ -176,6 +177,7 @@ export const TourGuide: React.FC<TourGuideProps> = ({ lang, run, onFinish }) => 
           textColor: '#f8fafc', // slate-50
           arrowColor: '#0f172a',
           overlayColor: 'rgba(2, 6, 23, 0.7)', // slate-950 with opacity
+          zIndex: 10000,
         },
         tooltipContainer: {
           textAlign: lang === 'fa' ? 'right' : 'left',

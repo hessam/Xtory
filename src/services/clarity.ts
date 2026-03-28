@@ -22,8 +22,8 @@ export const initClarity = () => {
   };
 
   const scheduleInitialization = () => {
-    // Increased delay to 3 seconds to ensure zero impact on initial TBT/INP.
-    setTimeout(init, 3000);
+    // Increased delay to 5 seconds to ensure zero impact on real-user INP on slow devices.
+    setTimeout(init, 5000);
   };
 
   // If already loaded, schedule; otherwise wait for load event
