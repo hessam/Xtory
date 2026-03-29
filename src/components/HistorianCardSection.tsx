@@ -102,7 +102,7 @@ export const HistorianCardSection: React.FC<Props> = ({
                 {lang === 'en' ? 'Transition Era' : 'دوران گذار'}
               </div>
             )}
-            <h2 className="font-serif font-bold text-white text-2xl sm:text-3xl leading-tight drop-shadow-lg">
+            <h2 className={`font-bold text-white text-2xl sm:text-3xl leading-tight drop-shadow-lg ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
               {card.eraName[lang]}
             </h2>
           </div>
@@ -173,11 +173,11 @@ export const HistorianCardSection: React.FC<Props> = ({
               </div>
               
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center font-serif text-amber-500 font-bold text-2xl shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                <div className={`w-12 h-12 rounded-full bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-amber-500 font-bold text-2xl shadow-[0_0_15px_rgba(245,158,11,0.2)] ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
                   {selectedVazir.name.en?.charAt(0) || 'V'}
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-white text-lg leading-tight">
+                  <h3 className={`font-bold text-white text-lg leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
                     {selectedVazir.name[lang]}
                   </h3>
                   <p className="text-amber-500/60 text-xs font-semibold uppercase tracking-widest mt-0.5">
@@ -202,7 +202,7 @@ export const HistorianCardSection: React.FC<Props> = ({
               onClick={() => onVazirSelect?.(eraVazir)}
               className="mt-4 flex items-center gap-3 p-3 rounded-2xl bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/10 transition-all text-left rtl:text-right w-full group shadow-md"
             >
-              <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-serif text-amber-500 font-bold text-lg shrink-0 group-hover:scale-105 transition-transform shadow-inner">
+              <div className={`w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-500 font-bold text-lg shrink-0 group-hover:scale-105 transition-transform shadow-inner ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
                 {eraVazir.name.en?.charAt(0) || 'V'}
               </div>
               

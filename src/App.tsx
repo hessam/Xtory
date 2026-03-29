@@ -841,7 +841,7 @@ const VazirCard = ({ vazir, lang, onClose }: { vazir: Vazir, lang: 'en' | 'fa', 
           {/* Header */}
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-amber-500 uppercase tracking-[0.3em] font-cinzel">
+              <span className={`text-[10px] font-bold text-amber-500 uppercase ${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel tracking-[0.3em]'}`}>
                 {lang === 'en' ? 'The Great Vazir' : 'وزیر بزرگ'}
               </span>
               <button 
@@ -851,7 +851,7 @@ const VazirCard = ({ vazir, lang, onClose }: { vazir: Vazir, lang: 'en' | 'fa', 
                 <X className="w-5 h-5 text-slate-400" />
               </button>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-cinzel text-white leading-tight">
+            <h2 className={`text-3xl sm:text-4xl text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn font-bold' : 'font-cinzel'}`}>
               {vazir.name[lang]}
             </h2>
             <p className="text-sm text-slate-400 font-medium">

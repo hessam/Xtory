@@ -599,7 +599,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             <span className="text-[10px] font-mono text-slate-500 bg-white/5 px-2 py-0.5 rounded-lg border border-white/5">
               {Math.abs(year)}{year < 0 ? ' BC' : ' AD'}
             </span>
-            <span className="font-cinzel font-bold text-amber-400 text-sm tracking-widest leading-none grow text-center">
+            <span className={`${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel tracking-widest'} font-bold text-amber-400 text-sm leading-none grow text-center`}>
                {historianResult.card.eraName[lang]}
             </span>
             <ChevronUp
@@ -642,7 +642,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             <div className="shrink-0 border-b border-white/10 bg-slate-950/80 backdrop-blur-sm z-20">
               {/* Era name micro-strip */}
               <div className="flex items-center gap-2 px-4 py-2">
-                <span className="font-cinzel text-amber-400 text-[11px] font-bold tracking-widest truncate flex-1">
+                <span className={`${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel tracking-widest'} text-amber-400 text-[11px] font-bold truncate flex-1`}>
                   {historianResult.card.eraName[lang]}
                 </span>
                 <span className="text-[9px] font-mono text-slate-600 shrink-0">

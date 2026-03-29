@@ -194,7 +194,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               </span>
               <WikipediaLink query={lang === 'en' ? searchResult.nameEn : searchResult.nameFa} lang={lang} />
             </div>
-            <h2 className="text-2xl font-bold font-serif text-white leading-tight">{lang === 'en' ? searchResult.nameEn : searchResult.nameFa}</h2>
+            <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{lang === 'en' ? searchResult.nameEn : searchResult.nameFa}</h2>
             <div className="flex items-center gap-2 text-sm text-slate-400">
                 <Calendar className="w-4 h-4" />
                 <span>{Math.abs(searchResult.year)}{searchResult.year < 0 ? (lang === 'en' ? ' BC' : ' ق.م') : (lang === 'en' ? ' AD' : ' م')}</span>
@@ -299,7 +299,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               </span>
               <WikipediaLink query={artifact.name[lang]} lang={lang} />
             </div>
-            <h2 className="text-2xl font-bold font-serif text-white leading-tight">{artifact.name[lang]}</h2>
+            <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{artifact.name[lang]}</h2>
             <p className="text-sm text-slate-400">
               {Math.abs(artifact.year)} {artifact.year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}
             </p>
@@ -386,7 +386,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               </span>
               <WikipediaLink query={figure.name[lang]} lang={lang} />
             </div>
-            <h2 className="text-2xl font-bold font-serif text-white leading-tight">{figure.name[lang]}</h2>
+            <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{figure.name[lang]}</h2>
             <p className="text-sm text-slate-400">
               {Math.abs(figure.birthYear)}{figure.birthYear < 0 ? (lang === 'en' ? ' BC' : ' ق.م') : ''}
               {' – '}
@@ -505,7 +505,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               </span>
               <WikipediaLink query={historicalEvent.title[lang]} lang={lang} />
             </div>
-            <h2 className="text-2xl font-bold font-serif text-white leading-tight">{historicalEvent.title[lang]}</h2>
+            <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{historicalEvent.title[lang]}</h2>
             <p className="text-sm text-slate-400">
               {Math.abs(historicalEvent.year)} {historicalEvent.year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}
             </p>
@@ -616,7 +616,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               <WikipediaLink query={ruler.name[lang]} lang={lang} />
             </div>
             {/* Ruler name */}
-            <h2 className="text-2xl font-bold font-serif text-white leading-tight">{ruler.name[lang]}</h2>
+            <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{ruler.name[lang]}</h2>
             {/* Title · Capital */}
             <p className="text-sm text-slate-400">{ruler.title[lang]} · {dynasty.capitalCity[lang]}</p>
           </div>
@@ -776,7 +776,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               </span>
               <WikipediaLink query={isGlobal ? 'Greater Iran' : (region?.name[lang] || '')} lang={lang} />
             </div>
-            <h2 className="text-2xl font-bold font-serif text-white leading-tight">
+            <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
               {isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.name[lang]}
             </h2>
             <p className="text-sm text-slate-400">

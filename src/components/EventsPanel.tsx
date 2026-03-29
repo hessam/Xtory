@@ -157,7 +157,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
         >
           <div className="w-12 h-1 bg-white/20 rounded-full mb-1" />
           <div className="flex justify-between items-center w-full px-6">
-            <h3 className="font-serif font-bold text-white text-sm">
+            <h3 className={`font-bold text-white text-sm ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
               {lang === 'en' ? 'Context of this Era' : 'زمینه این دوره'}
             </h3>
             <span className="text-xs font-mono text-slate-400 bg-black/20 px-2 py-0.5 rounded-lg border border-white/10">
@@ -213,7 +213,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
             <div className="px-4 py-3 border-b border-white/5 flex flex-col gap-3">
               {/* Desktop Header (Hidden on Mobile) */}
               <div className="hidden sm:flex justify-between items-center">
-                <h3 className="font-serif font-bold text-white text-sm">
+                <h3 className={`font-bold text-white text-sm ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
                   {lang === 'en' ? 'Context of this Era' : 'زمینه این دوره'}
                 </h3>
                 <span className="text-xs font-mono text-slate-400 bg-black/20 px-2 py-1 rounded-lg border border-white/10">
