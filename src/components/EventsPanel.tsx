@@ -3,13 +3,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { HistoricalEvent } from '../data/historicalEvents';
 import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
-import { Swords, Skull, Globe2, Landmark, Sparkles, ChevronRight, ChevronLeft, Loader2, User, Book, Lightbulb, Palette, HelpCircle, Building2, MapPin } from 'lucide-react';
+import { Swords, Skull, Globe2, Landmark, Sparkles, Loader2, User, Book, Lightbulb, Palette, HelpCircle, Building2, MapPin } from 'lucide-react';
 import { useApiKey } from '../context/ApiKeyContext';
 import { MythCard } from './MythCard';
 import { getQuestionsForYear } from '../data/quizQuestions';
 import { QuizQuestion } from '../types/quiz';
 import { HistorianCardSection } from './HistorianCardSection';
 import { getHistorianCard } from '../utils/getHistorianCard';
+import { Vazir } from '../data/vazirs';
 
 interface EventsPanelProps {
   year: number;
@@ -29,9 +30,11 @@ interface EventsPanelProps {
   setShowSettings?: (show: boolean) => void;
   onOpenQuiz: (questions: QuizQuestion[]) => void;
   onJumpToYear?: (year: number) => void;
+  selectedVazir?: Vazir | null;
+  onVazirClose?: () => void;
 }
 
-export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz, onJumpToYear }) => {
+export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz, onJumpToYear, selectedVazir, onVazirClose }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
   const { apiKey } = useApiKey();
@@ -129,11 +132,23 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
   };
 
   return (
+    // ── On mobile: fixed bottom sheet. On desktop: a flex-col that fills the sidebar. ──
     <div 
       id="tour-events-panel-desktop" 
-      className={`fixed sm:absolute bottom-0 sm:bottom-auto sm:top-24 left-0 sm:left-auto sm:right-6 w-full sm:w-80 z-20 flex flex-col pointer-events-none calm-transition ${isOpen ? 'h-[70vh] sm:h-auto' : 'h-16 sm:h-auto'}`}
+      className={`
+        fixed sm:static
+        bottom-0 sm:bottom-auto
+        left-0 sm:left-auto
+        w-full sm:w-auto sm:flex-1
+        z-20 sm:z-auto
+        flex flex-col
+        sm:overflow-hidden
+        pointer-events-none sm:pointer-events-auto
+        calm-transition
+        ${isOpen ? 'h-[70vh] sm:h-full' : 'h-16 sm:h-full'}
+      `}
     >
-      {/* Mobile Drag Handle / Header */}
+      {/* Mobile Drag Handle / Header — hidden on desktop */}
       <div className="sm:hidden flex flex-col items-center pointer-events-auto bg-slate-900/90 backdrop-blur-xl border-t border-x border-white/10 rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
         <div 
           onClick={() => setIsOpen(!isOpen)}
@@ -151,24 +166,29 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
         </div>
       </div>
 
-      {/* Desktop Toggle Button */}
-      <div className="hidden sm:flex self-end items-center gap-2 pointer-events-auto">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-3 liquid-glass border border-white/10 rounded-2xl shadow-2xl text-slate-300 hover:text-white hover:bg-white/10 calm-transition"
-        >
-          {isOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-        </button>
-      </div>
-
+      {/*
+        Mobile: AnimatePresence slide-up sheet with its own glass box.
+        Desktop: plain flex-col that fills the sidebar (no extra wrapper/glass).
+      */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={typeof window !== 'undefined' && window.innerWidth < 640 ? { y: '100%' } : { opacity: 0, x: 20 }}
-            animate={typeof window !== 'undefined' && window.innerWidth < 640 ? { y: 0 } : { opacity: 1, x: 0 }}
-            exit={typeof window !== 'undefined' && window.innerWidth < 640 ? { y: '100%' } : { opacity: 0, x: 20 }}
+            initial={typeof window !== 'undefined' && window.innerWidth < 640 ? { y: '100%' } : false}
+            animate={typeof window !== 'undefined' && window.innerWidth < 640 ? { y: 0 } : {}}
+            exit={typeof window !== 'undefined' && window.innerWidth < 640 ? { y: '100%' } : {}}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className={`sm:mt-4 w-full sm:w-80 liquid-glass-heavy border-x sm:border border-white/10 rounded-t-none sm:rounded-[2rem] shadow-2xl overflow-hidden pointer-events-auto flex flex-col flex-1 sm:flex-none sm:max-h-[50vh] bg-slate-900/95 sm:bg-transparent calm-transition`}
+            className={
+              /* Mobile: glass card rising from bottom */
+              /* Desktop: transparent, fills sidebar, no border/shadow of its own */
+              `w-full
+               bg-slate-900/95 sm:bg-transparent
+               border-x border-white/10 sm:border-0
+               rounded-t-none
+               overflow-hidden pointer-events-auto
+               flex flex-col
+               flex-1
+               sm:h-full sm:overflow-hidden`
+            }
             dir={lang === 'fa' ? 'rtl' : 'ltr'}
           >
             {/* ── Historian Card (always visible, above tabs) ── */}
@@ -179,12 +199,14 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                   lang={lang}
                   onNavigate={(y) => onJumpToYear?.(y)}
                   isEnriching={isLoadingAI}
+                  selectedVazir={selectedVazir}
+                  onVazirClose={onVazirClose}
                 />
               </div>
             )}
 
             {/* Tabs Row */}
-            <div className="px-3 sm:px-5 py-3 sm:py-5 border-b border-white/5 flex flex-col gap-3 bg-white/5 sm:bg-transparent">
+            <div className="px-4 py-3 border-b border-white/5 flex flex-col gap-3">
               {/* Desktop Header (Hidden on Mobile) */}
               <div className="hidden sm:flex justify-between items-center">
                 <h3 className="font-serif font-bold text-white text-sm">
@@ -217,7 +239,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-3 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 custom-scrollbar">
               {activeTab === 'events' && (
                 <>
                   <MythCard 
@@ -333,7 +355,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
               )}
             </div>
 
-            <div className="p-4 sm:p-5 border-t border-white/5 bg-white/5 sm:bg-transparent">
+            <div className="p-4 border-t border-white/5">
               <button
                 id="tour-ai-fetch-desktop"
                 onClick={handleFetch}
