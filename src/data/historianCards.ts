@@ -23,7 +23,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Pre-Historic Iran", fa: "ایران پیش از تاریخ" },
     yearRange: { start: -3000, end: -700 },
     situationOneLiner: {
-      en: "Tribes coalesce in the Zagros; the dawn of civilization outpaces the written word.",
+      en: "Tribes coalesce in the Zagros; the dawn of civilization before writing.",
       fa: "قبایل در زاگرس متحد می‌شوند؛ سپیده‌دم تمدن از کلام مکتوب پیشی می‌گیرد."
     },
     fullSummary: {
@@ -37,7 +37,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Median Empire", fa: "امپراتوری ماد" },
     yearRange: { start: -700, end: -550 },
     situationOneLiner: {
-      en: "A loose confederation of tribes humbles the Assyrian giant but struggles to hold itself together.",
+      en: "A tribal confederation humbles Assyria but struggles to hold itself together.",
       fa: "کنفدراسیون سستی از قبایل، غول آشوری را به زانو در می‌آورد اما در حفظ اتحاد خود درمانده است."
     },
     fullSummary: {
@@ -52,7 +52,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Achaemenid Empire", fa: "امپراتوری هخامنشی" },
     yearRange: { start: -550, end: -330 },
     situationOneLiner: {
-      en: "Cyrus builds history's first superpower, blending diverse nations into one fragile, golden peace.",
+      en: "Cyrus builds history's first superpower — from the Indus to the Nile.",
       fa: "کوروش نخستین ابرقدرت تاریخ را بنا می‌کند و ملت‌های گوناگون را در صلحی طلایی و شکننده پیوند می‌دهد."
     },
     fullSummary: {
@@ -67,7 +67,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Hellenistic Period", fa: "دوره هلنیستی" },
     yearRange: { start: -330, end: -247 },
     situationOneLiner: {
-      en: "Alexander's dream of a unified East and West dissolves into a mosaic of rival Greek generals.",
+      en: "Alexander's dream of a unified East dissolves into rival Greek states.",
       fa: "رویای اسکندر برای اتحاد شرق و غرب در موزاییکی از جنرال‌های رقیب یونانی از هم می‌پاشد."
     },
     fullSummary: {
@@ -82,7 +82,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Parthian Empire", fa: "امپراتوری اشکانی" },
     yearRange: { start: -247, end: 224 },
     situationOneLiner: {
-      en: "The mounted archers of the steppe become the masters of the Silk Road, defying Rome for centuries.",
+      en: "Mounted archers master the Silk Road, defying Rome for four centuries.",
       fa: "کمانداران سوارکار استپ، اربابان جاده ابریشم می‌شوند و قرن‌ها در برابر روم ایستادگی می‌کنند."
     },
     fullSummary: {
@@ -97,7 +97,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Sasanian Empire", fa: "امپراتوری ساسانی" },
     yearRange: { start: 224, end: 651 },
     situationOneLiner: {
-      en: "The glory of the Shahanshah reaches its peak just as the old world begins to crumble away.",
+      en: "The glory of the Shahanshah peaks as the old world crumbles away.",
       fa: "شکوه شاهنشاه به اوج خود می‌رسد، درست زمانی که دنیای کهن آغاز به فروپاشی می‌کند."
     },
     fullSummary: {
@@ -112,7 +112,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Early Islamic Conquest", fa: "دوره فتوحات اسلامی" },
     yearRange: { start: 651, end: 820 },
     situationOneLiner: {
-      en: "The old empire collapses; a new faith arrives, and the Persian spirit begins its long, quiet adaptation.",
+      en: "The empire collapses; a new faith arrives as the Persian spirit adapts.",
       fa: "امپراتوری کهن فرو می‌ریزد؛ آیینی نو فرا می‌رسد و روح ایرانی انطباق طولانی و آرام خود را آغاز می‌کند."
     },
     fullSummary: {
@@ -127,7 +127,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Iranian Renaissance", fa: "رنسانس ایرانی" },
     yearRange: { start: 820, end: 1040 },
     situationOneLiner: {
-      en: "Under the shadow of the Caliphate, the Persian language and science bloom with defiant brilliance.",
+      en: "Persian language and science bloom with defiant brilliance under the Caliphate.",
       fa: "در سایه خلافت، زبان و دانش پارسی با درخششی چالش‌برانگیز شکوفا می‌شود."
     },
     fullSummary: {
@@ -142,7 +142,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Seljuk Dominance", fa: "دوره سلجوقی" },
     yearRange: { start: 1040, end: 1220 },
     situationOneLiner: {
-      en: "Turkic warriors conquer the land, only to be seduced and transformed by the culture they subdued.",
+      en: "Turkic warriors conquer the land, transformed by the culture they subdued.",
       fa: "جنگجویان ترک زمین را فتح می‌کنند، اما خود شیفته و دگرگون‌شده‌ی فرهنگی می‌شوند که بر آن چیره گشتند."
     },
     fullSummary: {
@@ -157,7 +157,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Mongol Invasion", fa: "حمله مغول" },
     yearRange: { start: 1220, end: 1370 },
     situationOneLiner: {
-      en: "The apocalypse arrives from the East, wiping cities away but leaving a cleared path for global trade.",
+      en: "Apocalypse from the East wipes cities away, yet clears trade paths.",
       fa: "قیامت از شرق فرا می‌رسد، شهرها را محو می‌کند اما راهی هموار برای تجارت جهانی باقی می‌گذارد."
     },
     fullSummary: {
@@ -172,7 +172,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Timurid Era", fa: "دوره تیموری" },
     yearRange: { start: 1370, end: 1501 },
     situationOneLiner: {
-      en: "Timur builds a bloody empire on conquest, yet his descendants turn his capital into a cradle of art.",
+      en: "Timur builds a bloody empire; his descendants turn conquest into art.",
       fa: "تیمور امپراتوری خونینی بر پایه کشورگشایی بنا می‌کند، اما نوادگانش پایتخت او را به مهد هنر بدل می‌کنند."
     },
     fullSummary: {
@@ -187,7 +187,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Safavid Empire", fa: "امپراتوری صفوی" },
     yearRange: { start: 1501, end: 1736 },
     situationOneLiner: {
-      en: "The borders of modern Iran are drawn in blood and silk as a new national identity is forged in fire.",
+      en: "Modern borders are drawn in blood as a new identity is forged.",
       fa: "مرزهای ایران مدرن با خون و ابریشم ترسیم می‌شود، در حالی که هویتی ملی در آتش شکل می‌گیرد."
     },
     fullSummary: {
@@ -202,7 +202,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Afsharid & Zand Period", fa: "دوره افشاریه و زندیه" },
     yearRange: { start: 1736, end: 1796 },
     situationOneLiner: {
-      en: "Nader Shah strikes like a thunderbolt across Asia, yet leaves a vacuum that plunges the land into chaos.",
+      en: "Nader Shah strikes across Asia, leaving a vacuum that plunges into chaos.",
       fa: "نادرشاه چون صاعقه‌ای بر پهنه آسیا می‌تازد، اما خلأیی بر جای می‌گذارد که سرزمین را به کام آشوب می‌کشد."
     },
     fullSummary: {
@@ -217,7 +217,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Qajar Dynasty", fa: "دوره قاجار" },
     yearRange: { start: 1796, end: 1925 },
     situationOneLiner: {
-      en: "A traditional dynasty faces the industrial world, losing territory while desperately clinging to the past.",
+      en: "A traditional dynasty faces the industrial world, desperately clinging to the past.",
       fa: "سلسله‌ای سنتی با دنیای صنعتی روبرو می‌شود؛ سرزمین‌ها را از دست می‌دهد در حالی که ناامیدانه به گذشته چنگ زده است."
     },
     fullSummary: {
@@ -232,7 +232,7 @@ export const historianCards: HistorianCard[] = [
     eraName: { en: "Modern Iran", fa: "ایران مدرن" },
     yearRange: { start: 1925, end: 2000 },
     situationOneLiner: {
-      en: "An old nation enters a century of oil, revolution, and rapid change, hunting for its place in the world.",
+      en: "An old nation enters a century of oil, revolution, and change.",
       fa: "ملتی کهن وارد قرن نفت، انقلاب و تغییرات شتابان می‌شود و در جستجوی جایگاه خود در جهان است."
     },
     fullSummary: {
