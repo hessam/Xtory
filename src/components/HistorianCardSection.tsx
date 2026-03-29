@@ -133,7 +133,7 @@ export const HistorianCardSection: React.FC<Props> = ({
                 onClick={() => onNavigate(prevCard.card.yearRange.start)}
                 className="flex-1 flex items-center gap-3 px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white active:scale-95 group transition-all"
               >
-                <ChevronLeft className="w-3.5 h-3.5 shrink-0 ltr:group-hover:-translate-x-0.5 transition-transform" />
+                <ChevronLeft className="w-3.5 h-3.5 shrink-0 ltr:group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 rtl:rotate-180 transition-transform" />
                 <div className="flex flex-col items-start overflow-hidden">
                   <span className="text-[8px] uppercase tracking-wider opacity-60 leading-none mb-1">{lang === 'en' ? 'PREV' : 'قبلی'}</span>
                   <span className="text-[10px] font-bold truncate w-full uppercase tracking-widest">{prevCard.card.eraName[lang]}</span>
@@ -150,7 +150,7 @@ export const HistorianCardSection: React.FC<Props> = ({
                   <span className="text-[8px] uppercase tracking-wider opacity-60 leading-none mb-1">{lang === 'en' ? 'NEXT' : 'بعدی'}</span>
                   <span className="text-[10px] font-bold truncate w-full uppercase tracking-widest">{nextCard.card.eraName[lang]}</span>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 shrink-0 ltr:group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className="w-3.5 h-3.5 shrink-0 ltr:group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180 transition-transform" />
               </button>
             )}
           </div>
