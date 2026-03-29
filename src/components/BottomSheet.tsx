@@ -880,8 +880,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               )}
             </div>
 
-            {/* Fixed bottom — BYOK editorial insight whisper only, always visible */}
-            {!apiKey && (
+            {/* 
+               TODO: RE-ENABLE BYOK EDITORIAL INSIGHT 
+               This section needs more time to make the narrative flow complete. 
+               We will reintegrate this 'Historian Insight' whisper later.
+            */}
+            {/* {!apiKey && (
               <div
                 className="px-4 border-t border-[rgba(201,169,110,0.1)] shrink-0 pb-1"
                 style={{ paddingBottom: 'calc(4px + var(--safe-bottom))' }}
@@ -892,7 +896,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   onUnlock={() => setShowSettings?.(true)}
                 />
               </div>
-            )}
+            )} */}
+            
+            {/* Safe area padding when BYOK is hidden */}
+            <div style={{ height: 'var(--safe-bottom)', minHeight: '12px' }} className="shrink-0" />
       </div>
     </div>
   );
