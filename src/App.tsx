@@ -1,6 +1,7 @@
 import React, { useState, useMemo, Suspense, lazy, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Globe, Languages, HelpCircle, Key, AlertCircle, Heart, Search, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen } from 'lucide-react';
+import { Globe, Languages, HelpCircle, Key, AlertCircle, Heart, Search, X, ZoomIn, ZoomOut, Maximize } from 'lucide-react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { formatYear } from './utils/format';
 import { events as initialEvents, ReignEvent } from './data/events';
 import { rulers as initialRulers, Ruler } from './data/rulers';
@@ -54,6 +55,7 @@ export default function App() {
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
   const [selectedVazir, setSelectedVazir] = useState<Vazir | null>(null);
+  const [selectedBanner, setSelectedBanner] = useState<{ url: string, title: string } | null>(null);
   const [legendMode, setLegendMode] = useState<'simple' | 'detailed'>('simple');
 
   // Keyboard shortcut for search (Cmd+K)
@@ -92,6 +94,12 @@ export default function App() {
   React.useEffect(() => {
     import('./services/geminiService').then(m => m.setApiKey(apiKey)).catch(console.error);
   }, [apiKey]);
+
+  // Sync lang attribute to HTML tag
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+  }, [lang]);
 
   // Check if it's the first visit
   React.useEffect(() => {
@@ -206,6 +214,8 @@ export default function App() {
       setSelectedFigure(null);
       setSelectedArtifact(null);
       setSelectedSearchResult(null);
+      setSelectedVazir(null);
+      setSelectedBanner(null);
     });
   };
 
@@ -484,47 +494,68 @@ export default function App() {
           <ContextStrip year={year} lang={lang} />
         </motion.div>
 
-        {/* ─── 3-Column Middle Row ─────────────────────────────────────── */}
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* ─── Main Desktop Row (L-Sidebars + Map + Timeline + R-Sidebar) ────────────── */}
+        <div className="flex flex-1 min-h-0 overflow-hidden relative">
+
+          {/* LEFT CONTENT AREA (V-STACK: Sidebars/Map + Timeline) */}
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <div className="flex-1 flex min-h-0 overflow-hidden relative">
 
           {/* LEFT PANEL (Legend — collapsible) */}
-          {isLeftPanelOpen && (
-            <div
-              className="flex flex-col liquid-glass-heavy border-r border-white/10 overflow-y-auto"
-              style={{ width: 240, flexShrink: 0 }}
+          <div
+            className="relative flex flex-col liquid-glass-heavy ltr:border-r rtl:border-l border-white/10 calm-transition overflow-visible"
+            style={{ width: isLeftPanelOpen ? 240 : 48, flexShrink: 0 }}
+          >
+            {/* THE PIVOT (Always visible on the right edge) */}
+            <button
+               id="legend-pivot-trigger"
+               onClick={() => setIsLeftPanelOpen(!isLeftPanelOpen)}
+               className="absolute ltr:-right-[13px] rtl:-left-[13px] top-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center cursor-pointer group"
+               style={{ width: 26, height: 120 }}
+               title={isLeftPanelOpen ? "Collapse Legend" : "Expand Legend"}
             >
-              {/* COLLAPSE BUTTON */}
-              <button
-                onClick={() => setIsLeftPanelOpen(false)}
-                className="self-end m-3 p-1.5 rounded-lg hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
-                title="Collapse legend"
-              >
-                <PanelLeftClose className="w-4 h-4" />
-              </button>
-              
-              <div className="px-4 py-3 flex flex-col gap-3">
+              <div className="gold-thread" style={{ left: '50%' }} />
+              <div 
+                className="diamond-pivot group-hover:scale-110 group-hover:border-amber-400/80 transition-all duration-500" 
+                style={{ transform: `rotate(${isLeftPanelOpen ? '45deg' : '-45deg'})` }}
+              />
+            </button>
+
+            {/* COLLAPSED CONTENT (Vertical Spine Text) */}
+            {!isLeftPanelOpen && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center py-12 pointer-events-none">
+                <span className="historian-spine-text opacity-40 transition-opacity">
+                  {lang === 'en' ? 'Legend' : 'راهنما'}
+                </span>
+                <div className="mt-8 diamond-pivot scale-75 opacity-20 rotate-45" />
+              </div>
+            )}
+
+            {/* OPEN CONTENT */}
+            <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-700 ${isLeftPanelOpen ? 'opacity-100' : 'opacity-0 pointer-events-none whitespace-nowrap'}`}>
+               <div className="px-4 py-3 flex flex-col gap-3">
                 {/* LEGEND Header */}
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-1">
                   {lang === 'en' ? 'Legend' : 'راهنما'}
                 </span>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2.5">
                   {/* Simple/Detailed Toggle Content */}
                   {legendMode === 'simple' ? (
                     <>
-                      <LegendItem color="persian" label={{ en: 'Persian/Iranian', fa: 'ایرانی/پارسی' }} lang={lang} />
-                      <LegendItem color="arab" label={{ en: 'Caliphate/Foreign', fa: 'خلافت/خارجی' }} lang={lang} />
-                      <LegendItem color="nomadic" label={{ en: 'Nomadic/Contested', fa: 'عشایر/مناقشه' }} lang={lang} />
+                      <LegendItem colors={['persian']} label={{ en: 'Persian/Iranian', fa: 'ایرانی/پارسی' }} lang={lang} />
+                      <LegendItem colors={['arab', 'greek', 'foreign', 'semitic']} label={{ en: 'Caliphate/Foreign', fa: 'خلافت/خارجی' }} lang={lang} />
+                      <LegendItem colors={['turkic', 'nomadic']} label={{ en: 'Nomadic/Contested', fa: 'عشایر/مناقشه' }} lang={lang} />
                     </>
                   ) : (
                     <>
-                      <LegendItem color="persian" label={{ en: 'Persian/Iranian', fa: 'ایرانی/پارسی' }} lang={lang} />
-                      <LegendItem color="arab" label={{ en: 'Arab/Caliphate', fa: 'عرب/خلافت' }} lang={lang} />
-                      <LegendItem color="turkic" label={{ en: 'Turkic/Mongol', fa: 'ترک/مغول' }} lang={lang} />
-                      <LegendItem color="greek" label={{ en: 'Hellenic/Greek', fa: 'یونانی/هلنیستی' }} lang={lang} />
-                      <LegendItem color="nomadic" label={{ en: 'Nomadic/Steppe', fa: 'عشایر/استپ' }} lang={lang} />
-                      <LegendItem color="foreign" label={{ en: 'Foreign Imperial', fa: 'امپراتوری خارجی' }} lang={lang} />
-                      <LegendItem color="semitic" label={{ en: 'Babylonian/Semitic', fa: 'بابلی/سامی' }} lang={lang} />
+                      <LegendItem colors={['persian']} label={{ en: 'Persian/Iranian', fa: 'ایرانی/پارسی' }} lang={lang} />
+                      <LegendItem colors={['arab']} label={{ en: 'Arab/Caliphate', fa: 'عرب/خلافت' }} lang={lang} />
+                      <LegendItem colors={['turkic']} label={{ en: 'Turkic/Mongol', fa: 'ترک/مغول' }} lang={lang} />
+                      <LegendItem colors={['greek']} label={{ en: 'Hellenic/Greek', fa: 'یونانی/هلنیستی' }} lang={lang} />
+                      <LegendItem colors={['nomadic']} label={{ en: 'Nomadic/Steppe', fa: 'عشایر/استپ' }} lang={lang} />
+                      <LegendItem colors={['foreign']} label={{ en: 'Foreign Imperial', fa: 'امپراتوری خارجی' }} lang={lang} />
+                      <LegendItem colors={['semitic']} label={{ en: 'Babylonian/Semitic', fa: 'بابلی/سامی' }} lang={lang} />
                     </>
                   )}
                 </div>
@@ -544,26 +575,14 @@ export default function App() {
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-1">
                     {lang === 'en' ? 'Map Dots' : 'نقاط روی نقشه'}
                   </span>
-                  <LegendItem color="amber" label={{ en: 'Vazir (Advisor)', fa: 'وزیر' }} lang={lang} />
-                  <LegendItem color="purple" label={{ en: 'Historical Figure', fa: 'شخصیت تاریخی' }} lang={lang} />
-                  <LegendItem color="emerald" label={{ en: 'Historical Event', fa: 'رویداد تاریخی' }} lang={lang} />
-                  <LegendItem color="sky" label={{ en: 'Cultural Heritage', fa: 'میراث فرهنگی' }} lang={lang} />
+                  <LegendItem colors={['amber']} label={{ en: 'Vazir (Advisor)', fa: 'وزیر' }} lang={lang} />
+                  <LegendItem colors={['purple']} label={{ en: 'Historical Figure', fa: 'شخصیت تاریخی' }} lang={lang} />
+                  <LegendItem colors={['emerald']} label={{ en: 'Historical Event', fa: 'رویداد تاریخی' }} lang={lang} />
+                  <LegendItem colors={['sky']} label={{ en: 'Cultural Heritage', fa: 'میراث فرهنگی' }} lang={lang} />
                 </div>
               </div>
             </div>
-          )}
-
-          {/* LEFT PANEL EXPAND BUTTON (shown when collapsed) */}
-          {!isLeftPanelOpen && (
-            <button
-              onClick={() => setIsLeftPanelOpen(true)}
-              className="flex flex-col items-center justify-center px-2 liquid-glass border-r border-white/10 hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
-              style={{ width: 32, flexShrink: 0 }}
-              title="Expand legend"
-            >
-              <PanelLeftOpen className="w-4 h-4" />
-            </button>
-          )}
+          </div>
 
           {/* CENTER: Map (existing, now in flow) */}
           <div
@@ -598,62 +617,71 @@ export default function App() {
                 </div>
               </div>
             )}
+            </div>
+            </div>
+
+            {/* ─── Bottom Timeline Row (Nested sibling to Map) ───────────────── */}
+            <div
+              id="tour-timeline-desktop"
+              className="liquid-glass-heavy border-t border-white/10 overflow-hidden"
+              style={{ flexShrink: 0, height: 260 }}
+            >
+              <Timeline
+                year={year}
+                setYear={setYear}
+                lang={lang}
+                onEventClick={handleEventClick}
+                onYearContextClick={handleYearContextClick}
+                events={allEvents}
+                rulers={allRulers}
+                dynasties={allDynasties}
+                historicalEvents={allHistoricalEvents}
+                artifacts={allArtifacts}
+                onHistoricalEventClick={handleHistoricalEventClick}
+                onArtifactClick={handleArtifactClick}
+                isLoadingAI={isLoadingAI}
+              />
+            </div>
           </div>
 
-          {/* RIGHT PANEL (EventsPanel — collapsible) */}
-          {isRightPanelOpen && (
-            <div
-              className="flex flex-col liquid-glass-heavy border-l border-white/10 overflow-hidden"
-              style={{ width: 360, flexShrink: 0 }}
-            >
-              {/* COLLAPSE BUTTON */}
-              <button
-                onClick={() => setIsRightPanelOpen(false)}
-                className="self-start m-3 p-1.5 rounded-lg hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
-                title="Collapse historian"
-              >
-                <PanelRightClose className="w-4 h-4" />
-              </button>
-              {/* EventsPanel — pass ALL existing props exactly as they are */}
-              <EventsPanel {...panelProps} />
-            </div>
-          )}
-
-          {/* RIGHT PANEL EXPAND BUTTON (shown when collapsed) */}
-          {!isRightPanelOpen && (
+          {/* RIGHT PANEL (EventsPanel — collapsible, now full height sibling) */}
+          <div
+            className="relative flex flex-col liquid-glass-heavy ltr:border-l rtl:border-r border-white/10 calm-transition overflow-visible"
+            style={{ width: isRightPanelOpen ? 360 : 48, flexShrink: 0 }}
+          >
+            {/* THE PIVOT (Always visible on the left edge) */}
             <button
-              onClick={() => setIsRightPanelOpen(true)}
-              className="flex flex-col items-center justify-center px-2 liquid-glass border-l border-white/10 hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
-              style={{ width: 32, flexShrink: 0 }}
-              title="Expand historian"
+              id="historian-pivot-trigger"
+              onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
+              className="absolute ltr:-left-[13px] rtl:-right-[13px] top-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center cursor-pointer group"
+              style={{ width: 26, height: 120 }}
+              title={isRightPanelOpen ? "Collapse Historian" : "Expand Historian"}
             >
-              <PanelRightOpen className="w-4 h-4" />
+              <div className="gold-thread" style={{ left: '50%' }} />
+              <div 
+                className="diamond-pivot group-hover:scale-110 group-hover:border-amber-400/80 transition-all duration-500" 
+                style={{ transform: `rotate(${isRightPanelOpen ? '45deg' : '135deg'})` }}
+              />
             </button>
-          )}
 
-        </div>
+            {/* COLLAPSED CONTENT (Vertical Spine Text) */}
+            {!isRightPanelOpen && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center py-12 pointer-events-none">
+                <span className="historian-spine-text opacity-40 transition-opacity">
+                  {lang === 'en' ? 'Historian' : 'مورخ'}
+                </span>
+                <div className="mt-8 diamond-pivot scale-75 opacity-20 rotate-45" />
+              </div>
+            )}
 
-        {/* ─── Bottom Timeline Row ──────────────────────────────────────── */}
-        <div
-          id="tour-timeline-desktop"
-          className="liquid-glass-heavy border-t border-white/10 overflow-hidden"
-          style={{ flexShrink: 0, height: 260 }}
-        >
-          <Timeline
-            year={year}
-            setYear={setYear}
-            lang={lang}
-            onEventClick={handleEventClick}
-            onYearContextClick={handleYearContextClick}
-            events={allEvents}
-            rulers={allRulers}
-            dynasties={allDynasties}
-            historicalEvents={allHistoricalEvents}
-            artifacts={allArtifacts}
-            onHistoricalEventClick={handleHistoricalEventClick}
-            onArtifactClick={handleArtifactClick}
-            isLoadingAI={isLoadingAI}
-          />
+            {/* OPEN CONTENT */}
+            <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-700 ${isRightPanelOpen ? 'opacity-100' : 'opacity-0 pointer-events-none whitespace-nowrap'}`}>
+              <EventsPanel 
+                {...panelProps} 
+                onBannerClick={(url, title) => setSelectedBanner({ url, title })}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -673,6 +701,21 @@ export default function App() {
             events={allEvents}
             rulers={allRulers}
             dynasties={allDynasties}
+          />
+        )}
+        {selectedVazir && (
+          <VazirCard 
+            vazir={selectedVazir} 
+            lang={lang} 
+            onClose={() => setSelectedVazir(null)} 
+          />
+        )}
+        {selectedBanner && (
+          <BannerLightbox
+            url={selectedBanner.url}
+            title={selectedBanner.title}
+            lang={lang}
+            onClose={() => setSelectedBanner(null)}
           />
         )}
       </Suspense>
@@ -733,7 +776,7 @@ export default function App() {
 }
 
 // ─── Shared Components for Legend ───
-const LegendItem = ({ color, label, lang }: { color: string, label: { en: string, fa: string }, lang: 'en' | 'fa' }) => {
+const LegendItem = ({ colors, label, lang }: { colors: string[], label: { en: string, fa: string }, lang: 'en' | 'fa' }) => {
   const colorMap: Record<string, string> = {
     persian: 'bg-[#a855f7]',
     arab:    'bg-[#10b981]',
@@ -749,11 +792,196 @@ const LegendItem = ({ color, label, lang }: { color: string, label: { en: string
     sky:     'bg-sky-400'
   };
   return (
-    <div className="flex items-center gap-2">
-      <div className={`w-2.5 h-2.5 rounded-full ${colorMap[color]} shadow-md`} />
-      <span className="text-[11px] text-slate-300 font-medium">
+    <div className="flex items-center gap-2 group">
+      <div className="flex -space-x-1.5 isolate">
+        {colors.map((c, i) => (
+          <div 
+            key={i} 
+            className={`w-2.5 h-2.5 rounded-full ${colorMap[c]} shadow-md border border-slate-900/40 calm-transition group-hover:scale-110`} 
+            style={{ zIndex: colors.length - i }}
+          />
+        ))}
+      </div>
+      <span className="text-[11px] text-slate-300 font-medium whitespace-normal leading-tight">
         {label[lang]}
       </span>
     </div>
+  );
+};
+
+// ─── Vazir Profile Card Component ───
+const VazirCard = ({ vazir, lang, onClose }: { vazir: Vazir, lang: 'en' | 'fa', onClose: () => void }) => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, y: 20 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4 pointer-events-none"
+    >
+      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm pointer-events-auto" onClick={onClose} />
+      
+      <div className="relative w-full max-w-md liquid-glass-heavy border border-amber-500/30 rounded-[2rem] shadow-2xl pointer-events-auto overflow-hidden">
+        {/* Gold Accent Thread */}
+        <div className="absolute top-0 left-12 bottom-0 w-[1px] bg-gradient-to-b from-amber-500/0 via-amber-500/40 to-amber-500/0" />
+        
+        <div className="p-8 sm:p-10 flex flex-col gap-6">
+          {/* Header */}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-amber-500 uppercase tracking-[0.3em] font-cinzel">
+                {lang === 'en' ? 'The Great Vazir' : 'وزیر بزرگ'}
+              </span>
+              <button 
+                onClick={onClose}
+                className="p-2 hover:bg-white/10 rounded-full transition-colors -mr-2"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-cinzel text-white leading-tight">
+              {vazir.name[lang]}
+            </h2>
+            <p className="text-sm text-slate-400 font-medium">
+              {vazir.title[lang]}
+            </p>
+          </div>
+
+          {/* Body Sections */}
+          <div className="flex flex-col gap-5 relative">
+            {/* The Service */}
+            <div className="flex flex-col gap-1 pl-6 relative">
+              <div className="absolute left-0 top-1.5 w-2 h-2 rounded-full border border-amber-500/60 bg-slate-900" />
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+                {lang === 'en' ? 'The Service' : 'دوران خدمت'}
+              </span>
+              <p className="text-sm text-slate-200">
+                {lang === 'en' ? `Served ${vazir.rulerName.en}` : `در خدمت ${vazir.rulerName.fa}`}
+                <span className="mx-2 text-slate-600">|</span>
+                <span className="font-mono text-xs text-amber-400/80">
+                  {formatYear(vazir.activeYearStart, lang)} — {formatYear(vazir.activeYearEnd, lang)}
+                </span>
+              </p>
+            </div>
+
+            {/* The Contribution */}
+            <div className="flex flex-col gap-2 pl-6 relative">
+              <div className="absolute left-0 top-1.5 w-2 h-2 rounded-full border border-amber-500/60 bg-slate-900" />
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+                {lang === 'en' ? 'The Achievement' : 'دستاورد'}
+              </span>
+              <p className="text-sm text-slate-300 italic leading-relaxed">
+                "{vazir.contribution[lang]}"
+              </p>
+            </div>
+
+            {/* The Preservation */}
+            <div className="flex flex-col gap-2 pl-6 relative">
+              <div className="absolute left-0 top-1.5 w-2 h-2 rounded-full border border-amber-500/60 bg-slate-900" />
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+                {lang === 'en' ? 'What was Saved' : 'آنچه حفظ شد'}
+              </span>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                {vazir.preserved[lang]}
+              </p>
+            </div>
+
+            {/* The Paradox - The "Hidden Heart" of the card */}
+            <div className="mt-4 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/40" />
+              <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-[0.2em] block mb-2">
+                {lang === 'en' ? 'The Vazir\'s Paradox' : 'پارادوکس وزیر'}
+              </span>
+              <p className="text-sm text-amber-100/90 font-medium leading-relaxed">
+                {vazir.paradox[lang]}
+              </p>
+            </div>
+          </div>
+
+          {/* Footer Action */}
+          <button 
+            onClick={onClose}
+            className="w-full py-4 rounded-2xl border border-white/10 hover:bg-white/5 text-slate-400 text-xs uppercase tracking-widest font-bold calm-transition"
+          >
+            {lang === 'en' ? 'Return to Atlas' : 'بازگشت به اطلس'}
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// ─── Banner Lightbox Component ───
+const BannerLightbox = ({ url, title, lang, onClose }: { url: string, title: string, lang: 'en' | 'fa', onClose: () => void }) => {
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] bg-slate-950/95 backdrop-blur-xl flex flex-col"
+    >
+      {/* Top Bar */}
+      <div className="flex items-center justify-between p-4 sm:p-6 z-10" dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+        <div className="flex flex-col">
+          <span className={`text-[10px] font-bold text-amber-500 uppercase tracking-widest ${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel tracking-[0.3em]'}`}>
+            {lang === 'en' ? 'Living Atlas Illustration' : 'تصویر اطلس زنده'}
+          </span>
+          <h2 className={`text-xl sm:text-2xl text-white drop-shadow-lg ${lang === 'fa' ? 'font-vazirmatn font-bold' : 'font-cinzel'}`}>
+            {title}
+          </h2>
+        </div>
+        <button 
+          onClick={onClose}
+          className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 border border-white/10"
+        >
+          <X className="w-6 h-6 text-slate-300" />
+        </button>
+      </div>
+
+      {/* Image Container with Zoom */}
+      <div className="flex-1 overflow-hidden relative touch-none select-none">
+        <TransformWrapper
+          initialScale={1}
+          minScale={0.5}
+          maxScale={4}
+          centerOnInit
+          limitToBounds={false}
+        >
+          {({ zoomIn, zoomOut, resetTransform }) => (
+            <>
+              {/* Controls */}
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-slate-900/80 backdrop-blur-md border border-white/10 p-2 rounded-2xl z-20">
+                <button onClick={() => zoomOut()} className="p-2.5 hover:bg-white/10 rounded-xl transition-colors"><ZoomOut className="w-5 h-5 text-slate-300" /></button>
+                <div className="w-px h-4 bg-white/10" />
+                <button onClick={() => resetTransform()} className="p-2.5 hover:bg-white/10 rounded-xl transition-colors"><Maximize className="w-5 h-5 text-slate-300" /></button>
+                <div className="w-px h-4 bg-white/10" />
+                <button onClick={() => zoomIn()} className="p-2.5 hover:bg-white/10 rounded-xl transition-colors"><ZoomIn className="w-5 h-5 text-slate-300" /></button>
+              </div>
+
+              <TransformComponent 
+                wrapperStyle={{ width: '100%', height: '100%', cursor: 'grab' }}
+                contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <img 
+                  src={url} 
+                  className="max-w-[90vw] max-h-[75vh] object-contain shadow-2xl rounded-sm pointer-events-none" 
+                  alt={title} 
+                />
+              </TransformComponent>
+            </>
+          )}
+        </TransformWrapper>
+      </div>
+
+      {/* Hint */}
+      <div className={`py-6 text-center text-slate-500 text-[10px] uppercase tracking-widest font-bold ${lang === 'fa' ? 'font-vazirmatn' : ''}`}>
+        {lang === 'en' ? 'Use pinch or wheel to zoom · Drag to pan' : 'برای بزرگ‌نمایی از دو انگشت استفاده کنید'}
+      </div>
+    </motion.div>
   );
 };

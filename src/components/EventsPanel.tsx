@@ -32,9 +32,10 @@ interface EventsPanelProps {
   onJumpToYear?: (year: number) => void;
   selectedVazir?: Vazir | null;
   onVazirClose?: () => void;
+  onBannerClick?: (url: string, title: string) => void;
 }
 
-export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz, onJumpToYear, selectedVazir, onVazirClose }) => {
+export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz, onJumpToYear, selectedVazir, onVazirClose, onBannerClick }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
   const { apiKey } = useApiKey();
@@ -193,7 +194,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
           >
             {/* ── Historian Card (always visible, above tabs) ── */}
             {isOpen && (
-              <div className="relative border-b border-white/10 flex-shrink-0 max-h-[38%] overflow-y-auto custom-scrollbar">
+              <div className="relative border-b border-white/10 flex-shrink-0 max-h-[40%] sm:max-h-[55%] overflow-y-auto custom-scrollbar">
                 <HistorianCardSection
                   result={historianResult}
                   lang={lang}
@@ -201,6 +202,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                   isEnriching={isLoadingAI}
                   selectedVazir={selectedVazir}
                   onVazirClose={onVazirClose}
+                  onBannerClick={onBannerClick}
                 />
                 {/* Scroll-fade mask — appears only when content overflows */}
                 <div className="sticky bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none" />
