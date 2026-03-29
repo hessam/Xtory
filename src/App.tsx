@@ -15,6 +15,7 @@ import { getQuestionsForYear } from './data/quizQuestions';
 import { QuizQuestion } from './types/quiz';
 import { AIKeyButton } from './components/AIKeyButton';
 import { SearchBar } from './components/SearchBar';
+import { ContextStrip } from './components/ContextStrip';
 
 // Heavy components — lazy loaded so they never block first paint
 const Map        = lazy(() => import('./components/Map').then(m => ({ default: m.Map })));
@@ -336,6 +337,8 @@ export default function App() {
           </div>
         </header>
 
+        <ContextStrip year={year} lang={lang} />
+
         {/* ── Map area  flex-1, shrinks as sheet grows ─────────────────── */}
         <div 
           id="tour-map-mobile" 
@@ -457,6 +460,8 @@ export default function App() {
             </button>
           </div>
         </header>
+
+        <ContextStrip year={year} lang={lang} />
 
         {/* ─── 3-Column Middle Row ─────────────────────────────────────── */}
         <div className="flex flex-1 min-h-0 overflow-hidden">

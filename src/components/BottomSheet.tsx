@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect, useLayoutEffect, startTransition } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useLayoutEffect, startTransition, useMemo } from 'react';
 import { Sparkles, Loader2, Swords, Skull, Landmark, Globe2, User, Book, Lightbulb, Palette, Building2, MapPin, ChevronUp, AlertCircle } from 'lucide-react';
 import { Virtuoso } from 'react-virtuoso';
 import { HistoricalEvent } from '../data/historicalEvents';
@@ -8,6 +8,8 @@ import { useApiKey } from '../context/ApiKeyContext';
 import { MythCard } from './MythCard';
 import { getQuestionsForYear } from '../data/quizQuestions';
 import { QuizQuestion } from '../types/quiz';
+import { HistorianCardSection } from './HistorianCardSection';
+import { getHistorianCard } from '../utils/getHistorianCard';
 
 // ── Snap definitions ────────────────────────────────────────────────────────
 // COLLAPSED  = handle bar only. Height = 60px + safe-bottom
@@ -89,6 +91,7 @@ interface BottomSheetProps {
    isLoadingAIArtifacts:boolean;
   setShowSettings?:    (show: boolean) => void;
   onOpenQuiz: (questions: QuizQuestion[]) => void;
+  onJumpToYear?: (year: number) => void;
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -98,7 +101,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts,
   isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts,
   setShowSettings,
-  onOpenQuiz
+  onOpenQuiz,
+  onJumpToYear
 }) => {
   const [snap, setSnap] = useState<SnapPoint>('collapsed');
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
@@ -106,6 +110,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   const sheetRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const historianResult = useMemo(() => getHistorianCard(year), [year]);
 
   // Drag tracking
   const [isDragging, setIsDragging] = useState(false);
@@ -570,9 +576,16 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         {/* Pill indicator */}
         <div className="w-10 h-1.5 rounded-full bg-white/30 mb-2" />
         <div className="flex w-full px-5 justify-between items-center">
-          <span className="font-serif font-bold text-white text-sm">
-            {lang === 'en' ? 'Explore this Era' : 'این دوره را کاوش کنید'}
-          </span>
+          <div className="flex flex-col items-start gap-0.5">
+            <span className="font-serif font-bold text-white text-sm">
+              {historianResult.card.eraName[lang]}
+            </span>
+            {snap === 'collapsed' && (
+              <p className="text-slate-400 text-[10px] truncate max-w-[240px]">
+                {historianResult.card.situationOneLiner[lang]}
+              </p>
+            )}
+          </div>
           <div className="flex items-center gap-3">
             <span className="text-xs font-mono text-slate-400 bg-black/20 px-2 py-0.5 rounded-lg border border-white/10">
               {Math.abs(year)}{year < 0 ? ' BC' : ' AD'}
@@ -612,6 +625,15 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         onTouchEnd={snap === 'half' ? onContentTouchEnd : undefined}
         onTouchCancel={snap === 'half' ? onContentTouchEnd : undefined}
       >
+            <div className="border-b border-white/10 shrink-0">
+              <HistorianCardSection
+                result={historianResult}
+                lang={lang}
+                onNavigate={onJumpToYear ?? (() => {})}
+                isEnriching={isLoadingAI}
+              />
+            </div>
+
             <div className="px-4 pb-3 pt-1 border-b border-white/5 shrink-0">
               <div className="flex bg-black/20 rounded-xl p-1 border border-white/5">
                 {(['events', 'figures', 'artifacts'] as const).map(tab => (

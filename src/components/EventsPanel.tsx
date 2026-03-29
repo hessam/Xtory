@@ -8,6 +8,8 @@ import { useApiKey } from '../context/ApiKeyContext';
 import { MythCard } from './MythCard';
 import { getQuestionsForYear } from '../data/quizQuestions';
 import { QuizQuestion } from '../types/quiz';
+import { HistorianCardSection } from './HistorianCardSection';
+import { getHistorianCard } from '../utils/getHistorianCard';
 
 interface EventsPanelProps {
   year: number;
@@ -26,9 +28,10 @@ interface EventsPanelProps {
   isLoadingAIArtifacts: boolean;
   setShowSettings?: (show: boolean) => void;
   onOpenQuiz: (questions: QuizQuestion[]) => void;
+  onJumpToYear?: (year: number) => void;
 }
 
-export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz }) => {
+export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz, onJumpToYear }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
   const { apiKey } = useApiKey();
@@ -51,6 +54,8 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
   const mythsForEra = useMemo(() => {
     return getQuestionsForYear(year);
   }, [year]);
+
+  const historianResult = useMemo(() => getHistorianCard(year), [year]);
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -166,6 +171,18 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
             className={`sm:mt-4 w-full sm:w-80 liquid-glass-heavy border-x sm:border border-white/10 rounded-t-none sm:rounded-[2rem] shadow-2xl overflow-hidden pointer-events-auto flex flex-col flex-1 sm:flex-none sm:max-h-[50vh] bg-slate-900/95 sm:bg-transparent calm-transition`}
             dir={lang === 'fa' ? 'rtl' : 'ltr'}
           >
+            {/* ── Historian Card (always visible, above tabs) ── */}
+            {isOpen && (
+              <div className="border-b border-white/10">
+                <HistorianCardSection
+                  result={historianResult}
+                  lang={lang}
+                  onNavigate={(y) => onJumpToYear?.(y)}
+                  isEnriching={isLoadingAI}
+                />
+              </div>
+            )}
+
             {/* Tabs Row */}
             <div className="px-3 sm:px-5 py-3 sm:py-5 border-b border-white/5 flex flex-col gap-3 bg-white/5 sm:bg-transparent">
               {/* Desktop Header (Hidden on Mobile) */}
