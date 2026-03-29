@@ -193,7 +193,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
           >
             {/* ── Historian Card (always visible, above tabs) ── */}
             {isOpen && (
-              <div className="border-b border-white/10">
+              <div className="relative border-b border-white/10 flex-shrink-0 max-h-[38%] overflow-y-auto custom-scrollbar">
                 <HistorianCardSection
                   result={historianResult}
                   lang={lang}
@@ -202,6 +202,8 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                   selectedVazir={selectedVazir}
                   onVazirClose={onVazirClose}
                 />
+                {/* Scroll-fade mask — appears only when content overflows */}
+                <div className="sticky bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none" />
               </div>
             )}
 
