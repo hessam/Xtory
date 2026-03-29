@@ -706,7 +706,7 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className={`absolute left-4 sm:left-6 liquid-glass p-3 sm:p-5 rounded-2xl sm:rounded-3xl text-[9px] sm:text-xs font-vazirmatn flex flex-col gap-1.5 sm:gap-3 text-slate-300 pointer-events-auto z-10 calm-transition shadow-2xl ${!showLegend && 'hidden sm:flex'}`}
+            className={`absolute left-4 sm:left-6 liquid-glass p-3 rounded-2xl text-[9px] font-vazirmatn flex flex-col gap-1.5 text-slate-300 pointer-events-auto z-10 calm-transition shadow-2xl sm:hidden ${!showLegend && 'hidden'}`}
             style={{ top: 'calc(var(--safe-top, 0px) + 112px)' }}
           >
             <div className="flex justify-between items-center mb-1">

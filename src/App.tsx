@@ -16,6 +16,8 @@ import { QuizQuestion } from './types/quiz';
 import { AIKeyButton } from './components/AIKeyButton';
 import { SearchBar } from './components/SearchBar';
 import { ContextStrip } from './components/ContextStrip';
+import { ByokGate } from './components/ByokGate';
+import { Vazir } from './data/vazirs';
 
 // Heavy components — lazy loaded so they never block first paint
 const Map        = lazy(() => import('./components/Map').then(m => ({ default: m.Map })));
@@ -51,6 +53,8 @@ export default function App() {
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
+  const [selectedVazir, setSelectedVazir] = useState<Vazir | null>(null);
+  const [legendMode, setLegendMode] = useState<'simple' | 'detailed'>('simple');
 
   // Keyboard shortcut for search (Cmd+K)
   useEffect(() => {
@@ -271,7 +275,9 @@ export default function App() {
       setActiveQuizQuestions(questions);
       setIsQuizModalOpen(true);
     },
-    onJumpToYear: (y: number) => { setYear(y); }
+    onJumpToYear: (y: number) => { setYear(y); },
+    selectedVazir,
+    onVazirClose: () => setSelectedVazir(null),
   };
 
   return (
@@ -362,9 +368,7 @@ export default function App() {
             artifacts={allArtifacts}
             onHistoricalEventClick={handleHistoricalEventClick}
             onArtifactClick={handleArtifactClick}
-            onVazirClick={(vazir) => {
-              console.log('[Vazir clicked]', vazir);
-            }}
+            onVazirClick={(vazir) => setSelectedVazir(vazir)}
           />
         </div>
 
@@ -483,8 +487,55 @@ export default function App() {
               >
                 <PanelLeftClose className="w-4 h-4" />
               </button>
-              {/* LEGEND PLACEHOLDER — will be filled in Sprint 1 */}
-              <div className="px-4 pb-4 text-xs text-slate-500 italic">Legend panel (Sprint 1)</div>
+              
+              <div className="px-4 py-3 flex flex-col gap-3">
+                {/* LEGEND Header */}
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-1">
+                  {lang === 'en' ? 'Legend' : 'راهنما'}
+                </span>
+
+                <div className="flex flex-col gap-2">
+                  {/* Simple/Detailed Toggle Content */}
+                  {legendMode === 'simple' ? (
+                    <>
+                      <LegendItem color="persian" label={{ en: 'Persian/Iranian', fa: 'ایرانی/پارسی' }} lang={lang} />
+                      <LegendItem color="arab" label={{ en: 'Caliphate/Foreign', fa: 'خلافت/خارجی' }} lang={lang} />
+                      <LegendItem color="nomadic" label={{ en: 'Nomadic/Contested', fa: 'عشایر/مناقشه' }} lang={lang} />
+                    </>
+                  ) : (
+                    <>
+                      <LegendItem color="persian" label={{ en: 'Persian/Iranian', fa: 'ایرانی/پارسی' }} lang={lang} />
+                      <LegendItem color="arab" label={{ en: 'Arab/Caliphate', fa: 'عرب/خلافت' }} lang={lang} />
+                      <LegendItem color="turkic" label={{ en: 'Turkic/Mongol', fa: 'ترک/مغول' }} lang={lang} />
+                      <LegendItem color="greek" label={{ en: 'Hellenic/Greek', fa: 'یونانی/هلنیستی' }} lang={lang} />
+                      <LegendItem color="nomadic" label={{ en: 'Nomadic/Steppe', fa: 'عشایر/استپ' }} lang={lang} />
+                      <LegendItem color="foreign" label={{ en: 'Foreign Imperial', fa: 'امپراتوری خارجی' }} lang={lang} />
+                      <LegendItem color="semitic" label={{ en: 'Babylonian/Semitic', fa: 'بابلی/سامی' }} lang={lang} />
+                    </>
+                  )}
+                </div>
+
+                {/* Toggle Button */}
+                <button
+                  onClick={() => setLegendMode(m => m === 'simple' ? 'detailed' : 'simple')}
+                  className="text-[10px] text-indigo-400 hover:text-indigo-300 calm-transition text-left underline"
+                >
+                  {legendMode === 'simple'
+                    ? (lang === 'en' ? 'Detailed View ↓' : 'نمای دقیق ↓')
+                    : (lang === 'en' ? 'Simplified View ↑' : 'نمای ساده ↑')}
+                </button>
+
+                {/* MAP DOTS Key */}
+                <div className="mt-4 flex flex-col gap-2">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-1">
+                    {lang === 'en' ? 'Map Dots' : 'نقاط روی نقشه'}
+                  </span>
+                  <LegendItem color="amber" label={{ en: 'Vazir (Advisor)', fa: 'وزیر' }} lang={lang} />
+                  <LegendItem color="purple" label={{ en: 'Historical Figure', fa: 'شخصیت تاریخی' }} lang={lang} />
+                  <LegendItem color="emerald" label={{ en: 'Historical Event', fa: 'رویداد تاریخی' }} lang={lang} />
+                  <LegendItem color="sky" label={{ en: 'Cultural Heritage', fa: 'میراث فرهنگی' }} lang={lang} />
+                </div>
+              </div>
             </div>
           )}
 
@@ -518,25 +569,18 @@ export default function App() {
               artifacts={allArtifacts}
               onHistoricalEventClick={handleHistoricalEventClick}
               onArtifactClick={handleArtifactClick}
-              onVazirClick={(vazir) => {
-                console.log('[Vazir clicked]', vazir);
-              }}
+              onVazirClick={(vazir) => setSelectedVazir(vazir)}
             />
             
             {/* BYOK Banner moved inside the map container, now bottom-center */}
             {isReady && !apiKey && (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-                <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-2xl liquid-glass backdrop-blur-md shadow-lg">
-                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span className="text-sm text-amber-100 font-medium whitespace-nowrap">
-                    {lang === 'en' ? 'Add your free Gemini key to unlock AI features' : 'برای باز کردن ویژگی‌های هوش مصنوعی، کلید رایگان جمینای خود را اضافه کنید'}
-                  </span>
-                  <button
-                    onClick={() => setShowSettings(true)}
-                    className="ml-2 px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-xs font-semibold calm-transition"
-                  >
-                    {lang === 'en' ? 'Add Key' : 'افزودن کلید'}
-                  </button>
+                <div className="liquid-glass border border-amber-500/30 rounded-3xl shadow-xl overflow-hidden">
+                  <ByokGate
+                    year={year}
+                    lang={lang}
+                    onUnlock={() => setShowSettings(true)}
+                  />
                 </div>
               </div>
             )}
@@ -673,3 +717,29 @@ export default function App() {
     </div>
   );
 }
+
+// ─── Shared Components for Legend ───
+const LegendItem = ({ color, label, lang }: { color: string, label: { en: string, fa: string }, lang: 'en' | 'fa' }) => {
+  const colorMap: Record<string, string> = {
+    persian: 'bg-[#a855f7]',
+    arab:    'bg-[#10b981]',
+    turkic:  'bg-[#ea580c]',
+    greek:   'bg-[#0ea5e9]',
+    nomadic: 'bg-[#b45309]',
+    foreign: 'bg-[#e11d48]',
+    semitic: 'bg-[#78350f]',
+    // Dots
+    amber:   'bg-amber-400',
+    purple:  'bg-purple-400',
+    emerald: 'bg-emerald-400',
+    sky:     'bg-sky-400'
+  };
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`w-2.5 h-2.5 rounded-full ${colorMap[color]} shadow-md`} />
+      <span className="text-[11px] text-slate-300 font-medium">
+        {label[lang]}
+      </span>
+    </div>
+  );
+};

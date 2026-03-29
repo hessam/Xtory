@@ -9,6 +9,7 @@ import { MythCard } from './MythCard';
 import { getQuestionsForYear } from '../data/quizQuestions';
 import { QuizQuestion } from '../types/quiz';
 import { HistorianCardSection } from './HistorianCardSection';
+import { ByokGate } from './ByokGate';
 import { getHistorianCard } from '../utils/getHistorianCard';
 
 // ── Snap definitions ────────────────────────────────────────────────────────
@@ -794,18 +795,13 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               className="px-4 py-3 border-t border-white/5 shrink-0 flex flex-col gap-3"
               style={{ paddingBottom: 'calc(12px + var(--safe-bottom))' }}
             >
-              {!apiKey && setShowSettings && (
-                <div className="flex items-center gap-2 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl liquid-glass border-white/5">
-                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span className="text-[11px] text-amber-100 font-medium whitespace-nowrap">
-                    {lang === 'en' ? 'Add Gemini key to unlock AI' : 'کلید جمینای را اضافه کنید'}
-                  </span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setShowSettings(true); }}
-                    className="ml-auto px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-[10px] font-bold calm-transition"
-                  >
-                    {lang === 'en' ? 'Add' : 'افزودن'}
-                  </button>
+              {!apiKey && (
+                <div className="border border-amber-500/30 rounded-3xl overflow-hidden mb-3">
+                  <ByokGate
+                    year={year}
+                    lang={lang}
+                    onUnlock={() => setShowSettings?.(true)}
+                  />
                 </div>
               )}
               <button

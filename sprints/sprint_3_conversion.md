@@ -425,18 +425,18 @@ in the same file unless it grows past 20 lines.
 
 ## Definition of Done (DoD)
 
-- [ ] `src/data/byokTeasers.ts` exists with 15 era entries and the `getByokTeaser` + `getTeaserText` utilities
-- [ ] `src/components/ByokGate.tsx` exists with blurred skeleton, teaser text, and CTA button
-- [ ] Desktop BYOK banner shows contextual story teaser for the current era (not generic text)
-- [ ] Mobile BYOK banner shows the same contextual teaser
-- [ ] Clicking the CTA button still opens the settings modal
-- [ ] Scrubbing the timeline to a new era changes the teaser text
-- [ ] Clicking a Vazir dot on the map opens the Vazir profile panel in the historian sidebar
-- [ ] The Vazir profile panel shows name, title, ruler, contribution, and paradox
-- [ ] The `✕` button on the Vazir profile dismisses it correctly
-- [ ] Left sidebar legend shows "simplified" mode by default with 3 buckets
-- [ ] Legend toggle switches between simplified and detailed views
-- [ ] "Map Dots" key in the legend shows the 4 dot categories with correct amber/gold Vazir colour
-- [ ] Farsi fallback works — no blank strings appear in either language
-- [ ] `npm run build` passes with zero TypeScript errors
-- [ ] The app works end-to-end: scrub timeline → era changes → teaser changes → click Vazir → profile opens → click CTA → settings modal opens
+- [x] `src/data/byokTeasers.ts` exists with 15 era entries and the `getByokTeaser` + `getTeaserText` utilities
+- [x] `src/components/ByokGate.tsx` exists with blurred skeleton, teaser text, and CTA button
+- [x] Desktop BYOK banner shows contextual story teaser for the current era (not generic text)
+- [x] Mobile BYOK banner shows the same contextual teaser
+- [x] Clicking the CTA button still opens the settings modal
+- [x] Scrubbing the timeline to a new era changes the teaser text
+- [x] Clicking a Vazir dot on the map opens the Vazir profile panel in the historian sidebar
+- [x] The Vazir profile panel shows name, title, ruler, contribution, and paradox
+- [x] The `✕` button on the Vazir profile dismisses it correctly
+- [x] Left sidebar legend shows "simplified" mode by default with 3 buckets
+- [x] Legend toggle switches between simplified and detailed views
+- [x] "Map Dots" key in the legend shows the 4 dot categories with correct amber/gold Vazir colour
+- [x] Farsi fallback works — no blank strings appear in either language
+- [x] `npm run build` passes with zero TypeScript errors
+- [x] The app works end-to-end: scrub timeline → era changes → teaser changes → click Vazir → profile opens → click CTA → settings modal opens

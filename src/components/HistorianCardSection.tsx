@@ -1,8 +1,9 @@
 import React from 'react';
 import { HistorianCardResult } from '../utils/getHistorianCard';
 import { historianCards } from '../data/historianCards';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { getHistorianCard } from '../utils/getHistorianCard';
+import { Vazir } from '../data/vazirs';
 
 interface Props {
   result: HistorianCardResult;
@@ -10,6 +11,8 @@ interface Props {
   onNavigate: (year: number) => void;   // calls setYear in App.tsx
   isEnriching?: boolean;                // true while AI is fetching (shows the pulse)
   aiNarrative?: string | null;          // AI text to show beneath the card (null = not yet loaded)
+  selectedVazir?: Vazir | null;
+  onVazirClose?: () => void;
 }
 
 export const HistorianCardSection: React.FC<Props> = ({
@@ -18,6 +21,8 @@ export const HistorianCardSection: React.FC<Props> = ({
   onNavigate,
   isEnriching = false,
   aiNarrative = null,
+  selectedVazir = null,
+  onVazirClose = () => {},
 }) => {
   const { card, isBetweenEras } = result;
 
@@ -103,6 +108,41 @@ export const HistorianCardSection: React.FC<Props> = ({
         )}
       </div>
 
+      {/* Vazir Profile (rendered below chips if active) */}
+      {selectedVazir && (
+        <div className="mt-3 p-4 rounded-3xl border border-amber-500/30 bg-amber-500/5 relative overflow-hidden group hover:bg-amber-500/10 transition-colors shadow-lg">
+          {/* Subtle Glow */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 blur-3xl pointer-events-none" />
+
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+              {lang === 'en' ? 'Vazir of this Era' : 'وزیر این دوره'}
+            </span>
+            <button
+              onClick={onVazirClose}
+              className="p-1 text-slate-500 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <h3 className="font-serif font-bold text-white text-base leading-snug">
+            {selectedVazir.name[lang]}
+          </h3>
+
+          <p className="text-slate-400 text-xs mt-1 font-medium">
+            {selectedVazir.title[lang]} <span className="text-slate-600 mx-1">·</span> <span className="text-amber-200/60 ">{selectedVazir.rulerName[lang]}</span>
+          </p>
+
+          <p className="text-slate-200 text-sm mt-3 leading-relaxed italic border-l-2 border-amber-500/30 pl-3">
+            "{selectedVazir.contribution[lang]}"
+          </p>
+
+          <p className="text-slate-500 text-[11px] mt-3 leading-relaxed font-medium">
+            {selectedVazir.paradox[lang]}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
