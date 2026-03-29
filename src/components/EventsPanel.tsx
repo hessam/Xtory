@@ -32,10 +32,11 @@ interface EventsPanelProps {
   onJumpToYear?: (year: number) => void;
   selectedVazir?: Vazir | null;
   onVazirClose?: () => void;
+  onVazirClick?: (v: Vazir) => void;
   onBannerClick?: (url: string, title: string) => void;
 }
 
-export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz, onJumpToYear, selectedVazir, onVazirClose, onBannerClick }) => {
+export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, figures, artifacts, onEventClick, onFigureClick, onArtifactClick, onFetchAIEvents, onFetchAIFigures, onFetchAIArtifacts, isLoadingAI, isLoadingAIFigures, isLoadingAIArtifacts, setShowSettings, onOpenQuiz, onJumpToYear, selectedVazir, onVazirClose, onVazirClick, onBannerClick }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<'events' | 'figures' | 'artifacts'>('events');
   const { apiKey } = useApiKey();
@@ -202,6 +203,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                   isEnriching={isLoadingAI}
                   selectedVazir={selectedVazir}
                   onVazirClose={onVazirClose}
+                  onVazirSelect={onVazirClick}
                   onBannerClick={onBannerClick}
                 />
                 {/* Scroll-fade mask — appears only when content overflows */}
