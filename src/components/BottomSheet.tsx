@@ -637,24 +637,9 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         onTouchCancel={snap === 'half' ? onContentTouchEnd : undefined}
       >
 
-          {/* ── HALF: Full context header ─────────────────────────────────── */}
-          {snap !== 'full' && (
-            <div className="border-b border-white/10 shrink-0">
-              <HistorianCardSection
-                result={historianResult}
-                lang={lang}
-                onNavigate={onJumpToYear ?? (() => {})}
-                isEnriching={isLoadingAI}
-                selectedVazir={selectedVazir}
-                onVazirClose={onVazirClose}
-                onVazirSelect={onVazirClick}
-              />
-            </div>
-          )}
-
           {/* ── FULL: Compact sticky bar — era name + tabs only ───────────── */}
           {snap === 'full' && (
-            <div className="shrink-0 border-b border-white/10 bg-slate-950/80 backdrop-blur-sm">
+            <div className="shrink-0 border-b border-white/10 bg-slate-950/80 backdrop-blur-sm z-20">
               {/* Era name micro-strip */}
               <div className="flex items-center gap-2 px-4 py-2">
                 <span className="font-cinzel text-amber-400 text-[11px] font-bold tracking-widest truncate flex-1">
@@ -685,25 +670,6 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             </div>
           )}
 
-          {/* Tab switcher for half snap (below the full HistorianCardSection) */}
-          {snap !== 'full' && (
-            <div className="px-4 pb-3 pt-1 border-b border-white/5 shrink-0">
-              <div className="flex bg-black/20 rounded-xl p-1 border border-white/5">
-                {(['events', 'figures', 'artifacts'] as const).map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => startTransition(() => { setActiveTab(tab); })}
-                    className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-white/10 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
-                  >
-                    {lang === 'en'
-                      ? tab === 'events' ? 'Events' : tab === 'figures' ? 'Figures' : 'Heritage'
-                      : tab === 'events' ? 'رویدادها' : tab === 'figures' ? 'شخصیت‌ها' : 'میراث'}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
             <div
               className="flex-1 min-h-0 overflow-hidden"
               onTouchStart={snap === 'full' ? onFullScrollTouchStart : undefined}
@@ -720,12 +686,49 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   data={activeEvents}
                   components={{
                     Header: () => (
-                      <div className="px-4 pt-3 pb-2 flex flex-col gap-2">
-                        {activeEvents.length === 0 && !mythsForEra.length && (
-                          <div className="text-center py-8 text-slate-500 text-sm italic">
-                            {lang === 'en' ? 'No major events in this era.' : 'رویداد مهمی در این دوره ثبت نشده است.'}
+                      <div className="flex flex-col">
+                        {/* 1. Context Card — only in half snap, part of the scroll */}
+                        {snap !== 'full' && (
+                          <div className="border-b border-white/10">
+                            <HistorianCardSection
+                              result={historianResult}
+                              lang={lang}
+                              onNavigate={onJumpToYear ?? (() => {})}
+                              isEnriching={isLoadingAI}
+                              selectedVazir={selectedVazir}
+                              onVazirClose={onVazirClose}
+                              onVazirSelect={onVazirClick}
+                            />
                           </div>
                         )}
+
+                        {/* 2. Sticky Tab Switcher for HALF state */}
+                        {snap !== 'full' && (
+                          <div className="sticky top-0 px-4 pb-3 pt-3 border-b border-white/5 bg-slate-950/80 backdrop-blur-md z-10 shrink-0">
+                            <div className="flex bg-black/20 rounded-xl p-1 border border-white/5 shadow-inner">
+                              {(['events', 'figures', 'artifacts'] as const).map(tab => (
+                                <button
+                                  key={tab}
+                                  onClick={() => startTransition(() => { setActiveTab(tab); })}
+                                  className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-white/10 text-white shadow-sm font-bold' : 'text-slate-500 hover:text-slate-200'}`}
+                                >
+                                  {lang === 'en'
+                                    ? tab === 'events' ? 'Events' : tab === 'figures' ? 'Figures' : 'Heritage'
+                                    : tab === 'events' ? 'رویدادها' : tab === 'figures' ? 'شخصیت‌ها' : 'میراث'}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 3. Empty State Message */}
+                        <div className="px-4 py-3 flex flex-col gap-2">
+                          {activeEvents.length === 0 && !mythsForEra.length && (
+                            <div className="text-center py-8 text-slate-500 text-sm italic">
+                              {lang === 'en' ? 'No major events in this era.' : 'رویداد مهمی در این دوره ثبت نشده است.'}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ),
                     Footer: () => (
@@ -780,13 +783,52 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   onScroll={onScrollContent}
                   data={activeFigures}
                   components={{
-                    Header: activeFigures.length === 0 ? () => (
-                      <div className="px-4 pt-3">
-                        <div className="text-center py-8 text-slate-500 text-sm italic">
-                          {lang === 'en' ? 'No major figures in this era.' : 'شخصیت مهمی در این دوره ثبت نشده است.'}
-                        </div>
+                    Header: () => (
+                      <div className="flex flex-col">
+                        {/* 1. Context Card — only in half snap, part of the scroll */}
+                        {snap !== 'full' && (
+                          <div className="border-b border-white/10">
+                            <HistorianCardSection
+                              result={historianResult}
+                              lang={lang}
+                              onNavigate={onJumpToYear ?? (() => {})}
+                              isEnriching={isLoadingAI}
+                              selectedVazir={selectedVazir}
+                              onVazirClose={onVazirClose}
+                              onVazirSelect={onVazirClick}
+                            />
+                          </div>
+                        )}
+
+                        {/* 2. Sticky Tab Switcher for HALF state */}
+                        {snap !== 'full' && (
+                          <div className="sticky top-0 px-4 pb-3 pt-3 border-b border-white/5 bg-slate-950/80 backdrop-blur-md z-10 shrink-0">
+                            <div className="flex bg-black/20 rounded-xl p-1 border border-white/5 shadow-inner">
+                              {(['events', 'figures', 'artifacts'] as const).map(tab => (
+                                <button
+                                  key={tab}
+                                  onClick={() => startTransition(() => { setActiveTab(tab); })}
+                                  className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-white/10 text-white shadow-sm font-bold' : 'text-slate-500 hover:text-slate-200'}`}
+                                >
+                                  {lang === 'en'
+                                    ? tab === 'events' ? 'Events' : tab === 'figures' ? 'Figures' : 'Heritage'
+                                    : tab === 'events' ? 'رویدادها' : tab === 'figures' ? 'شخصیت‌ها' : 'میراث'}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 3. Empty State Message */}
+                        {activeFigures.length === 0 && (
+                          <div className="px-4 pt-3">
+                            <div className="text-center py-8 text-slate-500 text-sm italic">
+                              {lang === 'en' ? 'No major figures in this era.' : 'شخصیت مهمی در این دوره ثبت نشده است.'}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    ) : () => <div className="h-3" />,
+                    ),
                     Footer: () => (
                       <div className="px-4 pt-4 pb-6">
                         <button
@@ -833,13 +875,52 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   onScroll={onScrollContent}
                   data={activeArtifacts}
                   components={{
-                    Header: activeArtifacts.length === 0 ? () => (
-                      <div className="px-4 pt-3">
-                        <div className="text-center py-8 text-slate-500 text-sm italic">
-                          {lang === 'en' ? 'No major heritage in this era.' : 'میراث مهمی در این دوره ثبت نشده است.'}
-                        </div>
+                    Header: () => (
+                      <div className="flex flex-col">
+                        {/* 1. Context Card — only in half snap, part of the scroll */}
+                        {snap !== 'full' && (
+                          <div className="border-b border-white/10">
+                            <HistorianCardSection
+                              result={historianResult}
+                              lang={lang}
+                              onNavigate={onJumpToYear ?? (() => {})}
+                              isEnriching={isLoadingAI}
+                              selectedVazir={selectedVazir}
+                              onVazirClose={onVazirClose}
+                              onVazirSelect={onVazirClick}
+                            />
+                          </div>
+                        )}
+
+                        {/* 2. Sticky Tab Switcher for HALF state */}
+                        {snap !== 'full' && (
+                          <div className="sticky top-0 px-4 pb-3 pt-3 border-b border-white/5 bg-slate-950/80 backdrop-blur-md z-10 shrink-0">
+                            <div className="flex bg-black/20 rounded-xl p-1 border border-white/5 shadow-inner">
+                              {(['events', 'figures', 'artifacts'] as const).map(tab => (
+                                <button
+                                  key={tab}
+                                  onClick={() => startTransition(() => { setActiveTab(tab); })}
+                                  className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-white/10 text-white shadow-sm font-bold' : 'text-slate-500 hover:text-slate-200'}`}
+                                >
+                                  {lang === 'en'
+                                    ? tab === 'events' ? 'Events' : tab === 'figures' ? 'Figures' : 'Heritage'
+                                    : tab === 'events' ? 'رویدادها' : tab === 'figures' ? 'شخصیت‌ها' : 'میراث'}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 3. Empty State Message */}
+                        {activeArtifacts.length === 0 && (
+                          <div className="px-4 pt-3">
+                            <div className="text-center py-8 text-slate-500 text-sm italic">
+                              {lang === 'en' ? 'No major heritage in this era.' : 'میراث مهمی در این دوره ثبت نشده است.'}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    ) : () => <div className="h-3" />,
+                    ),
                     Footer: () => (
                       <div className="px-4 pt-4 pb-6">
                         <button
