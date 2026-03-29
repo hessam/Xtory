@@ -1,6 +1,6 @@
 import React, { useState, useMemo, Suspense, lazy, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Globe, Languages, HelpCircle, Key, AlertCircle, Heart, Search } from 'lucide-react';
+import { Globe, Languages, HelpCircle, Key, AlertCircle, Heart, Search, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { formatYear } from './utils/format';
 import { events as initialEvents, ReignEvent } from './data/events';
 import { rulers as initialRulers, Ruler } from './data/rulers';
@@ -48,6 +48,8 @@ export default function App() {
   const [showSearch, setShowSearch] = useState(false);
   const [activeQuizQuestions, setActiveQuizQuestions] = useState<QuizQuestion[] | null>(null);
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
 
   // Keyboard shortcut for search (Cmd+K)
   useEffect(() => {
@@ -408,31 +410,11 @@ export default function App() {
           DESKTOP LAYOUT  (sm+, unchanged from before)
           All children are absolute/overlapping like before
           ================================================================ */}
-      <div className="hidden sm:block relative w-full h-full">
-
-        {/* Map Background */}
-        <div 
-          id="tour-map-desktop" 
-          className="absolute inset-0 z-0"
-          style={{ pointerEvents: runTour ? 'none' : 'auto' }}
-        >
-          <Map
-            year={year}
-            lang={lang}
-            onRegionClick={handleRegionClick}
-            onGlobalContextClick={handleYearContextClick}
-            events={allEvents}
-            rulers={allRulers}
-            dynasties={allDynasties}
-            historicalEvents={allHistoricalEvents}
-            artifacts={allArtifacts}
-            onHistoricalEventClick={handleHistoricalEventClick}
-            onArtifactClick={handleArtifactClick}
-          />
-        </div>
+      <div className="hidden sm:flex flex-col w-full h-full overflow-hidden">
 
         {/* Floating Header */}
-        <header className="absolute top-0 left-0 right-0 p-4 md:p-6 flex items-center justify-between z-10 pointer-events-none gap-4">
+        <header className="p-4 md:p-6 flex items-center justify-between pointer-events-none gap-4"
+                style={{ flexShrink: 0 }}>
           <div className="flex items-center gap-3 pointer-events-auto liquid-glass px-5 py-4 rounded-3xl calm-transition">
             <Globe className="w-6 h-6 text-indigo-400 shrink-0" />
             <h1 className="text-lg md:text-xl font-bold font-serif tracking-tight text-white">
@@ -476,36 +458,51 @@ export default function App() {
           </div>
         </header>
 
-        {/* BYOK Banner — desktop version */}
-        {isReady && !apiKey && (
-          <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-            <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-2xl liquid-glass backdrop-blur-md shadow-lg">
-              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="text-sm text-amber-100 font-medium whitespace-nowrap">
-                {lang === 'en' ? 'Add your free Gemini key to unlock AI features' : 'برای باز کردن ویژگی‌های هوش مصنوعی، کلید رایگان جمینای خود را اضافه کنید'}
-              </span>
+        {/* ─── 3-Column Middle Row ─────────────────────────────────────── */}
+        <div className="flex flex-1 min-h-0 overflow-hidden">
+
+          {/* LEFT PANEL (Legend — collapsible) */}
+          {isLeftPanelOpen && (
+            <div
+              className="flex flex-col liquid-glass-heavy border-r border-white/10 overflow-y-auto"
+              style={{ width: 240, flexShrink: 0 }}
+            >
+              {/* COLLAPSE BUTTON */}
               <button
-                onClick={() => setShowSettings(true)}
-                className="ml-2 px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-xs font-semibold calm-transition"
+                onClick={() => setIsLeftPanelOpen(false)}
+                className="self-end m-3 p-1.5 rounded-lg hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
+                title="Collapse legend"
               >
-                {lang === 'en' ? 'Add Key' : 'افزودن کلید'}
+                <PanelLeftClose className="w-4 h-4" />
               </button>
+              {/* LEGEND PLACEHOLDER — will be filled in Sprint 1 */}
+              <div className="px-4 pb-4 text-xs text-slate-500 italic">Legend panel (Sprint 1)</div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Desktop Events Panel (sidebar) */}
-        <EventsPanel {...panelProps} />
+          {/* LEFT PANEL EXPAND BUTTON (shown when collapsed) */}
+          {!isLeftPanelOpen && (
+            <button
+              onClick={() => setIsLeftPanelOpen(true)}
+              className="flex flex-col items-center justify-center px-2 liquid-glass border-r border-white/10 hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
+              style={{ width: 32, flexShrink: 0 }}
+              title="Expand legend"
+            >
+              <PanelLeftOpen className="w-4 h-4" />
+            </button>
+          )}
 
-        {/* Bottom Timeline */}
-        <div id="tour-timeline-desktop" className="absolute bottom-0 left-0 right-0 p-4 md:p-6 z-10 pointer-events-none">
-          <div className="pointer-events-auto w-full max-w-7xl mx-auto liquid-glass-heavy rounded-[2rem] overflow-hidden flex flex-col h-[35vh] min-h-[250px] max-h-[400px] calm-transition">
-            <Timeline
+          {/* CENTER: Map (existing, now in flow) */}
+          <div
+            id="tour-map-desktop"
+            className="relative flex-1 min-w-0 overflow-hidden"
+            style={{ pointerEvents: runTour ? 'none' : 'auto' }}
+          >
+            <Map
               year={year}
-              setYear={setYear}
               lang={lang}
-              onEventClick={handleEventClick}
-              onYearContextClick={handleYearContextClick}
+              onRegionClick={handleRegionClick}
+              onGlobalContextClick={handleYearContextClick}
               events={allEvents}
               rulers={allRulers}
               dynasties={allDynasties}
@@ -513,9 +510,81 @@ export default function App() {
               artifacts={allArtifacts}
               onHistoricalEventClick={handleHistoricalEventClick}
               onArtifactClick={handleArtifactClick}
-              isLoadingAI={isLoadingAI}
             />
+            
+            {/* BYOK Banner moved inside the map container, now bottom-center */}
+            {isReady && !apiKey && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-2xl liquid-glass backdrop-blur-md shadow-lg">
+                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="text-sm text-amber-100 font-medium whitespace-nowrap">
+                    {lang === 'en' ? 'Add your free Gemini key to unlock AI features' : 'برای باز کردن ویژگی‌های هوش مصنوعی، کلید رایگان جمینای خود را اضافه کنید'}
+                  </span>
+                  <button
+                    onClick={() => setShowSettings(true)}
+                    className="ml-2 px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-xs font-semibold calm-transition"
+                  >
+                    {lang === 'en' ? 'Add Key' : 'افزودن کلید'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* RIGHT PANEL (EventsPanel — collapsible) */}
+          {isRightPanelOpen && (
+            <div
+              className="flex flex-col liquid-glass-heavy border-l border-white/10 overflow-hidden"
+              style={{ width: 360, flexShrink: 0 }}
+            >
+              {/* COLLAPSE BUTTON */}
+              <button
+                onClick={() => setIsRightPanelOpen(false)}
+                className="self-start m-3 p-1.5 rounded-lg hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
+                title="Collapse historian"
+              >
+                <PanelRightClose className="w-4 h-4" />
+              </button>
+              {/* EventsPanel — pass ALL existing props exactly as they are */}
+              <EventsPanel {...panelProps} />
+            </div>
+          )}
+
+          {/* RIGHT PANEL EXPAND BUTTON (shown when collapsed) */}
+          {!isRightPanelOpen && (
+            <button
+              onClick={() => setIsRightPanelOpen(true)}
+              className="flex flex-col items-center justify-center px-2 liquid-glass border-l border-white/10 hover:bg-white/10 calm-transition text-slate-400 hover:text-white"
+              style={{ width: 32, flexShrink: 0 }}
+              title="Expand historian"
+            >
+              <PanelRightOpen className="w-4 h-4" />
+            </button>
+          )}
+
+        </div>
+
+        {/* ─── Bottom Timeline Row ──────────────────────────────────────── */}
+        <div
+          id="tour-timeline-desktop"
+          className="liquid-glass-heavy border-t border-white/10 overflow-hidden"
+          style={{ flexShrink: 0, height: 260 }}
+        >
+          <Timeline
+            year={year}
+            setYear={setYear}
+            lang={lang}
+            onEventClick={handleEventClick}
+            onYearContextClick={handleYearContextClick}
+            events={allEvents}
+            rulers={allRulers}
+            dynasties={allDynasties}
+            historicalEvents={allHistoricalEvents}
+            artifacts={allArtifacts}
+            onHistoricalEventClick={handleHistoricalEventClick}
+            onArtifactClick={handleArtifactClick}
+            isLoadingAI={isLoadingAI}
+          />
         </div>
       </div>
 
