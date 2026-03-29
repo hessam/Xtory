@@ -27,29 +27,86 @@ export const regions: Region[] = [
   },
   {
     id: 'caucasus',
-    name: { en: 'The Caucasus', fa: 'قفقاز' },
-    polygon: '240,120 320,80 380,100 400,140 340,180 260,180',
-    center: [320, 130],
+    name: { en: 'Arran / Shirvan', fa: 'آران و شیروان' },
+    // Southern boundary raised from y=180 → y=152 to create space for Atropatene below.
+    // The Caucasus historically ends at the Kura/Araxes mountain passes, ~40km north of
+    // the Aras River; Atropatene occupies the band directly south of it (south of Aras).
+    polygon: '240,120 320,80 380,100 402,132 360,152 258,152',
+    center: [320, 118],
     cities: [
-      { id: 'artaxata', name: { en: 'Artaxata', fa: 'آرتاشات' }, coordinates: [300, 120] },
-      { id: 'derbent', name: { en: 'Derbent', fa: 'دربند' }, coordinates: [380, 110] }
+      { id: 'artaxata', name: { en: 'Artaxata', fa: 'آرتاشات' }, coordinates: [300, 114] },
+      { id: 'derbent', name: { en: 'Derbent', fa: 'دربند' }, coordinates: [382, 108] }
+    ]
+  },
+  {
+    id: 'iranian_azerbaijan',
+    name: { en: 'Atropatene', fa: 'آتورپاتگان' },
+    // ────── GEOGRAPHIC REASONING ──────────────────────────────────────────────
+    // Atropatene (Media Atropatene) = historical kingdom south of the Aras River;
+    // the precursor to what is now Iranian Azerbaijan (East & West Azerb., Ardabil).
+    //
+    // Northern boundary (Aras River line) = shared with the NEW Caucasus south edge:
+    //   258,152 → 360,152 → 402,132
+    // Eastern boundary connects to Jibal's north corner at 400,140:
+    //   402,132 → 400,140
+    // South & West boundary = old Caucasus south = current Jibal/Mesop top:
+    //   400,140 → 340,180 → 260,180
+    // Closes back by going NW: 260,180 → 258,152
+    //
+    // This creates a clean non-overlapping band between the raised Caucasus
+    // and the unchanged Jibal / Mesopotamia regions.
+    polygon: '258,152 360,152 402,132 400,140 340,180 260,180',
+    center: [330, 162],
+    cities: [
+      { id: 'tabriz', name: { en: 'Tabriz (Tauris)', fa: 'تبریز' }, coordinates: [302, 165] },
+      { id: 'gazaka', name: { en: 'Gazaka', fa: 'گزاکا' }, coordinates: [355, 158] },
+      { id: 'urmia', name: { en: 'Urmia', fa: 'ارومیه' }, coordinates: [270, 170] }
+    ]
+  },
+  {
+    id: 'Gilan',
+    name: { en: 'Gilan', fa: 'گیلان' },
+    polygon: '400,140 452,140 440,220 420,180',
+    center: [426, 172],
+    cities: [
+      { id: 'rasht', name: { en: 'Rasht', fa: 'رشت' }, coordinates: [415, 165] }
     ]
   },
   {
     id: 'mesopotamia',
     name: { en: 'Mesopotamia', fa: 'بین‌النهرین' },
-    polygon: '120,260 220,240 260,180 340,180 380,260 320,340 240,380 160,340',
-    center: [250, 280],
+    polygon: '120,260 220,240 260,180 290,220 300,270 270,320 240,380 160,340',
+    center: [210, 290],
     cities: [
-      { id: 'babylon', name: { en: 'Babylon', fa: 'بابل' }, coordinates: [260, 320] },
-      { id: 'ctesiphon', name: { en: 'Ctesiphon', fa: 'تیسفون' }, coordinates: [280, 300] },
-      { id: 'baghdad', name: { en: 'Baghdad', fa: 'بغداد' }, coordinates: [270, 290] }
+      { id: 'babylon', name: { en: 'Babylon', fa: 'بابل' }, coordinates: [240, 310] },
+      { id: 'ctesiphon', name: { en: 'Ctesiphon', fa: 'تیسفون' }, coordinates: [260, 290] },
+      { id: 'baghdad', name: { en: 'Baghdad', fa: 'بغداد' }, coordinates: [250, 280] }
+    ]
+  },
+  {
+    id: 'kurdistan',
+    name: { en: 'Kurdistan / Hulwan', fa: 'کردستان / حلوان' },
+    polygon: '260,180 340,180 380,260 320,340 270,320 300,270 290,220',
+    center: [315, 260],
+    cities: [
+      { id: 'hulwan', name: { en: 'Hulwan', fa: 'حلوان' }, coordinates: [310, 290] },
+      { id: 'kermanshah', name: { en: 'Kermanshah', fa: 'کرمانشاه' }, coordinates: [330, 300] }
+    ]
+  },
+  {
+    id: 'khuzestan',
+    name: { en: 'Khuzestan / Elam', fa: 'خوزستان / عیلام' },
+    polygon: '270,320 320,340 360,380 290,420 240,380',
+    center: [290, 360],
+    cities: [
+      { id: 'susa', name: { en: 'Susa', fa: 'شوش' }, coordinates: [310, 360] },
+      { id: 'ahvaz', name: { en: 'Ahvaz', fa: 'اهواز' }, coordinates: [280, 390] }
     ]
   },
   {
     id: 'jibal',
     name: { en: 'Jibal / Media', fa: 'جبال / ماد' },
-    polygon: '340,180 400,140 420,180 460,260 400,340 320,340 380,260',
+    polygon: '340,180 400,140 420,180 440,220 460,260 400,340 320,340 380,260',
     center: [390, 250],
     cities: [
       { id: 'ecbatana', name: { en: 'Ecbatana (Hamedan)', fa: 'هگمتانه (همدان)' }, coordinates: [370, 240] },
@@ -60,18 +117,18 @@ export const regions: Region[] = [
   {
     id: 'tabaristan',
     name: { en: 'Tabaristan', fa: 'طبرستان' },
-    polygon: '400,140 480,140 540,160 560,220 460,260 420,180',
-    center: [480, 190],
+    polygon: '452,140 480,140 540,160 560,220 460,260 440,220',
+    center: [500, 188],
     cities: [
-      { id: 'amol', name: { en: 'Amol', fa: 'آمل' }, coordinates: [450, 170] },
+      { id: 'amol', name: { en: 'Amol', fa: 'آمل' }, coordinates: [470, 180] },
       { id: 'gorgan', name: { en: 'Gorgan', fa: 'گرگان' }, coordinates: [520, 180] }
     ]
   },
   {
     id: 'fars',
     name: { en: 'Fars / Persis', fa: 'فارس' },
-    polygon: '240,380 320,340 400,340 460,260 540,320 580,420 480,480 340,460',
-    center: [420, 390],
+    polygon: '340,460 290,420 360,380 320,340 400,340 460,260 540,320 480,380 410,470',
+    center: [420, 380],
     cities: [
       { id: 'persepolis', name: { en: 'Persepolis', fa: 'تخت جمشید' }, coordinates: [440, 380] },
       { id: 'pasargadae', name: { en: 'Pasargadae', fa: 'پاسارگاد' }, coordinates: [450, 360] },
@@ -101,12 +158,31 @@ export const regions: Region[] = [
     ]
   },
   {
+    id: 'kirman',
+    name: { en: 'Kirman', fa: 'کرمان' },
+    polygon: '540,320 480,380 410,470 480,480 520,500 580,420',
+    center: [500, 420],
+    cities: [
+      { id: 'kerman', name: { en: 'Kerman', fa: 'کرمان' }, coordinates: [490, 400] },
+      { id: 'jiroft', name: { en: 'Jiroft', fa: 'جیرفت' }, coordinates: [510, 440] }
+    ]
+  },
+  {
     id: 'sistan',
     name: { en: 'Sistan', fa: 'سیستان' },
-    polygon: '540,320 680,320 760,400 720,520 560,520 480,480 580,420',
-    center: [620, 420],
+    polygon: '540,320 680,320 760,400 730,490 660,450 580,420',
+    center: [640, 390],
     cities: [
       { id: 'zaranj', name: { en: 'Zaranj', fa: 'زرنج' }, coordinates: [660, 400] }
+    ]
+  },
+  {
+    id: 'makran',
+    name: { en: 'Makran', fa: 'مکران' },
+    polygon: '520,500 580,420 660,450 730,490 720,520 560,520',
+    center: [620, 480],
+    cities: [
+      { id: 'pura', name: { en: 'Pura', fa: 'پورا' }, coordinates: [600, 480] }
     ]
   },
   {
@@ -122,7 +198,7 @@ export const regions: Region[] = [
   {
     id: 'indus',
     name: { en: 'Indus Valley', fa: 'دره سند' },
-    polygon: '760,400 860,360 920,220 980,340 900,560 720,520',
+    polygon: '760,400 860,360 920,220 980,340 900,560 720,520 730,490',
     center: [860, 420],
     cities: [
       { id: 'taxila', name: { en: 'Taxila', fa: 'تاکسیلا' }, coordinates: [880, 300] },
@@ -160,14 +236,14 @@ export const regions: Region[] = [
   {
     id: 'persian_gulf',
     name: { en: 'Persian Gulf', fa: 'خلیج فارس' },
-    polygon: '120,260 160,340 240,380 340,460 480,480 480,520 440,500 360,520 240,440 180,380 140,300',
+    polygon: '120,260 160,340 240,380 290,420 340,460 410,470 480,480 480,520 440,500 360,520 240,440 180,380 140,300',
     center: [320, 420],
     isWater: true
   },
   {
     id: 'sea_of_oman',
     name: { en: 'Sea of Oman', fa: 'دریای عمان' },
-    polygon: '480,480 560,520 720,520 900,560 900,600 720,600 620,580 560,560 480,520',
+    polygon: '480,480 520,500 560,520 720,520 900,560 900,600 720,600 620,580 560,560 480,520',
     center: [680, 540],
     isWater: true
   },

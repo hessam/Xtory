@@ -213,10 +213,10 @@ export const historicalEvents: HistoricalEvent[] = [
     id: 'ev_chaldiran',
     year: 1514,
     title: { en: 'Battle of Chaldiran', fa: 'نبرد چالدران' },
-    description: { en: 'The Ottoman Empire decisively defeats the Safavid Empire, halting Safavid expansion.', fa: 'امپراتوری عثمانی امپراتوری صفوی را قاطعانه شکست می‌دهد و گسترش صفویان را متوقف می‌کند.' },
+    description: { en: 'The Ottoman Empire decisively defeats Safavid Iran near Lake Urmia in Iranian Azerbaijan, halting Safavid expansion westward and establishing the enduring Ottoman–Safavid frontier along the Aras River.', fa: 'امپراتوری عثمانی صفویان ایران را در نزدیکی دریاچه ارومیه در آذربایجان ایرانی به طور قاطع شکست می‌دهد و گسترش صفویان به غرب را متوقف می‌کند.' },
     type: 'battle',
-    coordinates: [300, 160],
-    regionId: 'anatolia'
+    coordinates: [280, 165],
+    regionId: 'iranian_azerbaijan'
   },
   {
     id: 'ev_karnal',
@@ -244,5 +244,43 @@ export const historicalEvents: HistoricalEvent[] = [
     type: 'downfall',
     coordinates: [380, 220],
     regionId: 'jibal'
+  },
+  // ── Iranian Azerbaijan Events ──────────────────────────────────────────────
+  {
+    id: 'ev_tabriz_ilkhanate_capital',
+    year: 1265,
+    title: { en: 'Tabriz as Ilkhanate Capital', fa: 'تبریز پایتخت ایلخانان' },
+    description: { en: 'Hulagu Khan establishes Tabriz as the capital of the Ilkhanate, making it one of the largest cities in the medieval world and a crossroads of Silk Road trade.', fa: 'هولاکو خان تبریز را به عنوان پایتخت ایلخانان معین می‌کند و آن را به یکی از بزرگترین شهرهای جهان قرون وسطی و تقاطع جاده ابریشم تبدیل می‌نماید.' },
+    type: 'political',
+    coordinates: [300, 170],
+    regionId: 'iranian_azerbaijan'
+  },
+  {
+    id: 'ev_ardabil_shrine_foundation',
+    year: 1334,
+    title: { en: 'Ardabil Shrine & Safavid Order', fa: 'آرامگاه اردبیل و طریقت صفویه' },
+    description: { en: 'The Shrine of Sheikh Safi al-Din in Ardabil becomes the spiritual center of the Safavid Sufi order, which would later become the dynasty that established Twelver Shia Islam as the state religion of Iran.', fa: 'آرامگاه شیخ صفی‌الدین اردبیلی در اردبیل به مرکز معنوی طریقت صفویان تبدیل می‌شود که بعداً دودمانی را پایه گذاشت که تشیع دوازده‌امامی را به دین رسمی ایران تبدیل کرد.' },
+    type: 'tradition',
+    coordinates: [360, 168],
+    regionId: 'iranian_azerbaijan'
+  },
+
+  {
+    id: 'ev_ismail_safavid_tabriz',
+    year: 1501,
+    title: { en: 'Ismail I Crowned in Tabriz', fa: 'تاجگذاری اسماعیل اول در تبریز' },
+    description: { en: 'Shah Ismail I, founder of the Safavid dynasty and a native of Ardabil, captures Tabriz and declares it his capital, proclaiming Twelver Shia Islam the official religion of Iran.', fa: 'شاه اسماعیل اول، بنیانگذار سلسله صفوی و اهل اردبیل، تبریز را تصرف کرده و آن را پایتخت خود اعلام می‌کند و تشیع دوازده‌امامی را مذهب رسمی ایران می‌خواند.' },
+    type: 'political',
+    coordinates: [300, 170],
+    regionId: 'iranian_azerbaijan'
+  },
+  {
+    id: 'ev_russian_azerbaijan_pressure',
+    year: 1828,
+    title: { en: 'Treaty of Turkmenchay', fa: 'معاهده ترکمانچای' },
+    description: { en: 'Iran cedes the khanates north of the Aras River to Russia following defeat in the Russo-Persian Wars, fixing the modern Iran–Russia/Azerbaijan border. Iranian Azerbaijan (south of the Aras) remains part of Iran.', fa: 'ایران پس از شکست در جنگ‌های ایران و روسیه، خانات شمال رود ارس را به روسیه واگذار می‌کند و مرز کنونی ایران با روسیه/آذربایجان را تعیین می‌کند. آذربایجان ایرانی (جنوب ارس) بخشی از ایران باقی می‌ماند.' },
+    type: 'political',
+    coordinates: [295, 155],
+    regionId: 'iranian_azerbaijan'
   }
 ];

@@ -310,4 +310,101 @@ export const events: ReignEvent[] = [
   { id: 'e241', rulerId: 'cyrus_great', regionId: 'sistan', startDate: -545, endDate: -530, status: 'Direct Control' },
   { id: 'e242', rulerId: 'cyrus_great', regionId: 'bactria', startDate: -545, endDate: -530, status: 'Direct Control' },
   { id: 'e243', rulerId: 'cyrus_great', regionId: 'transoxiana', startDate: -545, endDate: -530, status: 'Direct Control' },
+  // ── Iranian Azerbaijan ─────────────────────────────────────────────────────
+  // The region (modern East/West Azerbaijan + Ardabil) was historically distinct
+  // from the Caucasus (north of the Aras) and from Jibal to the south.
+  // It was the heartland of the Safavid dynasty (Ardabil shrine) and contested
+  // between Iran and its neighbours throughout history.
+
+  // Cyrus the Great — absorbed Median territories including Azerbaijan
+  { id: 'e_azb_1', rulerId: 'cyrus_great', regionId: 'iranian_azerbaijan', startDate: -550, endDate: -530, status: 'Direct Control' },
+  // Darius the Great
+  { id: 'e_azb_2', rulerId: 'darius_great', regionId: 'iranian_azerbaijan', startDate: -522, endDate: -486, status: 'Direct Control' },
+  // Darius III
+  { id: 'e_azb_3', rulerId: 'darius_iii', regionId: 'iranian_azerbaijan', startDate: -336, endDate: -330, status: 'Direct Control' },
+  // Median rulers (Cyaxares, Astyages) — Azerbaijan was in the Median heartland
+  { id: 'e_azb_4', rulerId: 'cyaxares', regionId: 'iranian_azerbaijan', startDate: -625, endDate: -585, status: 'Direct Control' },
+  { id: 'e_azb_5', rulerId: 'astyages', regionId: 'iranian_azerbaijan', startDate: -585, endDate: -550, status: 'Direct Control' },
+  // Seleucid — Antiochus I held Azerbaijan briefly
+  { id: 'e_azb_6', rulerId: 'seleucus_i', regionId: 'iranian_azerbaijan', startDate: -305, endDate: -281, status: 'Sphere of Influence' },
+  { id: 'e_azb_7', rulerId: 'antiochus_iii', regionId: 'iranian_azerbaijan', startDate: -222, endDate: -187, status: 'Sphere of Influence' },
+  // Arsacid/Parthian — Mithridates I consolidated Az
+  { id: 'e_azb_8', rulerId: 'mithridates_i', regionId: 'iranian_azerbaijan', startDate: -148, endDate: -132, status: 'Direct Control' },
+  // Sasanian — Ardashir I & Khosrow II
+  { id: 'e_azb_9', rulerId: 'ardashir_i', regionId: 'iranian_azerbaijan', startDate: 224, endDate: 242, status: 'Direct Control' },
+  { id: 'e_azb_10', rulerId: 'khosrow_ii', regionId: 'iranian_azerbaijan', startDate: 590, endDate: 628, status: 'Direct Control' },
+  { id: 'e_azb_11', rulerId: 'yazdegerd_iii', regionId: 'iranian_azerbaijan', startDate: 632, endDate: 651, status: 'Direct Control' },
+  // Abbasid Caliphate
+  { id: 'e_azb_12', rulerId: 'al_mansur', regionId: 'iranian_azerbaijan', startDate: 754, endDate: 775, status: 'Direct Control' },
+  { id: 'e_azb_13', rulerId: 'harun_al_rashid', regionId: 'iranian_azerbaijan', startDate: 786, endDate: 809, status: 'Direct Control' },
+  // Ilkhanate — Mongols made Tabriz their western capital
+  { id: 'e_azb_14', rulerId: 'hulagu_khan', regionId: 'iranian_azerbaijan', startDate: 1256, endDate: 1265, status: 'Direct Control' },
+  { id: 'e_azb_15', rulerId: 'ghazan_khan', regionId: 'iranian_azerbaijan', startDate: 1295, endDate: 1304, status: 'Direct Control' },
+  { id: 'e_azb_16', rulerId: 'abu_said_bahadur', regionId: 'iranian_azerbaijan', startDate: 1316, endDate: 1335, status: 'Direct Control' },
+  // Jalayirid — Tabriz was their capital
+  { id: 'e_azb_17', rulerId: 'hasan_buzurg', regionId: 'iranian_azerbaijan', startDate: 1336, endDate: 1356, status: 'Direct Control' },
+  { id: 'e_azb_18', rulerId: 'shaykh_uways', regionId: 'iranian_azerbaijan', startDate: 1356, endDate: 1374, status: 'Direct Control' },
+  { id: 'e_azb_19', rulerId: 'husayn_jalayir', regionId: 'iranian_azerbaijan', startDate: 1374, endDate: 1382, status: 'Direct Control' },
+  // Timurid — Timur sacked Tabriz
+  { id: 'e_azb_20', rulerId: 'timur', regionId: 'iranian_azerbaijan', startDate: 1386, endDate: 1405, status: 'Direct Control' },
+  // Aq Qoyunlu — Uzun Hasan ruled from Tabriz
+  { id: 'e_azb_21', rulerId: 'uzun_hasan', regionId: 'iranian_azerbaijan', startDate: 1453, endDate: 1478, status: 'Direct Control' },
+  { id: 'e_azb_22', rulerId: 'murad_aq_qoyunlu', regionId: 'iranian_azerbaijan', startDate: 1497, endDate: 1508, status: 'Direct Control' },
+  // Safavid — Ardabil was the Safavid spiritual heartland; Ismail I was born there
+  { id: 'e_azb_23', rulerId: 'ismail_i', regionId: 'iranian_azerbaijan', startDate: 1501, endDate: 1524, status: 'Direct Control' },
+  { id: 'e_azb_24', rulerId: 'abbas_great', regionId: 'iranian_azerbaijan', startDate: 1588, endDate: 1629, status: 'Direct Control' },
+  { id: 'e_azb_25', rulerId: 'sultan_husayn', regionId: 'iranian_azerbaijan', startDate: 1694, endDate: 1722, status: 'Direct Control' },
+  // Afsharid — Nader Shah briefly held Azerbaijan before Russo-Ottoman pressure
+  { id: 'e_azb_26', rulerId: 'nader_shah', regionId: 'iranian_azerbaijan', startDate: 1736, endDate: 1747, status: 'Direct Control' },
+  // Zand — Karim Khan's sphere extended to Azerbaijan
+  { id: 'e_azb_27', rulerId: 'karim_khan', regionId: 'iranian_azerbaijan', startDate: 1751, endDate: 1779, status: 'Sphere of Influence' },
+  // Qajar — Agha Mohammad Khan reunified it; Qajar dynasty was of Azerbaijani-Turkic origin
+  { id: 'e_azb_28', rulerId: 'agha_mohammad_khan', regionId: 'iranian_azerbaijan', startDate: 1789, endDate: 1797, status: 'Direct Control' },
+  { id: 'e_azb_29', rulerId: 'naser_al_din', regionId: 'iranian_azerbaijan', startDate: 1848, endDate: 1896, status: 'Direct Control' },
+  { id: 'e_azb_30', rulerId: 'ahmad_shah_qajar', regionId: 'iranian_azerbaijan', startDate: 1909, endDate: 1925, status: 'Direct Control' },
+  // 1907 Anglo-Russian Convention — Russia's sphere extended into N. Azerbaijan
+  { id: 'e_azb_31', rulerId: 'nicholas_ii', regionId: 'iranian_azerbaijan', startDate: 1907, endDate: 1917, status: 'Sphere of Influence' },
+  // Pahlavi
+  { id: 'e_azb_32', rulerId: 'reza_shah', regionId: 'iranian_azerbaijan', startDate: 1925, endDate: 1941, status: 'Direct Control' },
+  { id: 'e_azb_33', rulerId: 'mohammad_reza_shah', regionId: 'iranian_azerbaijan', startDate: 1941, endDate: 1979, status: 'Direct Control' },
+  // Islamic Republic
+  { id: 'e_azb_34', rulerId: 'khomeini', regionId: 'iranian_azerbaijan', startDate: 1979, endDate: 1989, status: 'Direct Control' },
+  { id: 'e_azb_35', rulerId: 'khamenei', regionId: 'iranian_azerbaijan', startDate: 1989, endDate: 2024, status: 'Direct Control' },
+  
+  // ── Khuzestan / Elam ──
+  { id: 'e_khuz_1', rulerId: 'cyrus_great', regionId: 'khuzestan', startDate: -550, endDate: -530, status: 'Direct Control' },
+  { id: 'e_khuz_2', rulerId: 'ardashir_i', regionId: 'khuzestan', startDate: 224, endDate: 242, status: 'Direct Control' },
+  { id: 'e_khuz_3', rulerId: 'al_mansur', regionId: 'khuzestan', startDate: 754, endDate: 775, status: 'Direct Control' },
+  { id: 'e_khuz_4', rulerId: 'abbas_great', regionId: 'khuzestan', startDate: 1588, endDate: 1629, status: 'Direct Control' },
+  { id: 'e_khuz_5', rulerId: 'reza_shah', regionId: 'khuzestan', startDate: 1925, endDate: 1941, status: 'Direct Control' },
+  { id: 'e_khuz_6', rulerId: 'khamenei', regionId: 'khuzestan', startDate: 1989, endDate: 2024, status: 'Direct Control' },
+
+  // ── Gilan ──
+  { id: 'e_gil_1', rulerId: 'ismail_i', regionId: 'Gilan', startDate: 1501, endDate: 1524, status: 'Direct Control' },
+  { id: 'e_gil_2', rulerId: 'abbas_great', regionId: 'Gilan', startDate: 1588, endDate: 1629, status: 'Direct Control' },
+  { id: 'e_gil_3', rulerId: 'reza_shah', regionId: 'Gilan', startDate: 1925, endDate: 1941, status: 'Direct Control' },
+  { id: 'e_gil_4', rulerId: 'khamenei', regionId: 'Gilan', startDate: 1989, endDate: 2024, status: 'Direct Control' },
+
+  // ── Kurdistan / Hulwan ──
+  { id: 'e_kur_1', rulerId: 'cyrus_great', regionId: 'kurdistan', startDate: -550, endDate: -530, status: 'Direct Control' },
+  { id: 'e_kur_2', rulerId: 'ardashir_i', regionId: 'kurdistan', startDate: 224, endDate: 242, status: 'Direct Control' },
+  { id: 'e_kur_3', rulerId: 'abbas_great', regionId: 'kurdistan', startDate: 1588, endDate: 1629, status: 'Direct Control' },
+  { id: 'e_kur_4', rulerId: 'reza_shah', regionId: 'kurdistan', startDate: 1925, endDate: 1941, status: 'Direct Control' },
+  { id: 'e_kur_5', rulerId: 'khamenei', regionId: 'kurdistan', startDate: 1989, endDate: 2024, status: 'Direct Control' },
+
+  // ── Kirman ──
+  { id: 'e_kir_1', rulerId: 'cyrus_great', regionId: 'kirman', startDate: -550, endDate: -530, status: 'Direct Control' },
+  { id: 'e_kir_2', rulerId: 'ardashir_i', regionId: 'kirman', startDate: 224, endDate: 242, status: 'Direct Control' },
+  { id: 'e_kir_3', rulerId: 'abbas_great', regionId: 'kirman', startDate: 1588, endDate: 1629, status: 'Direct Control' },
+  { id: 'e_kir_4', rulerId: 'nader_shah', regionId: 'kirman', startDate: 1736, endDate: 1747, status: 'Direct Control' },
+  { id: 'e_kir_5', rulerId: 'reza_shah', regionId: 'kirman', startDate: 1925, endDate: 1941, status: 'Direct Control' },
+  { id: 'e_kir_6', rulerId: 'khamenei', regionId: 'kirman', startDate: 1989, endDate: 2024, status: 'Direct Control' },
+
+  // ── Makran ──
+  { id: 'e_mak_1', rulerId: 'cyrus_great', regionId: 'makran', startDate: -550, endDate: -530, status: 'Direct Control' },
+  { id: 'e_mak_2', rulerId: 'ardashir_i', regionId: 'makran', startDate: 224, endDate: 242, status: 'Direct Control' },
+  { id: 'e_mak_3', rulerId: 'abbas_great', regionId: 'makran', startDate: 1588, endDate: 1629, status: 'Direct Control' },
+  { id: 'e_mak_4', rulerId: 'nader_shah', regionId: 'makran', startDate: 1736, endDate: 1747, status: 'Direct Control' },
+  { id: 'e_mak_5', rulerId: 'reza_shah', regionId: 'makran', startDate: 1925, endDate: 1941, status: 'Direct Control' },
+  { id: 'e_mak_6', rulerId: 'khamenei', regionId: 'makran', startDate: 1989, endDate: 2024, status: 'Direct Control' }
 ];

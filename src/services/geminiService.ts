@@ -493,11 +493,12 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
 
   const prompt = `You are a strict data-entry historian mapping the exact political borders in Greater Iran for the year ${Math.abs(year)}${year<0?'BC':'AD'}.
   You MUST provide the ruler and dynasty status for EVERY SINGLE ONE of these explicitly required regions:
-  ["anatolia", "caucasus", "mesopotamia", "jibal", "tabaristan", "fars", "khorasan", "transoxiana", "sistan", "bactria", "indus"].
+  ["anatolia", "caucasus", "iranian_azerbaijan", "Gilan", "kurdistan", "khuzestan", "mesopotamia", "jibal", "tabaristan", "fars", "kirman", "khorasan", "transoxiana", "sistan", "makran", "bactria", "indus"].
+  NOTE: "iranian_azerbaijan" refers to the historical region of Atropatene; "caucasus" refers to Arran/Shirvan; "kurdistan" refers to the Zagros mountain passes (Hulwan/Kermanshah); "khuzestan" refers to Elam/Susiana; "Gilan" is the western Caspian coast; "kirman" is the province southeast of Fars; "makran" is the coastal strip south of Sistan.
   
-  CRITICAL RULE: If a single large empire (e.g., Achaemenid, Sassanid, Caliphate) controls multiple regions, you MUST output a separate JSON object for EACH region it controls. Do not skip ANY of the 11 regions.
+  CRITICAL RULE: If a single large empire (e.g., Achaemenid, Sassanid, Caliphate) controls multiple regions, you MUST output a separate JSON object for EACH region it controls. Do not skip ANY of the 17 regions.
 
-  Return ONLY a JSON array of exactly 11 objects (one for each region). Each object must contain:
+  Return ONLY a JSON array of exactly 17 objects (one for each region). Each object must contain:
   - rulerNameEn: Ruler's name in English
   - rulerNameFa: Ruler's name in Persian
   - rulerTitleEn: Ruler's title in English (e.g., "King of Kings", "Emperor")
@@ -536,7 +537,7 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
               capitalCityFa: { type: "STRING" },
               startDate: { type: "INTEGER" },
               endDate: { type: "INTEGER" },
-              regionId: { type: "STRING", enum: ["anatolia", "caucasus", "mesopotamia", "jibal", "tabaristan", "fars", "khorasan", "transoxiana", "sistan", "bactria", "indus"] },
+              regionId: { type: "STRING", enum: ["anatolia", "caucasus", "iranian_azerbaijan", "Gilan", "kurdistan", "khuzestan", "mesopotamia", "jibal", "tabaristan", "fars", "kirman", "khorasan", "transoxiana", "sistan", "makran", "bactria", "indus"] },
               status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] }
             },
             required: ["rulerNameEn", "rulerNameFa", "rulerTitleEn", "rulerTitleFa", "dynastyNameEn", "dynastyNameFa", "dynastyColorFamily", "dynastyClassification", "capitalCityEn", "capitalCityFa", "startDate", "endDate", "regionId", "status"]

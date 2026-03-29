@@ -348,6 +348,17 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                     <rect width="4" height="4" fill="#8a7a6e" />
                     <circle cx="1" cy="1" r="0.5" fill="#7a6a5e" opacity="0.4" />
                   </pattern>
+
+                  {/* IRAN BORDER: Neon green glass glow — triple-layer effect */}
+                  <filter id="iran-border-glow" x="-8%" y="-8%" width="116%" height="116%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1" />
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur2" />
+                    <feMerge>
+                      <feMergeNode in="blur1" />
+                      <feMergeNode in="blur2" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
                 </defs>
 
                 {/* GPU acceleration layer */}
@@ -553,6 +564,55 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                     </g>
                   );
                 })}
+
+                {/*
+                  MODERN IRAN BORDER OVERLAY — traced from region polygon vertices.
+                  Path includes Atropatene (Iranian Azerbaijan, south of the Aras River):
+                    258,152 → 402,132 → 480,140  (NW: Aras River / Atropatene north = Iran NW tip)
+                    → 540,160  (Caspian/Tabaristan north shore)
+                    → 680,320  (KHORASAN DIAGONAL)
+                    → 760,400 → 720,520  (Sistan east wall)
+                    → 560,520 → 480,480  (Sea of Oman north shore, going west)
+                    → 340,460 → 240,380  (Persian Gulf north shore)
+                    → 320,340 → 380,260 → 260,180  (Iran-Iraq west border going north)
+                    → Z back to 258,152
+                */}
+                {(() => {
+                  const iranBorderPath = `M 258,152 L 402,132 L 452,140 L 480,140 L 540,160 L 680,320 L 760,400 L 730,490 L 720,520 L 560,520 L 520,500 L 480,480 L 410,470 L 340,460 L 290,420 L 240,380 L 270,320 L 300,270 L 290,220 L 260,180 Z`;
+                  return (
+                    <g className="pointer-events-none" style={{ isolation: 'isolate' }}>
+                      <path
+                        d={iranBorderPath}
+                        fill="none"
+                        stroke="#4ade80"
+                        strokeWidth="7"
+                        strokeOpacity={0.15}
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        filter="url(#iran-border-glow)"
+                      />
+                      <path
+                        d={iranBorderPath}
+                        fill="none"
+                        stroke="#4ade80"
+                        strokeWidth="3"
+                        strokeOpacity={0.4}
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d={iranBorderPath}
+                        fill="none"
+                        stroke="#86efac"
+                        strokeWidth="1.3"
+                        strokeOpacity={0.9}
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        style={{ mixBlendMode: 'screen' }}
+                      />
+                    </g>
+                  );
+                })()}
 
                 {/* Historical Events */}
                 {activeHistoricalEvents.map((event) => (
