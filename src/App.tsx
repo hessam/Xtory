@@ -727,10 +727,16 @@ export default function App() {
         )}
       </Suspense>
 
-      {/* Chatbot FAB — translates up by --sheet-height on mobile */}
-      <Suspense fallback={null}>
-        <Chatbot lang={lang} />
-      </Suspense>
+      {/* 
+        AI Assistant (Chatbot) 
+        Hiding on mobile to keep the experience focused on the Atlas and Drawer.
+        Currently optimized for desktop users only.
+      */}
+      {window.innerWidth >= 640 && (
+        <Suspense fallback={null}>
+          <Chatbot lang={lang} />
+        </Suspense>
+      )}
 
       {showSettings && <SettingsModal lang={lang} onClose={() => setShowSettings(false)} />}
       {showSupport  && <SupportModal  lang={lang} onClose={closeSupport} />}
