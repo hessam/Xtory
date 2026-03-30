@@ -3,12 +3,14 @@ import {createRoot} from 'react-dom/client';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { initClarity } from './services/clarity.ts';
+import { initGTM } from './services/tagManager.ts';
 import App from './App.tsx';
 import { ApiKeyProvider } from './context/ApiKeyContext.tsx';
 import './index.css';
 
-// Initialize Microsoft Clarity
+// Initialize Analytics & Tag Management
 initClarity();
+initGTM();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
