@@ -43,11 +43,35 @@
     <link rel="preload" href="/fonts/font-34.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href="/fonts/font-48.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
 
-    <!-- DNS prefetch for the only external API we use -->
+    <!-- DNS prefetch for external APIs -->
     <link rel="dns-prefetch" href="https://generativelanguage.googleapis.com" />
     <link rel="preconnect" href="https://generativelanguage.googleapis.com" crossorigin />
+
+    <!-- dns-prefetch for Google Tag Manager CDN -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+    <!-- Google Tag Manager: baked into static HTML so Preview Mode & crawlers detect it immediately -->
+    <!-- Vite replaces %VITE_GTM_ID% at build time (and in dev via loadEnv) -->
+    <script>
+      (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),
+            dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','%VITE_GTM_ID%');
+    </script>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript fallback) -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=%VITE_GTM_ID%"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
