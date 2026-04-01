@@ -58,6 +58,7 @@ export default function App() {
   const [selectedBanner, setSelectedBanner] = useState<{ url: string, title: string } | null>(null);
   const [legendMode, setLegendMode] = useState<'simple' | 'detailed'>('simple');
   const [aiError, setAiError] = useState<string | null>(null);
+  const [showExtentTooltip, setShowExtentTooltip] = useState(false);
 
   // Auto-dismiss AI error after 6 seconds
   useEffect(() => {
@@ -144,14 +145,8 @@ export default function App() {
       const newDynasties: Record<string, Dynasty> = {};
 
       newData.forEach(item => {
-        // Prevent conflict with existing data in the same region and overlapping timeframe
-        const isOverlapping = currentEvents.some(
-          e => e.regionId === item.regionId && Math.max(item.startDate, e.startDate) <= Math.min(item.endDate, e.endDate)
-        );
-
-        if (isOverlapping) {
-          return;
-        }
+        // AI events are now safely injected and rely on MapLeaflet's render-time prioritization.
+        // This stops massive AI temporal blocks from being rejected by tiny static temporal blocks.
 
         const dynastyId = `dyn_${item.dynastyNameEn.toLowerCase().replace(/\s+/g, '_')}`;
         const rulerId = `rul_${item.rulerNameEn.toLowerCase().replace(/\s+/g, '_')}`;
@@ -185,7 +180,8 @@ export default function App() {
           regionId: item.regionId,
           startDate: item.startDate,
           endDate: item.endDate,
-          status: item.status
+          status: item.status,
+          isAiGenerated: true
         });
       });
 
@@ -565,7 +561,7 @@ export default function App() {
             )}
 
             {/* OPEN CONTENT */}
-            <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-700 ${isLeftPanelOpen ? 'opacity-100' : 'opacity-0 pointer-events-none whitespace-nowrap'}`}>
+            <div className={`flex-1 flex flex-col overflow-y-auto overflow-x-hidden transition-all duration-700 ${isLeftPanelOpen ? 'opacity-100' : 'opacity-0 pointer-events-none whitespace-nowrap'}`}>
                <div className="px-4 py-3 flex flex-col gap-3">
                 {/* LEGEND Header */}
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-1">
@@ -613,6 +609,47 @@ export default function App() {
                   <LegendItem colors={['emerald']} label={{ en: 'Historical Event', fa: 'رویداد تاریخی' }} lang={lang} />
                   <LegendItem colors={['sky']} label={{ en: 'Cultural Heritage', fa: 'میراث فرهنگی' }} lang={lang} />
                 </div>
+
+                {/* CONTROL EXTENT Key */}
+                <div className="mt-4 flex flex-col gap-2">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-1">
+                    {lang === 'en' ? 'Control Extent' : 'گستره حاکمیت'}
+                  </span>
+                  {[
+                    { label: { en: 'Direct Control', fa: 'کنترل مستقیم' }, opacity: 0.9 },
+                    { label: { en: 'Partial Control', fa: 'کنترل نسبی' }, opacity: 0.7 },
+                    { label: { en: 'Vassal State', fa: 'دولت دست‌نشانده' }, opacity: 0.55 },
+                    { label: { en: 'Sphere of Influence', fa: 'حوزه نفوذ' }, opacity: 0.25 },
+                    { label: { en: 'Contested/Warzone', fa: 'مناقشه/جنگ' }, opacity: 0.15 },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div
+                        className="w-6 h-2.5 rounded-sm border border-white/10"
+                        style={{ background: `rgba(168, 85, 247, ${item.opacity})` }}
+                      />
+                      <span className="text-[10px] text-slate-400 leading-tight">{item.label[lang]}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* BOUNDARIES Key */}
+                <div className="mt-4 flex flex-col gap-2">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-1">
+                    {lang === 'en' ? 'Boundaries' : 'مرزها'}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <svg width="24" height="6"><line x1="0" y1="3" x2="24" y2="3" stroke="#10b981" strokeWidth="2" strokeDasharray="3,4" opacity="0.7"/></svg>
+                    <span className="text-[10px] text-slate-400">{lang === 'en' ? 'Modern Iran' : 'مرز ایران مدرن'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg width="24" height="6"><line x1="0" y1="3" x2="24" y2="3" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="4,4" opacity="0.6"/></svg>
+                    <span className="text-[10px] text-slate-400">{lang === 'en' ? 'Achaemenid Max Extent' : 'بیشترین گستره هخامنشی'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg width="24" height="6"><line x1="0" y1="3" x2="24" y2="3" stroke="#818cf8" strokeWidth="1.8" strokeDasharray="3,4" opacity="0.6"/></svg>
+                    <span className="text-[10px] text-slate-400">{lang === 'en' ? 'Sasanian Max Extent' : 'بیشترین گستره ساسانی'}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -637,6 +674,63 @@ export default function App() {
               onArtifactClick={handleArtifactClick}
               onVazirClick={(vazir) => setSelectedVazir(vazir)}
             />
+
+            {/* Control Extent Academic Tooltip — bottom-left of map */}
+            <div className="absolute bottom-4 left-4 z-50 pointer-events-auto max-w-xs">
+              <button
+                onClick={() => setShowExtentTooltip(v => !v)}
+                className="liquid-glass border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-slate-400 hover:text-white calm-transition flex items-center gap-1.5 shadow-lg"
+                title={lang === 'en' ? 'About Control Extent' : 'درباره گستره حاکمیت'}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                {lang === 'en' ? 'About Map Opacity' : 'درباره شفافیت نقشه'}
+              </button>
+              {showExtentTooltip && (
+                <div className="mt-2 liquid-glass-heavy border border-white/10 rounded-2xl p-4 shadow-2xl text-[11px] leading-relaxed text-slate-300 font-vazirmatn">
+                  <button
+                    onClick={() => setShowExtentTooltip(false)}
+                    className="absolute top-2 right-3 text-slate-500 hover:text-white calm-transition text-sm"
+                  >✕</button>
+                  {lang === 'en' ? (
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest">Methodological Note</span>
+                      <p>
+                        Historical regions on this map represent broad geographic zones, not precise political borders.
+                        A single polygon (e.g. <em>Khorasan</em>) may span territories held by multiple modern nations.
+                      </p>
+                      <p>
+                        <strong>Opacity indicates the degree of sovereign control</strong> a dynasty exercised over each region.
+                        Full opacity ("Direct Control") denotes complete administrative authority.
+                        Reduced opacity ("Partial Control") signifies that the dynasty governed only a portion of the
+                        mapped zone — for instance, modern Iran's Khorasan Razavi within the larger historical Khorasan.
+                      </p>
+                      <p className="text-slate-500 text-[10px] italic">
+                        This graduated-opacity method avoids the false precision of drawing borders where none
+                        historically existed, while still conveying the varying degrees of political reach.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2" dir="rtl">
+                      <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest">یادداشت روش‌شناختی</span>
+                      <p>
+                        مناطق تاریخی روی این نقشه نشان‌دهنده حوزه‌های جغرافیایی گسترده هستند، نه مرزهای سیاسی دقیق.
+                        یک چندضلعی (مانند <em>خراسان</em>) ممکن است قلمروهایی را شامل شود که امروزه به چند کشور تعلق دارند.
+                      </p>
+                      <p>
+                        <strong>شفافیت نشان‌دهنده میزان حاکمیت واقعی</strong> هر سلسله بر هر منطقه است.
+                        شفافیت کامل («کنترل مستقیم») به معنای اقتدار اداری کامل است.
+                        شفافیت کمتر («کنترل نسبی») به این معناست که سلسله تنها بخشی از منطقه نمایش داده شده را
+                        اداره می‌کرد — مثلاً خراسان رضوی ایران امروزی در دل خراسان بزرگ تاریخی.
+                      </p>
+                      <p className="text-slate-500 text-[10px] italic">
+                        این روش شفافیت تدریجی از دقت کاذب مرزبندی در جایی که مرز مشخصی وجود نداشته جلوگیری می‌کند،
+                        در عین حال که درجه‌های متفاوت دسترسی سیاسی را به‌خوبی نمایش می‌دهد.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
             
             {/* BYOK Banner temporarily hidden until layout matures
             {isReady && !apiKey && (

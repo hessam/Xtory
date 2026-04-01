@@ -1,13 +1,16 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, Marker, Pane, useMap, useMapEvents } from 'react-leaflet';
-import { GeoJsonObject } from 'geojson';
+import { GeoJsonObject, Feature } from 'geojson';
 import L from 'leaflet';
 import * as turf from '@turf/turf';
 import 'leaflet/dist/leaflet.css';
 import regionsGeoJSON from '../data/regions.json';
 import neighboursGeoJSON from '../data/neighbours.json';
 import iranModernGeoJSON from '../data/iran_modern.json';
-import { regions, RegionId } from '../data/regions';
+import achaemenidMaxGeoJSON from '../data/achaemenid_max.json';
+import sasanianMaxGeoJSON from '../data/sasanian_max.json';
+import { regions, RegionId, EraRole } from '../data/regions';
+import { getEraForYear } from '../services/geminiService';
 import { ReignEvent } from '../data/events';
 import { Ruler } from '../data/rulers';
 import { Dynasty } from '../data/dynasties';
@@ -40,7 +43,14 @@ interface MapLeafletProps {
 const CENTER_LAT_LNG: [number, number] = [32, 53];
 const DEFAULT_ZOOM = 5;
 const MIN_ZOOM = 4;
-const MAX_ZOOM = 10;
+const MAX_ZOOM = 8;
+
+// Bounds: South KSA → Top of Caspian, Turkey → East Afghanistan
+// Prevents tile loading outside the Greater Iran focus area
+const MAP_BOUNDS: L.LatLngBoundsExpression = [
+  [10, 24],   // SW corner (south KSA + padding, west Turkey + padding)
+  [45, 77],   // NE corner (top Caspian + padding, east Afghanistan + padding)
+];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -100,6 +110,17 @@ function MapEventsHandler({ onRegionClick, onZoomChange }: { onRegionClick: (id:
 export default function MapLeaflet(props: MapLeafletProps) {
   const { year, lang, onRegionClick, events, rulers, dynasties, historicalEvents = [], artifacts = [], vazirs = [], onHistoricalEventClick, onArtifactClick, onVazirClick } = props;
   const [currentZoom, setCurrentZoom] = useState(DEFAULT_ZOOM);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
+  const ZOOM_CITY_TIER1 = isMobile ? 5 : 6;
+  const ZOOM_CITY_TIER2 = isMobile ? 6 : 7;
+  const ZOOM_CITY_TIER3 = isMobile ? 7 : 8;
 
   const activeEvents = useMemo(() => events.filter(e => year >= e.startDate && year <= e.endDate), [events, year]);
   const activeHistoricalEvents = useMemo(() => historicalEvents.filter(e => Math.abs(e.year - year) <= 25 && e.coordinates).map(e => ({ ...e, latLng: e.coordinates as [number, number] })), [historicalEvents, year]);
@@ -116,7 +137,7 @@ export default function MapLeaflet(props: MapLeafletProps) {
 
   const allCities = useMemo(() => {
     return regions.flatMap(r => (r.anchorCities || []).map((c, i) => ({
-      id: c.name.toLowerCase().replace(/\\s+/g, '_'),
+      id: c.name.toLowerCase().replace(/\s+/g, '_'),
       name: { en: c.name, fa: c.nameFa },
       regionId: r.id,
       latLng: [c.lat, c.lng] as [number, number],
@@ -124,41 +145,115 @@ export default function MapLeaflet(props: MapLeafletProps) {
     })));
   }, []);
 
-  const styleRegion = (feature: any) => {
-    const regionId = feature.properties.id;
-    const regionEvents = activeEvents.filter(e => e.regionId === regionId);
-    if (!regionEvents || regionEvents.length === 0) return { fillColor: 'transparent', color: 'rgba(255, 255, 255, 0.04)', weight: 0.5, fillOpacity: 0, opacity: 0.2, className: 'calm-transition' };
+  const currentEra = useMemo(() => getEraForYear(year), [year]);
+
+  const getControlExtent = (role?: EraRole): number => {
+    if (!role) return 0;
+    const ROLE_TO_EXTENT: Record<EraRole, number> = {
+      heartland: 1.0,
+      province: 0.7,
+      frontier: 0.35,
+      contested: 0.2,
+      nominal: 0.15,
+      independent: 0.1,
+    };
+    return ROLE_TO_EXTENT[role];
+  };
+  const getRegionEvents = (regionId: string) => {
+    const events = activeEvents.filter(e => e.regionId === regionId);
+    const staticEvents = events.filter(e => !e.isAiGenerated);
+    // If we have authoritative static data for this year, ignore AI fallbacks to prevent collisions
+    return staticEvents.length > 0 ? staticEvents : events;
+  };
+
+  const activeRegionIds = useMemo(() => {
+    if (!regionsGeoJSON) return new Set<string>();
+    return new Set<string>((regionsGeoJSON as any).features.map((f: any) => f.properties.id));
+  }, [regionsGeoJSON]);
+
+  const styleRegion = React.useCallback((feature: any) => {
+    const regionId = feature.properties.id as RegionId;
+    const regionEvents = getRegionEvents(regionId);
+    
+    // ── FALLBACK: Use static eraPresence if no ruler data exists ──
+    if (!regionEvents || regionEvents.length === 0) {
+      const regionData = regions.find(r => r.id === regionId);
+      const role = regionData?.eraPresence[currentEra.id];
+      const extent = getControlExtent(role);
+      
+      if (extent === 0) {
+        return { fillColor: 'transparent', color: 'rgba(255, 255, 255, 0.04)', weight: 0.5, fillOpacity: 0, opacity: 0.2, className: 'calm-transition' };
+      }
+      
+      return {
+        fillColor: '#ffffff', // Neutral tint for historical presence without specific ruler data
+        color: 'rgba(255, 255, 255, 0.2)',
+        weight: extent < 0.3 ? 1 : (extent * 1.5),
+        fillOpacity: 0.05 + (extent * 0.15), // Very subtle fallback
+        opacity: extent * 0.4,
+        className: `region-polygon transition-all duration-1000 ${extent < 0.3 ? 'breathing-border' : ''}`
+      };
+    }
+
     const primaryEvent = regionEvents.find(e => e.status === 'Direct Control') || regionEvents[0];
     const ruler = rulers[primaryEvent.rulerId];
     if (!ruler) return { fillColor: 'transparent', color: 'transparent', weight: 0, fillOpacity: 0 };
     const dynasty = dynasties[ruler.dynastyId];
     const color = dynasty ? getDynastyColor(dynasty) : '#ffffff';
-    const isSphere = primaryEvent.status === 'Sphere of Influence' || primaryEvent.status === 'Contested/Warzone';
+    const STATUS_EXTENT: Record<string, number> = {
+      'Direct Control': 0.9,
+      'Partial Control': 0.7,
+      'Vassal State': 0.55,
+      'Sphere of Influence': 0.25,
+      'Contested/Warzone': 0.15,
+    };
     
-    // Material Upgrade: Layered feel
+    // Explicit 0-10 influence score from the curated dataset takes precedence
+    const baseExtent = primaryEvent.influence !== undefined 
+      ? primaryEvent.influence / 10 
+      : (STATUS_EXTENT[primaryEvent.status] || 0.5);
+      
+    // Clamp slightly so 0 influence doesn't completely erase the region if they are explicitly mapped
+    const extent = Math.max(0.05, baseExtent);
+    const isWeak = extent < 0.3;
+    
+    // Material Upgrade: Layered feel with extent-driven opacity
     return { 
       fillColor: color, 
       color: color, 
-      weight: isSphere ? 1 : 2.5, 
-      fillOpacity: isSphere ? 0.05 : 0.15, 
-      opacity: isSphere ? 0.4 : 0.85, 
-      className: 'region-polygon transition-all duration-1000'
+      weight: isWeak ? 1 : (extent * 2.5), 
+      fillOpacity: 0.08 + (extent * 0.52), 
+      opacity: extent * 0.9, 
+      className: `region-polygon transition-all duration-1000 ${isWeak ? 'breathing-border' : ''}`
     };
-  };
+  }, [currentEra.id, activeEvents, rulers, dynasties, lang]);
 
-  const onEachRegion = (feature: any, layer: any) => {
+  const onEachRegion = React.useCallback((feature: any, layer: any) => {
+    const regionId = feature.properties.id;
+    const regionData = regions.find(r => r.id === regionId);
+
+    // Titles are now rendered separately in the markers-pane for precise centroid control.
+
     layer.on({
       click: (e: L.LeafletMouseEvent) => {
         L.DomEvent.stopPropagation(e);
-        const regionId = feature.properties.id;
         onRegionClick(regionId);
-        const regionData = regions.find(r => r.id === regionId);
         pushToDataLayer('map_region_click', { region_id: regionId, region_name: regionData?.displayName.en || regionId, current_year: year });
       },
-      mouseover: (e: L.LeafletMouseEvent) => { e.target.setStyle({ fillOpacity: 0.4, weight: 3 }); },
-      mouseout: (e: L.LeafletMouseEvent) => { e.target.setStyle(styleRegion(feature)); }
+      mouseover: (e: L.LeafletMouseEvent) => { 
+        // Use a slight increase in opacity to provide feedback without losing the procedural colors
+        const currentStyle = styleRegion(feature);
+        e.target.setStyle({ 
+          fillOpacity: Math.min((currentStyle.fillOpacity || 0) * 1.5, 0.45) 
+        }); 
+      },
+      mouseout: (e: L.LeafletMouseEvent) => { 
+        // Revert to the specific style logic for the Primary Fill layer (weight: 0)
+        const baseStyle = styleRegion(feature);
+        e.target.setStyle({ ...baseStyle, weight: 0 }); 
+      }
     });
-  };
+  }, [onRegionClick, year, lang, styleRegion, currentZoom]);
 
   return (
     <div className="w-full h-full relative bg-[#0a1410] overflow-hidden z-0">
@@ -178,23 +273,37 @@ export default function MapLeaflet(props: MapLeafletProps) {
       </svg>
       <div className="map-vignette pointer-events-none z-[401]" />
       <MapFilters />
-      <MapContainer center={CENTER_LAT_LNG} zoom={DEFAULT_ZOOM} minZoom={MIN_ZOOM} maxZoom={MAX_ZOOM} className="w-full h-full z-0" zoomControl={false} attributionControl={true}>
-        <TileLayer 
-          url={`https://tiles.stadiamaps.com/tiles/stamen_terrain_background/{z}/{x}/{y}{r}.png${import.meta.env.VITE_STADIA_API_KEY ? `?api_key=${import.meta.env.VITE_STADIA_API_KEY}` : ''}`}
-          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://stamen.com/">Stamen Design</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' 
-        />
+       <MapContainer 
+         center={CENTER_LAT_LNG} 
+         zoom={DEFAULT_ZOOM} 
+         minZoom={MIN_ZOOM} 
+         maxZoom={MAX_ZOOM} 
+         maxBounds={MAP_BOUNDS}
+         maxBoundsViscosity={0.8}
+         className="w-full h-full z-0" 
+         zoomControl={false} 
+         attributionControl={true}
+       >
+         <TileLayer 
+           url={`https://tile.thunderforest.com/pioneer/{z}/{x}/{y}{r}.png?apikey=${import.meta.env.VITE_THUNDERFOREST_API_KEY || ''}`}
+           attribution='&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
+         />
         
         {/* Cinematic Overlays - Sit exactly between the Base Map Tiles (zIndex: 200) and the Interactive Overlays (zIndex: 400+) */}
         <Pane name="cinematic-overlays" style={{ zIndex: 250 }}>
-          <div className="map-tint-overlay pointer-events-none" />
+          <div 
+            className="map-tint-overlay pointer-events-none" 
+            style={{ opacity: Math.max(0.15, 0.75 - (currentZoom - MIN_ZOOM) * 0.15) }} 
+          />
         </Pane>
 
         <MapEventsHandler onRegionClick={(id) => onRegionClick(id as any)} onZoomChange={setCurrentZoom} />
         
-        {/* Static Background Neighbours */}
-        <GeoJSON 
-          key={`neighbours-${year}`} 
-          data={neighboursGeoJSON as GeoJsonObject} 
+        {/* Static Background Neighbours (Hidden below zoom 4) */}
+        {currentZoom <= 4 && (
+          <GeoJSON 
+            key={`neighbours-${year}`} 
+            data={neighboursGeoJSON as GeoJsonObject} 
           style={{ 
             fillColor: '#000000', 
             fillOpacity: 0.15, 
@@ -207,40 +316,108 @@ export default function MapLeaflet(props: MapLeafletProps) {
           }} 
           interactive={false} 
         />
+        )}
 
-        {/* Layered Cartographic Stack: Rotring Technical Pen Style */}
-        
-        {/* 1. Base Region Area Fill */}
-        <GeoJSON 
-          key={`regions-fill-${year}`} 
-          data={regionsGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ ...styleRegion(feat), lineJoin: 'miter', lineCap: 'butt', weight: 0 })} 
-          onEachFeature={onEachRegion} 
-        />
+        {/* ── Era-Gated Empire Fill Overlays ─────────────────────────────────────
+            These render the FULL historical max-extent of great empires using the
+            same GeoJSON sources as the ghost-border overlays, but as colored fills.
+            They are PURELY DECORATIVE:
+              • non-interactive (no clicks, no AI connection)
+              • era-gated (only visible when year is within the dynasty's range)
+              • rendered BELOW the interactive region polygons (zIndex 290)
+            This lets us show Anatolia, Egypt, Thrace etc. in Achaemenid purple
+            without ever adding those regions to the events system, which would
+            cause false AI data for later centuries.
+        ─────────────────────────────────────────────────────────────────────── */}
+        <Pane name="empire-fills-pane" style={{ zIndex: 290 }}>
+          {/* Achaemenid Empire: 559 BC – 330 BC */}
+          {year >= -559 && year <= -330 && (
+            <GeoJSON
+              key={`achaemenid-fill-${year}`}
+              data={achaemenidMaxGeoJSON as GeoJsonObject}
+              interactive={false}
+              style={() => ({
+                fillColor: '#a855f7',
+                fillOpacity: 0.10,
+                color: 'transparent',
+                weight: 0,
+                className: 'pointer-events-none calm-transition'
+              })}
+            />
+          )}
+          {/* Sasanian Empire: 224 AD – 651 AD */}
+          {year >= 224 && year <= 651 && (
+            <GeoJSON
+              key={`sasanian-fill-${year}`}
+              data={sasanianMaxGeoJSON as GeoJsonObject}
+              interactive={false}
+              style={() => ({
+                fillColor: '#a855f7',
+                fillOpacity: 0.10,
+                color: 'transparent',
+                weight: 0,
+                className: 'pointer-events-none calm-transition'
+              })}
+            />
+          )}
+        </Pane>
 
-        {/* 2. Technical Halo Layer 1 (Wide, Transparent) */}
-        <GeoJSON 
-          key={`regions-halo1-${year}`} 
-          data={regionsGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ fillOpacity: 0, weight: 11, color: styleRegion(feat).color, opacity: 0.15, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
-          interactive={false} 
-        />
+        {/* 1. Area Fills (Layered for Multi-Dynasty/Era Fallback) */}
+        {(regionsGeoJSON as any).features.map((feature: any, idx: number) => {
+          const regionId = feature.properties?.id as RegionId;
+          const regionEvents = getRegionEvents(regionId);
+          const baseStyle = styleRegion(feature);
+          
+          return (
+            <React.Fragment key={`region-layer-group-${regionId}-${year}-${currentZoom}`}>
+              {/* Primary Layer: The most direct control or the era-fallback */}
+              <GeoJSON 
+                data={feature} 
+                style={() => ({ ...baseStyle, weight: 0 })}
+                onEachFeature={onEachRegion}
+              />
+              
+              {/* Overlapping Secondary Dynasties if Contested */}
+              {regionEvents.length > 1 && regionEvents.slice(1).map((event, sIdx) => {
+                const ruler = rulers[event.rulerId];
+                if (!ruler) return null;
+                const dynasty = dynasties[ruler.dynastyId];
+                const color = dynasty ? getDynastyColor(dynasty) : '#ffffff';
+                const opacity = event.influence !== undefined ? (event.influence / 10) * 0.4 : 0.12;
+                return (
+                  <GeoJSON
+                    key={`secondary-${regionId}-${event.id}-${sIdx}`}
+                    data={feature}
+                    interactive={false}
+                    style={() => ({
+                      fillColor: color,
+                      fillOpacity: opacity,
+                      weight: 0,
+                      className: 'pointer-events-none mix-blend-screen'
+                    })}
+                  />
+                );
+              })}
 
-        {/* 3. Technical Halo Layer 2 (Medium) */}
-        <GeoJSON 
-          key={`regions-halo2-${year}`} 
-          data={regionsGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ fillOpacity: 0, weight: 6, color: styleRegion(feat).color, opacity: 0.35, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
-          interactive={false} 
-        />
-
-        {/* 4. Technical Halo Layer 3 (Sharp Core) */}
-        <GeoJSON 
-          key={`regions-halo3-${year}`} 
-          data={regionsGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ fillOpacity: 0, weight: 3, color: styleRegion(feat).color, opacity: 0.65, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
-          interactive={false} 
-        />
+              {/* Cinematic Halos (Inherited from primary or fallback visuals) */}
+              <GeoJSON 
+                data={feature} 
+                interactive={false}
+                style={() => ({ fillOpacity: 0, weight: 11, color: baseStyle.color, opacity: 0.15, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
+              />
+              <GeoJSON 
+                data={feature} 
+                interactive={false}
+                style={() => ({ fillOpacity: 0, weight: 6, color: baseStyle.color, opacity: 0.35, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
+              />
+              <GeoJSON 
+                data={feature} 
+                interactive={false}
+                style={() => ({ fillOpacity: 0, weight: 3, color: baseStyle.color, opacity: 0.65, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
+              />
+            </React.Fragment>
+          );
+        })}
 
         {/* 5. The Sketched Ink Border (3 Overlapping Displaced Solid Paths) */}
         <GeoJSON 
@@ -262,88 +439,164 @@ export default function MapLeaflet(props: MapLeafletProps) {
           interactive={false} 
         />
 
-        {/* 6. Modern Iran (2026) Ghost Overlay */}
+        {/* 6. Ghost Overlays: Reference Bounds for Max Historical Extents */}
         <GeoJSON 
-          key={`iran-modern-${year}`} 
-          data={iranModernGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ fillOpacity: 0, weight: 1.5, color: '#10b981', opacity: 0.4, lineJoin: 'miter', lineCap: 'butt', dashArray: '5, 10', className: 'sketch-path-2 pointer-events-none' })} 
+          key={`achaemenid-ghost-${year}`} 
+          data={achaemenidMaxGeoJSON as GeoJsonObject} 
+          style={() => ({ fillOpacity: 0.02, fillColor: '#f59e0b', weight: 1.8, color: '#f59e0b', opacity: 0.35, dashArray: '6, 8', lineJoin: 'round', className: 'pointer-events-none' })} 
+          interactive={false} 
+        />
+        <GeoJSON 
+          key={`sasanian-ghost-${year}`} 
+          data={sasanianMaxGeoJSON as GeoJsonObject} 
+          style={() => ({ fillOpacity: 0.02, fillColor: '#818cf8', weight: 1.8, color: '#818cf8', opacity: 0.35, dashArray: '4, 6', lineJoin: 'round', className: 'pointer-events-none' })} 
           interactive={false} 
         />
 
-        {/* Static Contiguous Neighbour Labels */}
-        {(neighboursGeoJSON as any).features.map((feat: any) => {
-          if (currentZoom > 7) return null; // Hide background labels when zooming in tight
-          const centroid = turf.centerOfMass(feat).geometry.coordinates;
-          const title = lang === 'fa' && feat.properties.nameFa ? feat.properties.nameFa : feat.properties.name;
-          const fontClass = lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel';
-          const icon = L.divIcon({
-            className: 'neighbour-label-container',
-            html: `<div class="neighbour-label ${fontClass}">${title}</div>`,
-            iconSize: [200, 30],
-            iconAnchor: [100, 15]
-          });
-          return <Marker key={`neighbour-label-${feat.properties.id}`} position={[centroid[1], centroid[0]] as [number, number]} icon={icon} interactive={false} />;
-        })}
+        {/* 7. Modern Iran (2026) — rendered in a high-z Pane so it is always on top */}
+        <Pane name="iran-modern-pane" style={{ zIndex: 450 }}>
+          <GeoJSON 
+            key={`iran-modern-${year}`} 
+            data={iranModernGeoJSON as GeoJsonObject} 
+            style={() => ({ fillOpacity: 0, weight: 2.0, color: '#10b981', opacity: 0.55, lineJoin: 'round', lineCap: 'round', dashArray: '5, 8', className: 'pointer-events-none' })} 
+            interactive={false} 
+          />
+        </Pane>
 
-        {regions.map((poly) => {
-          if (currentZoom > 7.5) return null;
-          const center = poly.centroid ? [poly.centroid.lat, poly.centroid.lng] : null;
-          if (!center) return null;
-          const fontClass = lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel';
-          const icon = L.divIcon({
-            className: 'custom-region-label',
-            html: `<div class="region-label-cinematic ${fontClass}">${lang === 'en' ? poly.displayName.en : poly.displayName.fa}</div>`,
-            iconSize: [120, 24],
-            iconAnchor: [60, 12]
-          });
-          return <Marker key={`label-${poly.id}`} position={center as [number, number]} icon={icon} interactive={false} />;
-        })}
-        {allCities.map(city => {
-          const dotVisible = (city.tier === 1 && currentZoom >= 4) || (city.tier === 2 && currentZoom >= 5) || (city.tier === 3 && currentZoom >= 6);
-          if (!dotVisible) return null;
-          
-          let tierClass = 'city-label-minor';
-          let labelOpacity = 0.4;
-          let baseOpacity = 0.6;
-          
-          if (city.tier === 1) {
-            tierClass = 'city-label-gold';
-            labelOpacity = currentZoom >= 4.5 ? 1 : 0;
-            baseOpacity = 0.9;
-          } else if (city.tier === 2) {
-            tierClass = 'city-label-major';
-            labelOpacity = currentZoom >= 5.5 ? 0.9 : 0;
-            baseOpacity = 0.7;
-          } else {
-            labelOpacity = currentZoom >= 6.5 ? 0.6 : 0;
-            baseOpacity = 0.4;
-          }
+        {/* 8. Marker Layers: Labels, Cities, Events, Artifacts (Highest Index) */}
+        <Pane name="markers-pane" style={{ zIndex: 600 }}>
+          {/* Static Contiguous Neighbour Labels */}
+          {(neighboursGeoJSON as any).features.map((feat: any) => {
+            if (currentZoom > 7) return null; // Hide background labels when zooming in tight
+            const centroid = turf.centerOfMass(feat).geometry.coordinates;
+            const title = lang === 'fa' && feat.properties.nameFa ? feat.properties.nameFa : feat.properties.name;
+            const fontClass = lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel';
+            const icon = L.divIcon({
+              className: 'neighbour-label-container',
+              html: `<div class="neighbour-label ${fontClass}">${title}</div>`,
+              iconSize: [200, 30],
+              iconAnchor: [100, 15]
+            });
+            return <Marker key={`neighbour-label-${feat.properties.id}`} position={[centroid[1], centroid[0]] as [number, number]} icon={icon} interactive={false} />;
+          })}
 
-          return (
-            <CircleMarker key={city.id} center={city.latLng} radius={city.tier === 1 ? 3 : 2} pathOptions={{ fillColor: city.tier === 1 ? '#FFD875' : '#d4c49a', color: '#0a1410', weight: 1, fillOpacity: baseOpacity }} interactive={false}>
-              <Tooltip direction="top" permanent opacity={labelOpacity} className="city-tooltip bg-transparent border-0 shadow-none">
-                <span className={`font-sans ${tierClass} ${lang === 'fa' ? 'text-[11px]' : 'text-[10px] sm:text-[11px]'}`}>
-                  {city.name[lang]}
-                </span>
+          {/* Core Region Titles at Hand-Picked Centroids */}
+          {regions.filter(r => activeRegionIds.has(r.id)).map((r) => {
+            const fontClass = lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel';
+            const nameObj = lang === 'en' ? r.displayName.en : r.displayName.fa;
+            const labelText = isMobile ? nameObj.short : nameObj.full;
+            const icon = L.divIcon({
+              className: 'region-label-container',
+              html: `<div class="region-label ${fontClass} zoom-${Math.floor(currentZoom)}"><span class="tooltip-text">${labelText}</span></div>`,
+              iconSize: [250, 40],
+              iconAnchor: [125, 20]
+            });
+            return (
+              <Marker 
+                key={`core-label-${r.id}`} 
+                position={[r.centroid.lat, r.centroid.lng] as [number, number]} 
+                icon={icon} 
+                interactive={false} 
+              />
+            );
+          })}
+
+          {allCities.map((city, index) => {
+            const showAtZoom = city.tier === 1 ? ZOOM_CITY_TIER1 : city.tier === 2 ? ZOOM_CITY_TIER2 : ZOOM_CITY_TIER3;
+            if (currentZoom < showAtZoom) return null;
+
+            const fontSizeEn = currentZoom >= (showAtZoom + 1) ? 16 : 14;
+            const fontSizeFa = currentZoom >= (showAtZoom + 1) ? 16 : 14;
+
+            return (
+              <CircleMarker
+                key={city.name.en + index}
+                center={city.latLng}
+                radius={currentZoom >= 7 ? 4 : 3}
+                pathOptions={{
+                  color: '#0a1410',
+                  weight: 1,
+                  fillColor: 'rgba(201,169,110,0.6)',
+                  fillOpacity: 1
+                }}
+                interactive={false}
+              >
+                <Tooltip
+                  direction="right"
+                  offset={[6, 0]}
+                  permanent={true}
+                  className="city-tooltip bg-transparent border-0 shadow-none"
+                >
+                  <span style={{
+                    fontFamily: lang === 'fa' ? "'Vazirmatn', sans-serif" : "'Crimson Pro', serif",
+                    fontSize: lang === 'fa' ? `${fontSizeFa}px` : `${fontSizeEn}px`,
+                    color: 'rgba(255, 255, 255, 0.85)',
+                    textShadow: isMobile 
+                      ? '0 0 6px #000, 0 1px 2px #000, 0 0 16px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.5)'
+                      : '0 0 8px rgba(0,0,0,0.9), 0 1px 3px #000, 0 0 20px rgba(0,0,0,0.6)',
+                    pointerEvents: 'none' as const,
+                    whiteSpace: 'nowrap' as const,
+                  }}>
+                    {city.name[lang]}
+                  </span>
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
+
+          {activeHistoricalEvents.map(event => (
+            <CircleMarker 
+              key={event.id} 
+              center={event.latLng} 
+              radius={8} 
+              className="event-marker" 
+              pathOptions={{ 
+                fillColor: event.type === 'battle' ? '#f43f5e' : event.type === 'downfall' ? '#c084fc' : event.type === 'political' ? '#38bdf8' : '#34d399', 
+                color: '#fff', 
+                weight: 1, 
+                fillOpacity: 0.8, 
+                className: 'event-marker' 
+              }} 
+              eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onHistoricalEventClick?.(event); } }}
+            >
+              <Tooltip 
+                direction="top" 
+                offset={[0, -4]} 
+                className={`event-label ${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel'}`}
+              >
+                <span className="event-icon" style={{ color: event.type === 'battle' ? '#f43f5e' : event.type === 'downfall' ? '#c084fc' : event.type === 'political' ? '#38bdf8' : '#34d399' }}>◆</span>
+                <span className="tooltip-text">{event.title[lang]}</span>
               </Tooltip>
             </CircleMarker>
-          );
-        })}
-        {activeHistoricalEvents.map(event => (
-          <CircleMarker key={event.id} center={event.latLng} radius={8} className="event-marker" pathOptions={{ fillColor: event.type === 'battle' ? '#f43f5e' : event.type === 'downfall' ? '#c084fc' : event.type === 'political' ? '#38bdf8' : '#34d399', color: '#fff', weight: 1, fillOpacity: 0.8, className: 'event-marker' }} eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onHistoricalEventClick?.(event); } }}>
-            <Tooltip direction="top"><div className="flex items-center gap-2">{getEventIcon(event.type)}<span className="font-sans text-xs font-bold">{event.title[lang]}</span></div></Tooltip>
-          </CircleMarker>
-        ))}
-        {activeArtifacts.map(artifact => (
-          <CircleMarker key={artifact.id} center={artifact.latLng} radius={8} className="event-marker" pathOptions={{ fillColor: '#fbbf24', color: '#fff', weight: 1, fillOpacity: 0.8, className: 'event-marker' }} eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onArtifactClick?.(artifact); } }}>
-            <Tooltip direction="top"><div className="flex items-center gap-2">{getArtifactIcon(artifact.type)}<span className="font-sans text-xs font-bold">{artifact.name[lang]}</span></div></Tooltip>
-          </CircleMarker>
-        ))}
-        {activeVazirs.map(v => (
-          <CircleMarker key={v.id} center={v.latLng} radius={6} pathOptions={{ fillColor: '#c9a96e', color: '#0a1410', weight: 1, fillOpacity: 1 }} eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onVazirClick?.(v as any); } }}>
-            <Tooltip direction="right"><span className="font-cinzel text-xs font-bold gold-text">{v.name[lang]}</span></Tooltip>
-          </CircleMarker>
-        ))}
+          ))}
+
+          {activeArtifacts.map(artifact => (
+            <CircleMarker key={artifact.id} center={artifact.latLng} radius={8} className="event-marker" pathOptions={{ fillColor: '#fbbf24', color: '#fff', weight: 1, fillOpacity: 0.8, className: 'event-marker' }} eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onArtifactClick?.(artifact); } }}>
+              <Tooltip 
+                direction="top" 
+                offset={[0, -4]} 
+                className={`event-label ${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel'}`}
+              >
+                <span className="event-icon" style={{ color: '#fbbf24' }}>◆</span>
+                <span className="tooltip-text">{artifact.name[lang]}</span>
+              </Tooltip>
+            </CircleMarker>
+          ))}
+
+          {activeVazirs.map(v => (
+            <CircleMarker key={v.id} center={v.latLng} radius={6} pathOptions={{ fillColor: '#c9a96e', color: '#0a1410', weight: 1, fillOpacity: 1 }} eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onVazirClick?.(v as any); } }}>
+              <Tooltip 
+                direction="top" 
+                offset={[0, -4]} 
+                className={`event-label ${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel'}`}
+              >
+                <span className="event-icon" style={{ color: '#c9a96e' }}>◆</span>
+                <span className="tooltip-text">{v.name[lang]}</span>
+              </Tooltip>
+            </CircleMarker>
+          ))}
+        </Pane>
+
         <ZoomControls />
       </MapContainer>
     </div>

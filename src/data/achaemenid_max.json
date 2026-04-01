@@ -1,0 +1,17 @@
+{
+  "type": "FeatureCollection",
+  "name": "achaemenid_max",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "id": "achaemenid_max", "name": "Achaemenid Empire Maximum Extent" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [24, 42], [30, 43], [40, 44], [50, 45], [60, 48], [70, 46], [75, 40], [75, 30], 
+          [72, 23], [65, 20], [55, 15], [45, 14], [35, 12], [30, 20], [25, 25], [24, 32], [24, 42]
+        ]]
+      }
+    }
+  ]
+}

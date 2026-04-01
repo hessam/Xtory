@@ -510,8 +510,8 @@ export default function MapLeaflet(props: MapLeafletProps) {
       zoomControl={false}  // we use custom ZoomControls component
     >
       <TileLayer
-        url="https://tiles.stadiamaps.com/tiles/stamen_terrain_background/{z}/{x}/{y}{r}.png"
-        attribution="Map tiles by Stamen Design"
+        url="https://api.thunderforest.com/landscape/{z}/{x}/{y}{r}.png?apikey=YOUR_KEY"
+        attribution='&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
 
       {/* Region polygons — key forces remount on era/colour change */}
@@ -667,7 +667,7 @@ function ZoomListener() {
 
 | Style | URL | Notes |
 |-------|-----|-------|
-| Dark terrain (recommended) | `https://tiles.stadiamaps.com/tiles/stamen_terrain_background/{z}/{x}/{y}{r}.png` | Free, no API key for low traffic |
+| Landscape terrain (recommended) | `https://api.thunderforest.com/landscape/{z}/{x}/{y}{r}.png?apikey=YOUR_KEY` | 150K tiles/mo free |
 | Minimal dark | `https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png` | No labels — good fallback |
 | Shaded relief | `https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}` | Esri, free tier |
 

@@ -56,7 +56,10 @@ export interface AnchorCity {
 export interface Region {
   id: RegionId;
   zone: ZoneId;
-  displayName: { en: string; fa: string };
+  displayName: { 
+    en: { full: string; short: string }; 
+    fa: { full: string; short: string };
+  };
   /** Era-correct name aliases for grounding AI prompts — no hallucination needed */
   aliases: string[];
   anchorCities: AnchorCity[];
@@ -70,7 +73,10 @@ export interface Region {
 
 export interface Zone {
   id: ZoneId;
-  displayName: { en: string; fa: string };
+  displayName: { 
+    en: { full: string; short: string }; 
+    fa: { full: string; short: string };
+  };
   regions: RegionId[];
 }
 
@@ -79,27 +85,27 @@ export interface Zone {
 export const zones: Zone[] = [
   {
     id: 'core_plateau',
-    displayName: { en: 'Core Plateau', fa: 'فلات مرکزی' },
+    displayName: { en: { full: 'Core Plateau', short: 'Plateau' }, fa: { full: 'فلات مرکزی', short: 'فلات' } },
     regions: ['fars', 'jibal', 'khuzestan'],
   },
   {
     id: 'western_lowlands',
-    displayName: { en: 'Western Lowlands', fa: 'دشت‌های غربی' },
+    displayName: { en: { full: 'Western Lowlands', short: 'Lowlands' }, fa: { full: 'دشت‌های غربی', short: 'دشت‌ها' } },
     regions: ['mesopotamia'],
   },
   {
     id: 'north_caucasus',
-    displayName: { en: 'North & Caucasus', fa: 'شمال و قفقاز' },
+    displayName: { en: { full: 'North & Caucasus', short: 'North' }, fa: { full: 'شمال و قفقاز', short: 'شمال' } },
     regions: ['azerbaijan', 'caucasus', 'caspian_coast'],
   },
   {
     id: 'eastern_expanse',
-    displayName: { en: 'Eastern Expanse', fa: 'پهنه شرقی' },
+    displayName: { en: { full: 'Eastern Expanse', short: 'East' }, fa: { full: 'پهنه شرقی', short: 'شرق' } },
     regions: ['khorasan', 'sistan', 'makran'],
   },
   {
     id: 'ne_frontier',
-    displayName: { en: 'NE Frontier', fa: 'مرز شمال‌شرقی' },
+    displayName: { en: { full: 'NE Frontier', short: 'Frontier' }, fa: { full: 'مرز شمال‌شرقی', short: 'مرز' } },
     regions: ['transoxiana', 'chorasmia'],
   },
 ];
@@ -113,7 +119,7 @@ export const regions: Region[] = [
   {
     id: 'fars',
     zone: 'core_plateau',
-    displayName: { en: 'Fars', fa: 'فارس' },
+    displayName: { en: { full: 'Fars / Persis', short: 'Fars' }, fa: { full: 'فارس', short: 'فارس' } },
     aliases: ['Persis', 'Parsa', 'Pars', 'Pārs', 'Parsua', 'Persies', 'Eran-khwarrah-Shapur'],
     anchorCities: [
       { name: 'Persepolis', nameFa: 'تخت جمشید', lat: 29.935, lng: 52.891, historicalNames: ['Parsa', 'Takht-e Jamshid'] },
@@ -143,7 +149,7 @@ export const regions: Region[] = [
   {
     id: 'jibal',
     zone: 'core_plateau',
-    displayName: { en: 'Jibal / Media', fa: 'جبال / ماد' },
+    displayName: { en: { full: 'Jibal / Media', short: 'Jibal' }, fa: { full: 'جبال / ماد', short: 'جبال' } },
     aliases: ['Media', 'Pahla', 'Pahlav', 'Persian Iraq', 'Iraq-i Ajam', 'Al-Mahat', 'Mada', 'Māy', 'Irāq-e Ajamī'],
     anchorCities: [
       { name: 'Ecbatana (Hamadan)', nameFa: 'هگمتانه (همدان)', lat: 34.799, lng: 48.515, historicalNames: ['Ecbatana', 'Agbatana', 'Hegmataneh'] },
@@ -174,7 +180,7 @@ export const regions: Region[] = [
   {
     id: 'khuzestan',
     zone: 'core_plateau',
-    displayName: { en: 'Khuzestan', fa: 'خوزستان' },
+    displayName: { en: { full: 'Khuzestan / Elam', short: 'Khuzestan' }, fa: { full: 'خوزستان', short: 'خوزستان' } },
     aliases: ['Elam', 'Susiana', 'Huzistan', 'Hūzestān', 'Elymais', 'Xuzestan', 'Arabistan'],
     anchorCities: [
       { name: 'Susa', nameFa: 'شوش', lat: 32.188, lng: 48.258, historicalNames: ['Shush', 'Shushan', 'Aqatana'] },
@@ -204,7 +210,7 @@ export const regions: Region[] = [
   {
     id: 'mesopotamia',
     zone: 'western_lowlands',
-    displayName: { en: 'Mesopotamia', fa: 'بین‌النهرین' },
+    displayName: { en: { full: 'Mesopotamia / Sawad', short: 'Mesopotamia' }, fa: { full: 'بین‌النهرین / سواد', short: 'عراق' } },
     aliases: ['Asorestan', 'Āsōrestān', 'Babylonia', 'Iraq-i Arab', 'Irāq al-Arabī', 'Sawad', 'Mēšān', 'Suristan', 'Del-e Eranshahr'],
     anchorCities: [
       { name: 'Ctesiphon', nameFa: 'تیسفون', lat: 33.094, lng: 44.581, historicalNames: ['al-Madain', 'Taysafun', 'Veh-Ardashir'] },
@@ -234,7 +240,7 @@ export const regions: Region[] = [
   {
     id: 'azerbaijan',
     zone: 'north_caucasus',
-    displayName: { en: 'Azerbaijan', fa: 'آذربایجان' },
+    displayName: { en: { full: 'Azerbaijan / Media', short: 'Azerbaijan' }, fa: { full: 'آذربایجان', short: 'آذربایجان' } },
     aliases: ['Adurbadagan', 'Atropatene', 'Atrapatkan', 'Ādurbāyagān', 'Adharbādhakān', 'Adourbadene', 'Media Atropatene'],
     anchorCities: [
       { name: 'Ganzak (Takht-e Soleyman)', nameFa: 'گنزک (تخت سلیمان)', lat: 36.602, lng: 47.237, historicalNames: ['Shiz', 'Gandzak'] },
@@ -264,7 +270,7 @@ export const regions: Region[] = [
   {
     id: 'caucasus',
     zone: 'north_caucasus',
-    displayName: { en: 'The Caucasus', fa: 'قفقاز' },
+    displayName: { en: { full: 'The Caucasus / Arran', short: 'Caucasus' }, fa: { full: 'قفقاز / ارران', short: 'قفقاز' } },
     aliases: ['Armenia', 'Armin', 'Arran', 'Albania', 'Iberia', 'Georgia', 'Viruzān', 'Balāsagān', 'Lazica'],
     anchorCities: [
       { name: 'Darband (Derbent)', nameFa: 'دربند', lat: 42.058, lng: 48.287, historicalNames: ['al-Bab', 'Bab al-Abwab', 'Chor'] },
@@ -292,7 +298,7 @@ export const regions: Region[] = [
   {
     id: 'caspian_coast',
     zone: 'north_caucasus',
-    displayName: { en: 'Caspian Coast', fa: 'سواحل خزر' },
+    displayName: { en: { full: 'Caspian / Tabaristan', short: 'Caspian' }, fa: { full: 'سواحل خزر / طبرستان', short: 'خزر' } },
     aliases: ['Tabaristan', 'Gilan', 'Mazandaran', 'Hyrcania', 'Parishkhwar', 'Padishkhwargar', 'Gełan', 'Varkana'],
     anchorCities: [
       { name: 'Amul (Amol)', nameFa: 'آمل', lat: 36.471, lng: 52.357, historicalNames: ['Amol', 'Amul'] },
@@ -322,7 +328,7 @@ export const regions: Region[] = [
   {
     id: 'khorasan',
     zone: 'eastern_expanse',
-    displayName: { en: 'Greater Khorasan', fa: 'خراسان بزرگ' },
+    displayName: { en: { full: 'Greater Khorasan', short: 'Khorasan' }, fa: { full: 'خراسان بزرگ', short: 'خراسان' } },
     aliases: ['Abarshahr', 'Parthia', 'Parthava', 'Xwarāsān', 'Ariana', 'Land of the Rising Sun', 'Harēv', 'Verkāna'],
     anchorCities: [
       { name: 'Nishapur', nameFa: 'نیشابور', lat: 36.213, lng: 58.796, historicalNames: ['Neyshabur', 'Abarshahr', 'Shapur-Kart'] },
@@ -354,7 +360,7 @@ export const regions: Region[] = [
   {
     id: 'sistan',
     zone: 'eastern_expanse',
-    displayName: { en: 'Sistan & Zabulistan', fa: 'سیستان و زابلستان' },
+    displayName: { en: { full: 'Sistan / Sakastan', short: 'Sistan' }, fa: { full: 'سیستان و زابلستان', short: 'سیستان' } },
     aliases: ['Sagestan', 'Drangiana', 'Sakastan', 'Seistan', 'Sagestān', 'Nimroz', 'Nimruz', 'Rukhkhudh'],
     anchorCities: [
       { name: 'Zaranj', nameFa: 'زرنج', lat: 30.958, lng: 61.864, historicalNames: ['Zarang', 'Zranka'] },
@@ -383,7 +389,7 @@ export const regions: Region[] = [
   {
     id: 'makran',
     zone: 'eastern_expanse',
-    displayName: { en: 'Makran & Balochistan', fa: 'مکران و بلوچستان' },
+    displayName: { en: { full: 'Makran / Gedrosia', short: 'Makran' }, fa: { full: 'مکران و بلوچستان', short: 'مکران' } },
     aliases: ['Gedrosia', 'Turan', 'Maka', 'Balāsakān', 'Pāradān', 'Baluchistan', 'Makuran', 'Turgistan', 'Kirman coast'],
     anchorCities: [
       { name: 'Tiz (Chabahar)', nameFa: 'تیز (چابهار)', lat: 25.289, lng: 60.643, historicalNames: ['Tiz', 'Mosarna'] },
@@ -411,7 +417,7 @@ export const regions: Region[] = [
   {
     id: 'transoxiana',
     zone: 'ne_frontier',
-    displayName: { en: 'Transoxiana', fa: 'فرارود' },
+    displayName: { en: { full: 'Transoxiana / Sogdia', short: 'Transoxiana' }, fa: { full: 'فرارود / ماوراءالنهر', short: 'فرارود' } },
     aliases: ["Sogdia", 'Ma Wara un-Nahr', 'Sogdiana', 'Mawara un Nahr', 'Sodikene', 'Suguda', 'Osrūšana'],
     anchorCities: [
       { name: 'Samarkand', nameFa: 'سمرقند', lat: 39.655, lng: 66.975, historicalNames: ['Maracanda', 'Afrasiab'] },
@@ -442,7 +448,7 @@ export const regions: Region[] = [
   {
     id: 'chorasmia',
     zone: 'ne_frontier',
-    displayName: { en: 'Chorasmia', fa: 'خوارزم' },
+    displayName: { en: { full: 'Chorasmia / Khwarazm', short: 'Chorasmia' }, fa: { full: 'خوارزم', short: 'خوارزم' } },
     aliases: ['Khwarazm', 'Khwārizm', 'Khwarezm', 'Khorezm', 'Uwarazmiy', 'Airyanem Vaejah', 'Īrānvēj'],
     anchorCities: [
       { name: 'Kath', nameFa: 'کاث', lat: 42.031, lng: 61.119, historicalNames: ['Kath', 'Al-Fil'] },
@@ -491,7 +497,7 @@ export function getZoneById(id: ZoneId): Zone | undefined {
 export function getAliasPromptString(regionId: RegionId): string {
   const region = getRegionById(regionId);
   if (!region) return '';
-  return `${region.displayName.en} (also known as: ${region.aliases.join(', ')})`;
+  return `${region.displayName.en.full} (also known as: ${region.aliases.join(', ')})`;
 }
 
 /** Get all anchor city names (including historical) for a region — for AI grounding */

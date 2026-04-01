@@ -189,7 +189,7 @@
 @import 'leaflet/dist/leaflet.css';
 
 .leaflet-tile-pane {
-  filter: brightness(0.9) contrast(1.1) saturate(0.8) sepia(0.1);
+  filter: brightness(0.45) sepia(0.2) saturate(0.6) contrast(1.2);
 }
 
 .map-tint-overlay {
@@ -228,20 +228,27 @@
   transform: translate(1px, -0.5px);
 }
 
-.neighbour-label-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.neighbour-label-container, .region-label-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 .neighbour-label {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.15);
-  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-shadow: 
+    0 1px 4px #000, 
+    0 0 10px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 0, 0, 0.4);
   pointer-events: none;
+  transition: opacity 0.4s ease;
 }
 .region-label-cinematic {
   display: flex;
@@ -278,12 +285,48 @@
   font-weight: 600 !important;
 }
 
-.region-label-cinematic {
-  color: rgba(180, 170, 210, 0.5) !important;
+/* index.css — region label semantic zoom */
+
+.region-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-weight: 400;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 4px !important;
-  font-weight: 800 !important;
-  text-shadow: 0 4px 8px rgba(0,0,0,0.8) !important;
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 
+    0 0 8px rgba(0,0,0,0.9),
+    0 1px 3px rgba(0,0,0,1),
+    0 0 20px rgba(0,0,0,0.6);
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, font-size 0.2s ease;
+}
+
+/* Default zoom (4–5) — optimized for readability */
+.region-label { font-size: 16px; opacity: 0.75; }
+
+/* Zoom 6 — slightly larger */
+.zoom-6.region-label { font-size: 19px; opacity: 0.85; }
+
+/* Zoom 7+ — user is zoomed into a specific region focus */
+.zoom-7.region-label, .zoom-8.region-label, .zoom-9.region-label { font-size: 24px; opacity: 0.95; }
+
+/* Mobile scale — higher floor for touch readability */
+@media (max-width: 768px) {
+  .region-label {
+    text-shadow:
+      0 0 6px rgba(0,0,0,1),
+      0 1px 2px rgba(0,0,0,1),
+      0 0 16px rgba(0,0,0,0.8),
+      0 0 30px rgba(0,0,0,0.5);
+    font-weight: 500;
+    opacity: 0.95 !important;
+  }
+  .region-label { font-size: 18px; }
+  .zoom-6.region-label { font-size: 21px; }
+  .zoom-7.region-label, .zoom-8.region-label, .zoom-9.region-label { font-size: 26px; }
 }
 
 /* Material upgrade for territory fills */
@@ -320,6 +363,35 @@
 .leaflet-tooltip::before {
   display: none !important;
 }
+
+/* ── Event Tooltip ────────────────────────────────────────────────── */
+.event-label.leaflet-tooltip {
+  background: rgba(10, 12, 10, 0.82) !important;
+  border: 1px solid rgba(201, 169, 110, 0.25) !important;
+  border-radius: 4px;
+  padding: 4px 10px 4px 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: rgba(201, 169, 110, 0.9) !important;
+  white-space: nowrap;
+  pointer-events: none;
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Farsi tooltips: enforce Vazirmatn regardless of any font class */
+.event-label.font-vazirmatn {
+  font-family: 'Vazirmatn', sans-serif !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  direction: rtl;
+}
+
+.event-label .event-icon {
+  font-size: 11px;
+}
+
 .custom-region-label {
   background: transparent;
   border: none;
@@ -338,4 +410,32 @@
 
 .gold-text {
   filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9));
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Era Issue Visuals
+   ───────────────────────────────────────────────────────────────────────────── */
+.breathing-border {
+  animation: border-breathe 4s ease-in-out infinite;
+}
+
+@keyframes border-breathe {
+  0%, 100% { 
+    stroke-opacity: 0.3; 
+    stroke-width: 1;
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
+  }
+  50% { 
+    stroke-opacity: 0.7; 
+    stroke-width: 2;
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.2));
+  }
+}
+
+/* Enforce global Vazirmatn for Persian text wherever direction is RTL */
+[dir="rtl"],
+[dir="rtl"] * {
+  font-family: 'Vazirmatn', sans-serif !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
 }

@@ -66,6 +66,38 @@ const WikipediaLink = ({ query, lang }: { query: string, lang: 'en' | 'fa' }) =>
   </a>
 );
 
+function getControlExplanation(lang: 'en' | 'fa', status: string, isAiGenerated?: boolean): string {
+  const statusMappings: Record<string, {en: string, fa: string}> = {
+    'Direct Control': {
+      en: 'The ruling power holds direct administrative and military control over this region, integrating it fully into the state apparatus.',
+      fa: 'قدرت حاکم کنترل مستقیم اداری و نظامی بر این منطقه دارد و آن را کاملاً در دستگاه دولتی ادغام کرده است.'
+    },
+    'Partial Control': {
+      en: 'The dynasty held full sovereignty over the portion of this region within its borders. The mapped area extends beyond the actual territory — parts of this region belonged to other polities.',
+      fa: 'این سلسله حاکمیت کامل بر بخشی از این منطقه که در مرزهایش قرار داشت، اعمال می‌کرد. منطقه نمایش داده شده فراتر از قلمرو واقعی گسترش می‌یابد — بخش‌هایی از این منطقه تحت حکومت‌های دیگر بود.'
+    },
+    'Vassal State': {
+      en: 'Operates under local autonomy but pays tribute and absolute political allegiance to the central dynasty.',
+      fa: 'تحت استقلال محلی عمل می‌کند اما به خاندان مرکزی خراج و وفاداری سیاسی مطلق می‌پردازد.'
+    },
+    'Sphere of Influence': {
+      en: 'Not directly administered, but firmly under the cultural, economic, or diplomatic dominance of the ruling dynasty.',
+      fa: 'به‌طور مستقیم اداره نمی‌شود، اما کاملاً تحت تسلط فرهنگی، اقتصادی یا دیپلماتیک خاندان حاکم است.'
+    },
+    'Contested/Warzone': {
+      en: 'A volatile frontier currently experiencing active conflict, shifting borders, or fractured rival control.',
+      fa: 'مرزی ناپایدار که در حال حاضر درگیر جنگ فعال، جابجایی مرزها یا کنترل تکه‌تکه شده است.'
+    }
+  };
+  const baseDef = statusMappings[status] ? statusMappings[status][lang] : statusMappings['Direct Control'][lang];
+  const aiNote = isAiGenerated 
+    ? (lang === 'en' ? ' This evaluation was dynamically inferred by AI based on surrounding historical contexts.' : ' این ارزیابی به‌صورت پویا توسط هوش مصنوعی بر اساس زمینه‌های تاریخی پیرامون تخمین زده شده است.') 
+    : (lang === 'en' ? ' Based on verified, static historical records.' : ' تایید شده بر اساس اسناد تاریخی قطعی.');
+  
+  return baseDef + aiNote;
+}
+
+
 interface DetailModalProps {
   eventId: string | null;
   regionId: string | null;
@@ -659,11 +691,19 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
 
         {/* ── Regional Status ── */}
         <div className="mb-5 p-4 liquid-glass rounded-2xl border border-white/5">
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{region?.displayName[lang]?.toUpperCase()}</p>
-          <div className="flex items-center gap-2">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{region?.displayName[lang]?.full.toUpperCase()}</p>
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className={`w-2 h-2 rounded-full shrink-0 ${isDirect ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-            <p className="text-sm text-slate-300 leading-relaxed">{event.status}</p>
+            <p className="text-sm text-slate-300 leading-none font-semibold">{event.status}</p>
+            {event.isAiGenerated && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                {lang === 'en' ? 'AI Inferred' : 'تخمین هوش مصنوعی'}
+              </span>
+            )}
           </div>
+          <p className="text-[11px] text-slate-400 leading-relaxed border-l-2 border-white/10 pl-2 mt-2">
+            {getControlExplanation(lang, event.status, event.isAiGenerated)}
+          </p>
         </div>
 
         {/* ── AI Content Area ── */}
@@ -679,12 +719,12 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
                   className="flex-1 px-3 py-2 liquid-glass border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 calm-transition"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && customWhatIf.trim()) {
-                      handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang] || '', year, customWhatIf);
+                      handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang]?.full || '', year, customWhatIf);
                     }
                   }}
                 />
                 <button
-                  onClick={() => handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang] || '', year, customWhatIf)}
+                  onClick={() => handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang]?.full || '', year, customWhatIf)}
                   disabled={!customWhatIf.trim() || isGenerating}
                   className="p-2 liquid-glass text-emerald-400 border border-white/10 rounded-xl hover:bg-white/10 disabled:opacity-50 calm-transition"
                 >
@@ -726,7 +766,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
             <button
               onClick={() => {
                 if (activeTab !== 'whatif') {
-                  handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang] || '', year);
+                  handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang]?.full || '', year);
                 } else {
                   setActiveTab('details');
                 }
@@ -774,10 +814,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
                 <MapPin className="w-3 h-3" />
                 {lang === 'en' ? 'Region' : 'منطقه'}
               </span>
-              <WikipediaLink query={isGlobal ? 'Greater Iran' : (region?.displayName[lang] || '')} lang={lang} />
+              <WikipediaLink query={isGlobal ? 'Greater Iran' : (region?.displayName[lang]?.full || '')} lang={lang} />
             </div>
             <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
-              {isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.displayName[lang]}
+              {isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.displayName[lang]?.full}
             </h2>
             <p className="text-sm text-slate-400">
               {Math.abs(year)} {year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}
@@ -808,14 +848,21 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               const d = dynasties[r.dynastyId];
               const eventRegion = regions.find(reg => reg.id === event.regionId);
               return (
-                <div key={event.id} className="p-3 liquid-glass rounded-2xl border border-white/5 flex items-center justify-between">
-                  <div>
-                    <div className="font-semibold text-sm text-white">{r.name[lang]}</div>
-                    <div className="text-xs text-slate-400 mt-0.5">
-                      {d.name[lang]}{isGlobal && eventRegion ? ` · ${eventRegion.displayName[lang]}` : ''}
+                <div key={event.id} className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-y-2">
+                    <div>
+                      <div className="font-semibold text-sm text-white">{r.name[lang]}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">
+                        {d.name[lang]}{isGlobal && eventRegion ? ` · ${eventRegion.displayName[lang].full}` : ''}
+                      </div>
                     </div>
+                    <span className={`text-xs px-2 py-1 rounded-full border flex-shrink-0 ${event.isAiGenerated ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'}`}>
+                      {event.status} {event.isAiGenerated && (lang === 'en' ? '(AI)' : '(تخمین)')}
+                    </span>
                   </div>
-                  <span className="text-xs text-slate-500 italic shrink-0 ml-2">{event.status}</span>
+                  <p className="text-[10px] text-slate-400 border-t border-white/5 pt-2 mt-1 leading-relaxed">
+                     {getControlExplanation(lang, event.status, event.isAiGenerated)}
+                  </p>
                 </div>
               );
             })
@@ -845,7 +892,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
         {/* ── Always-Visible Action ── */}
         <div className="pt-2 border-t border-white/5">
           <button
-            onClick={() => { if (activeTab !== 'context') { handleGenerateRegionContext(isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.displayName[lang] || '', year); } else { setActiveTab('details'); } }}
+            onClick={() => { if (activeTab !== 'context') { handleGenerateRegionContext(isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.displayName[lang]?.full || '', year); } else { setActiveTab('details'); } }}
             className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold calm-transition border ${activeTab === 'context' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'liquid-glass border-white/5 text-slate-300 hover:text-white hover:bg-white/10'}`}
           >
             <Globe className="w-4 h-4" />

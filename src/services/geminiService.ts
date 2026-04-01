@@ -3,6 +3,7 @@ import { HistoricalEvent } from '../data/historicalEvents';
 import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
 import { regions, EraKey, getRegionById } from '../data/regions';
+import { events as staticEvents } from '../data/events';
 import { QuizQuestion } from '../types/quiz';
 
 const ERA_BOUNDARIES = [
@@ -204,7 +205,7 @@ export const setApiKey = async (key: string) => {
  * Maps a year to a representative historical EraKey.
  * Used to cross-reference AI results against hardcoded eraPresence data.
  */
-function getEraForYear(year: number): { id: EraKey } {
+export function getEraForYear(year: number): { id: EraKey } {
   if (year < -1000) return { id: 'elamite' };
   if (year >= -1000 && year < -550) return { id: 'median' };
   if (year >= -550 && year < -330) return { id: 'achaemenid' };
@@ -598,15 +599,27 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
   const cached = getCached<DynamicRulerData[]>(cacheKey);
   if (cached) return cached;
 
-  const regionManifest = regions.map(r => ({
+  const knownRegionIds = staticEvents
+    .filter(e => year >= e.startDate && year <= e.endDate)
+    .map(e => e.regionId);
+
+  const missingRegions = regions.filter(r => !knownRegionIds.includes(r.id));
+
+  // If we already have full static coverage for this year across all regions, we don't need AI.
+  if (missingRegions.length === 0) return [];
+
+  const regionManifest = missingRegions.map(r => ({
     id: r.id,
-    knownAs: r.aliases.slice(0, 2), // max 2 aliases — keeps tokens low
-    anchorCity: r.anchorCities[0].name // single most famous city
+    knownAs: r.aliases.slice(0, 3), // max 3 aliases
+    anchorCities: r.anchorCities.map(c => ({
+      name: c.name,
+      historical: c.historicalNames || []
+    }))
   }));
 
   const prompt = `You are a strict data-entry historian mapping the exact political borders in Greater Iran for the year ${Math.abs(year)}${year<0?'BC':'AD'}.
-  For each region in the manifest below, return the ruling dynasty/power and primary ruler name. 
-  The anchorCity and aliases are for geographic grounding—return who ruled that specific city.
+  For the specific regions in the manifest below, return the ruling dynasty/power and primary ruler name. 
+  The anchorCities (including modern and historical names) and aliases are for geographic grounding—return who ruled those specific areas during that era. Do not hallucinate based on modern names if they didn't exist then.
   Use the id field as your key. 
   Return compact JSON ONLY. 
   Do not skip ANY of the regions listed in the manifest.
@@ -653,7 +666,7 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
               capitalCityFa: { type: "STRING" },
               startDate: { type: "INTEGER" },
               endDate: { type: "INTEGER" },
-              regionId: { type: "STRING", enum: regions.map(r => r.id) },
+              regionId: { type: "STRING", enum: missingRegions.map(r => r.id) },
               status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] },
               confidence: { type: "STRING", enum: ["high", "low"] }
             },
@@ -705,7 +718,7 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
                   capitalCityFa: { type: "STRING" },
                   startDate: { type: "INTEGER" },
                   endDate: { type: "INTEGER" },
-                  regionId: { type: "STRING", enum: regions.map(r => r.id) },
+                  regionId: { type: "STRING", enum: missingRegions.map(r => r.id) },
                   status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] },
                   confidence: { type: "STRING", enum: ["high", "low"] }
                 },
