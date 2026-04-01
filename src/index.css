@@ -439,3 +439,49 @@
   letter-spacing: normal !important;
   text-transform: none !important;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Intro Animation — Cinematic Keyframes
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Product title rises from slight blur into sharp focus */
+@keyframes introTitleRise {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 20px));
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    filter: blur(0);
+  }
+}
+
+/* Decorative horizontal rules expand from center */
+@keyframes introRuleExpand {
+  0% {
+    opacity: 0;
+    width: 0px;
+  }
+  100% {
+    opacity: 1;
+    width: 80px;
+  }
+}
+
+/* Skip button materializes subtly */
+@keyframes introSkipFade {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

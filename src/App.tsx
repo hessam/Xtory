@@ -32,10 +32,27 @@ const SettingsModal = lazy(() => import('./components/SettingsModal').then(m => 
 const SupportModal  = lazy(() => import('./components/SupportModal').then(m => ({ default: m.SupportModal })));
 const SearchModal   = lazy(() => import('./components/SearchModal').then(m => ({ default: m.SearchModal })));
 const QuizModal     = lazy(() => import('./components/QuizModal').then(m => ({ default: m.QuizModal })));
+const IntroAnimation = lazy(() => import('./components/IntroAnimation'));
 
 export default function App() {
   const [year, setYear] = useState<number>(-500);
-  const [lang, setLang] = useState<'en' | 'fa'>('en');
+  const [lang, setLang] = useState<'en' | 'fa'>(() => {
+    // 1. Respect explicit user choice (they toggled the language button)
+    const stored = localStorage.getItem('atlas_lang');
+    if (stored === 'fa' || stored === 'en') return stored;
+
+    // 2. Timezone signal — survives VPN, proxy, and English browser settings
+    //    Asia/Tehran = Iran, Asia/Kabul = Afghanistan (Dari/Farsi speakers)
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz === 'Asia/Tehran' || tz === 'Asia/Kabul') return 'fa';
+    } catch (_) {}
+
+    // 3. Browser language fallback (catches the ~2% with Persian browser)
+    if (navigator.language?.startsWith('fa')) return 'fa';
+
+    return 'en';
+  });
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [selectedHistoricalEvent, setSelectedHistoricalEvent] = useState<HistoricalEvent | null>(null);
@@ -58,6 +75,7 @@ export default function App() {
   const [selectedBanner, setSelectedBanner] = useState<{ url: string, title: string } | null>(null);
   const [legendMode, setLegendMode] = useState<'simple' | 'detailed'>('simple');
   const [aiError, setAiError] = useState<string | null>(null);
+  const [introComplete, setIntroComplete] = useState(false);
   const [showExtentTooltip, setShowExtentTooltip] = useState(false);
 
   // Auto-dismiss AI error after 6 seconds
@@ -105,20 +123,12 @@ export default function App() {
     import('./services/geminiService').then(m => m.setApiKey(apiKey)).catch(console.error);
   }, [apiKey]);
 
-  // Sync lang attribute to HTML tag
+  // Sync lang to HTML tag + persist to localStorage
   useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+    localStorage.setItem('atlas_lang', lang);
   }, [lang]);
-
-  // Check if it's the first visit
-  React.useEffect(() => {
-    const hasVisited = localStorage.getItem('hasVisitedPolySovereignty');
-    if (!hasVisited) {
-      setRunTour(true);
-      localStorage.setItem('hasVisitedPolySovereignty', 'true');
-    }
-  }, []);
 
   // Dynamic data state
   const [dynamicData, setDynamicData] = useState<{
@@ -316,6 +326,17 @@ export default function App() {
       className={`w-screen h-[100dvh] bg-[#020617] text-slate-200 overflow-hidden selection:bg-indigo-500/30 ${lang === 'fa' ? 'font-vazirmatn' : 'font-sans'}`}
       dir={lang === 'fa' ? 'rtl' : 'ltr'}
     >
+      {!introComplete && (
+        <Suspense fallback={null}>
+          <IntroAnimation 
+            onComplete={(autoRun) => {
+              setIntroComplete(true);
+              if (autoRun) setRunTour(true);
+            }} 
+            lang={lang} 
+          />
+        </Suspense>
+      )}
       <Suspense fallback={null}>
         <TourGuide lang={lang} run={runTour} onFinish={() => setRunTour(false)} />
       </Suspense>
