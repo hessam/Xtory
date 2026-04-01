@@ -19,7 +19,8 @@ import { Artifact } from '../data/artifacts';
 import { Vazir } from '../data/vazirs';
 import { pushToDataLayer } from '../services/tagManager';
 import { MapFilters } from './MapFilters';
-import { Sparkles, Swords, Skull, Landmark, Globe2, Building2, Book, ZoomIn, ZoomOut, Maximize } from 'lucide-react';
+import { Sparkles, Swords, Skull, Landmark, Globe2, Building2, Book, ZoomIn, ZoomOut, Maximize, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { mapPolygons, ZOOM_ANCHOR_CITIES, ZOOM_ALL_CITIES } from '../data/mapPolygons';
 
 interface MapLeafletProps {
@@ -111,6 +112,7 @@ export default function MapLeaflet(props: MapLeafletProps) {
   const { year, lang, onRegionClick, events, rulers, dynasties, historicalEvents = [], artifacts = [], vazirs = [], onHistoricalEventClick, onArtifactClick, onVazirClick } = props;
   const [currentZoom, setCurrentZoom] = useState(DEFAULT_ZOOM);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showLegend, setShowLegend] = useState(false);
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768);
@@ -218,10 +220,14 @@ export default function MapLeaflet(props: MapLeafletProps) {
     const isWeak = extent < 0.3;
     
     // Material Upgrade: Layered feel with extent-driven opacity
+    // Weight Adjustment: On mobile at low zoom, keep borders very thin to prevent crowding
+    const baseWeight = isMobile ? (currentZoom <= 5 ? 0.8 : 1.25) : 2.0;
+    const finalWeight = isWeak ? Math.min(1, baseWeight * 0.5) : (extent * baseWeight);
+    
     return { 
       fillColor: color, 
       color: color, 
-      weight: isWeak ? 1 : (extent * 2.5), 
+      weight: finalWeight, 
       fillOpacity: 0.08 + (extent * 0.52), 
       opacity: extent * 0.9, 
       className: `region-polygon transition-all duration-1000 ${isWeak ? 'breathing-border' : ''}`
@@ -298,6 +304,56 @@ export default function MapLeaflet(props: MapLeafletProps) {
         </Pane>
 
         <MapEventsHandler onRegionClick={(id) => onRegionClick(id as any)} onZoomChange={setCurrentZoom} />
+        
+        {/* Mobile Legend Toggle */}
+        <div 
+          className="sm:hidden absolute left-4 z-[1000] pointer-events-auto"
+          style={{ top: 'calc(var(--safe-top, 0px) + 72px)' }}
+        >
+          <button 
+            onClick={() => setShowLegend(!showLegend)}
+            className="liquid-glass px-3 py-2 rounded-xl text-[10px] font-bold text-white flex items-center gap-2 border border-white/10 active:scale-95 transition-all shadow-lg"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            {lang === 'en' ? 'MAP LEGEND' : 'راهنمای نقشه'}
+          </button>
+        </div>
+
+        {/* Legend Overlay */}
+        <AnimatePresence>
+          {showLegend && (
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="sm:hidden absolute left-4 liquid-glass-heavy p-3 rounded-2xl text-[9px] font-vazirmatn flex flex-col gap-1.5 text-slate-300 pointer-events-auto z-[1001] shadow-2xl overflow-visible"
+              style={{ top: 'calc(var(--safe-top, 0px) + 112px)', width: '180px' }}
+            >
+              <div className="flex justify-between items-center mb-1">
+                <div className="font-bold text-white uppercase tracking-wider text-[8px] opacity-80">{lang === 'en' ? 'Map Legend' : 'راهنمای نقشه'}</div>
+                <button onClick={() => setShowLegend(false)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
+                  <X className="w-3 h-3 text-slate-400" />
+                </button>
+              </div>
+              <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#a855f7] shadow-[0_0_8px_rgba(168,85,247,0.8)]"></div> {lang === 'en' ? 'Persian/Iranian' : 'ایرانی/پارسی'}</div>
+              <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#10b981] shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div> {lang === 'en' ? 'Arab/Caliphate' : 'عرب/خلافت'}</div>
+              <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#ea580c] shadow-[0_0_8px_rgba(234,88,12,0.8)]"></div> {lang === 'en' ? 'Turkic/Mongol' : 'ترک/مغول'}</div>
+              <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#0ea5e9] shadow-[0_0_8px_rgba(14,165,233,0.8)]"></div> {lang === 'en' ? 'Hellenic/Greek' : 'یونانی/هلنیستی'}</div>
+              <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#b45309] shadow-[0_0_8px_rgba(180,83,9,0.8)]"></div> {lang === 'en' ? 'Nomadic/Steppe' : 'عشایر/استپ'}</div>
+              <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#e11d48] shadow-[0_0_8px_rgba(225,29,72,0.8)]"></div> {lang === 'en' ? 'Foreign Imperial' : 'امپراتوری خارجی'}</div>
+              <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#78350f] shadow-[0_0_8px_rgba(120,53,15,0.8)]"></div> {lang === 'en' ? 'Babylonian/Semitic' : 'بابلی/سامی'}</div>
+              <div className="w-full h-px bg-white/5 my-0.5"></div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-2 rounded-sm border border-white/10 bg-indigo-500/80"></div>
+                {lang === 'en' ? 'Direct Control' : 'کنترل مستقیم'}
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-2 rounded-sm border border-white/10 bg-indigo-500/30"></div>
+                {lang === 'en' ? 'Influence/Vassal' : 'نفوذ/دست‌نشانده'}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* Static Background Neighbours (Hidden below zoom 4) */}
         {currentZoom <= 4 && (
