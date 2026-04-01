@@ -659,7 +659,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
 
         {/* ── Regional Status ── */}
         <div className="mb-5 p-4 liquid-glass rounded-2xl border border-white/5">
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{region?.name[lang]?.toUpperCase()}</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{region?.displayName[lang]?.toUpperCase()}</p>
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full shrink-0 ${isDirect ? 'bg-emerald-400' : 'bg-amber-400'}`} />
             <p className="text-sm text-slate-300 leading-relaxed">{event.status}</p>
@@ -679,12 +679,12 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
                   className="flex-1 px-3 py-2 liquid-glass border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 calm-transition"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && customWhatIf.trim()) {
-                      handleGenerateWhatIf(event.status, ruler.name[lang], region?.name[lang] || '', year, customWhatIf);
+                      handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang] || '', year, customWhatIf);
                     }
                   }}
                 />
                 <button
-                  onClick={() => handleGenerateWhatIf(event.status, ruler.name[lang], region?.name[lang] || '', year, customWhatIf)}
+                  onClick={() => handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang] || '', year, customWhatIf)}
                   disabled={!customWhatIf.trim() || isGenerating}
                   className="p-2 liquid-glass text-emerald-400 border border-white/10 rounded-xl hover:bg-white/10 disabled:opacity-50 calm-transition"
                 >
@@ -726,7 +726,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
             <button
               onClick={() => {
                 if (activeTab !== 'whatif') {
-                  handleGenerateWhatIf(event.status, ruler.name[lang], region?.name[lang] || '', year);
+                  handleGenerateWhatIf(event.status, ruler.name[lang], region?.displayName[lang] || '', year);
                 } else {
                   setActiveTab('details');
                 }
@@ -774,10 +774,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
                 <MapPin className="w-3 h-3" />
                 {lang === 'en' ? 'Region' : 'منطقه'}
               </span>
-              <WikipediaLink query={isGlobal ? 'Greater Iran' : (region?.name[lang] || '')} lang={lang} />
+              <WikipediaLink query={isGlobal ? 'Greater Iran' : (region?.displayName[lang] || '')} lang={lang} />
             </div>
             <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>
-              {isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.name[lang]}
+              {isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.displayName[lang]}
             </h2>
             <p className="text-sm text-slate-400">
               {Math.abs(year)} {year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}
@@ -812,7 +812,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
                   <div>
                     <div className="font-semibold text-sm text-white">{r.name[lang]}</div>
                     <div className="text-xs text-slate-400 mt-0.5">
-                      {d.name[lang]}{isGlobal && eventRegion ? ` · ${eventRegion.name[lang]}` : ''}
+                      {d.name[lang]}{isGlobal && eventRegion ? ` · ${eventRegion.displayName[lang]}` : ''}
                     </div>
                   </div>
                   <span className="text-xs text-slate-500 italic shrink-0 ml-2">{event.status}</span>
@@ -845,7 +845,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
         {/* ── Always-Visible Action ── */}
         <div className="pt-2 border-t border-white/5">
           <button
-            onClick={() => { if (activeTab !== 'context') { handleGenerateRegionContext(isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.name[lang] || '', year); } else { setActiveTab('details'); } }}
+            onClick={() => { if (activeTab !== 'context') { handleGenerateRegionContext(isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.displayName[lang] || '', year); } else { setActiveTab('details'); } }}
             className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold calm-transition border ${activeTab === 'context' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'liquid-glass border-white/5 text-slate-300 hover:text-white hover:bg-white/10'}`}
           >
             <Globe className="w-4 h-4" />

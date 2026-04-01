@@ -182,3 +182,160 @@
   pointer-events: auto !important;
   z-index: 9999 !important;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Leaflet Customizations
+   ───────────────────────────────────────────────────────────────────────────── */
+@import 'leaflet/dist/leaflet.css';
+
+.leaflet-tile-pane {
+  filter: brightness(0.9) contrast(1.1) saturate(0.8) sepia(0.1);
+}
+
+.map-tint-overlay {
+  position: absolute;
+  top: -3000px;
+  left: -3000px;
+  width: 10000px;
+  height: 10000px;
+  background: #1a1535;
+  mix-blend-mode: multiply;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.map-vignette {
+  position: absolute; /* Absolute to the map wrapper so it doesn't cover the global nav bar, but doesn't pan either */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 20%, rgba(8, 6, 22, 0.8) 100%);
+  pointer-events: none;
+  z-index: 401;
+}
+
+.sketch-path-1 path {
+  filter: url(#sketch-1);
+  transform: translate(0.5px, 0.5px);
+}
+.sketch-path-2 path {
+  filter: url(#sketch-2);
+  transform: translate(-0.5px, 1px);
+}
+.sketch-path-3 path {
+  filter: url(#sketch-3);
+  transform: translate(1px, -0.5px);
+}
+
+.neighbour-label-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neighbour-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+.region-label-cinematic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.font-vazirmatn {
+  font-family: 'Vazirmatn', sans-serif !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  direction: rtl;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif !important;
+  letter-spacing: 6px !important;
+  text-transform: uppercase !important;
+}
+
+.city-label-gold {
+  color: #FFD875 !important;
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.4), 0 2px 4px rgba(0,0,0,0.9) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px;
+}
+
+.city-label-major {
+  color: #E8D090 !important;
+  opacity: 0.8;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.95) !important;
+  font-weight: 600 !important;
+}
+
+.region-label-cinematic {
+  color: rgba(180, 170, 210, 0.5) !important;
+  text-transform: uppercase;
+  letter-spacing: 4px !important;
+  font-weight: 800 !important;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.8) !important;
+}
+
+/* Material upgrade for territory fills */
+.region-polygon {
+  filter: drop-shadow(0 0 12px rgba(0,0,0,0.5));
+  stroke-dasharray: none;
+  transition: all 1s ease;
+}
+
+
+.leaflet-container {
+  background-color: #0a1410 !important;
+  font-family: inherit;
+}
+
+/* Hide default Leaflet controls — we use custom ones */
+.leaflet-control-zoom {
+  display: none;
+}
+
+.leaflet-control-attribution {
+  font-size: 9px;
+  opacity: 0.3;
+  background: transparent !important;
+  color: rgba(201, 169, 110, 0.4) !important;
+}
+
+/* Custom Tooltip Clean overrides */
+.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.leaflet-tooltip::before {
+  display: none !important;
+}
+.custom-region-label {
+  background: transparent;
+  border: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SVG Filter Bindings
+   ───────────────────────────────────────────────────────────────────────────── */
+.region-polygon {
+  filter: url(#subtle-relief);
+}
+
+.event-marker {
+  filter: url(#eventGlow);
+}
+
+.gold-text {
+  filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9));
+}

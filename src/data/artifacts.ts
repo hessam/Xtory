@@ -28,7 +28,7 @@ export const artifacts: Artifact[] = [
     },
     year: -1250,
     currentLocation: { en: "Khuzestan, Iran", fa: "خوزستان، ایران" },
-    coordinates: [350, 280],
+    coordinates: [32.0083, 48.5200],
     type: "monument",
     regionId: "mesopotamia"
   },
@@ -41,7 +41,7 @@ export const artifacts: Artifact[] = [
     },
     year: -520,
     currentLocation: { en: "Kermanshah, Iran", fa: "کرمانشاه، ایران" },
-    coordinates: [360, 260],
+    coordinates: [34.3853, 47.4363],
     type: "monument",
     regionId: "jibal"
   },
@@ -54,7 +54,7 @@ export const artifacts: Artifact[] = [
     },
     year: -530,
     currentLocation: { en: "Pasargadae, Fars, Iran", fa: "پاسارگاد، فارس، ایران" },
-    coordinates: [440, 360],
+    coordinates: [30.2036, 53.1788],
     type: "monument",
     regionId: "fars"
   },
@@ -67,7 +67,7 @@ export const artifacts: Artifact[] = [
     },
     year: -550,
     currentLocation: { en: "Fars, Iran", fa: "فارس، ایران" },
-    coordinates: [445, 355],
+    coordinates: [30.2036, 53.1788],
     type: "architecture",
     regionId: "fars"
   },
@@ -80,7 +80,7 @@ export const artifacts: Artifact[] = [
     },
     year: -539,
     currentLocation: { en: "British Museum, London", fa: "موزه بریتانیا، لندن" },
-    coordinates: [370, 290], // Babylon approx
+    coordinates: [32.5363, 44.4208], // Babylon approx
     type: "artifact",
     regionId: "mesopotamia"
   },
@@ -93,7 +93,7 @@ export const artifacts: Artifact[] = [
     },
     year: -515,
     currentLocation: { en: "Fars Province, Iran", fa: "استان فارس، ایران" },
-    coordinates: [450, 350], // Persepolis approx
+    coordinates: [29.9360, 52.8906], // Persepolis approx
     type: "monument",
     regionId: "fars"
   },
@@ -106,7 +106,7 @@ export const artifacts: Artifact[] = [
     },
     year: 540,
     currentLocation: { en: "Salman Pak, Iraq", fa: "سلمان پاک، عراق" },
-    coordinates: [375, 285], // Ctesiphon approx
+    coordinates: [33.0936, 44.5794], // Ctesiphon approx
     type: "monument",
     regionId: "mesopotamia"
   },
@@ -119,7 +119,7 @@ export const artifacts: Artifact[] = [
     },
     year: 1430,
     currentLocation: { en: "Golestan Palace, Tehran", fa: "کاخ گلستان، تهران" },
-    coordinates: [550, 250], // Herat approx
+    coordinates: [34.3419, 62.2031], // Herat approx
     type: "manuscript",
     regionId: "khorasan"
   },
@@ -132,7 +132,7 @@ export const artifacts: Artifact[] = [
     },
     year: 1629,
     currentLocation: { en: "Isfahan, Iran", fa: "اصفهان، ایران" },
-    coordinates: [420, 310], // Isfahan approx
+    coordinates: [32.6577, 51.6776], // Isfahan approx
     type: "architecture",
     regionId: "jibal"
   }

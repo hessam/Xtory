@@ -2,30 +2,94 @@ import type { GoogleGenAI } from "@google/genai";
 import { HistoricalEvent } from '../data/historicalEvents';
 import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
+import { regions, EraKey, getRegionById } from '../data/regions';
 import { QuizQuestion } from '../types/quiz';
+
+const ERA_BOUNDARIES = [
+  { id: 'median',        start: -678, end: -550 },
+  { id: 'achaemenid',    start: -550, end: -330 },
+  { id: 'seleucid',      start: -330, end: -247 },
+  { id: 'parthian',      start: -247, end:  224  },
+  { id: 'sasanian',      start:  224, end:  651  },
+  { id: 'umayyad',       start:  661, end:  750  },
+  { id: 'abbasid',       start:  750, end:  1258 },
+  { id: 'samanid',       start:  819, end:  999  },
+  { id: 'buyid',         start:  934, end:  1062 },
+  { id: 'ghaznavid',     start:  977, end:  1186 },
+  { id: 'seljuk',        start: 1037, end:  1194 },
+  { id: 'ilkhanid',      start: 1256, end:  1335 },
+  { id: 'timurid',       start: 1370, end:  1507 },
+  { id: 'safavid',       start: 1501, end:  1736 },
+];
+
+function getYearBucketKey(year: number, prefix: string, lang: string): string {
+  const bucket = Math.floor(year / 25) * 25;
+  return `${prefix}_${bucket}_${lang}`;
+}
+
+/**
+ * Returns a hybrid cache key.
+ * Short eras get a single static key.
+ * Long eras (>150 years) use 25-year buckets to preserve map granularity.
+ */
+function getHybridCacheKey(year: number, prefix: string, lang: string): string {
+  const era = ERA_BOUNDARIES.find(e => year >= e.start && year <= e.end);
+  
+  if (era) {
+    const eraLength = era.end - era.start;
+    if (eraLength > 150) {
+      return getYearBucketKey(year, `${prefix}_${era.id}`, lang);
+    }
+    return `${prefix}_${era.id}_${lang}`;
+  }
+  
+  return getYearBucketKey(year, prefix, lang);
+}
 
 // --- IN-MEMORY SESSION CACHE (LRU) ---
 const CACHE_MAP = new Map<string, any>();
 const MAX_CACHE_SIZE = 50;
 
 function getCached<T>(key: string): T | null {
+  // Check memory first
   if (CACHE_MAP.has(key)) {
-    // Re-insert to mark as recently used (LRU logic)
     const value = CACHE_MAP.get(key);
     CACHE_MAP.delete(key);
     CACHE_MAP.set(key, value);
     return value as T;
+  }
+  
+  // Back with localStorage if in browser
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(`xtory_${key}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Sync back to memory for faster subsequent access
+        CACHE_MAP.set(key, parsed);
+        return parsed as T;
+      }
+    } catch (e) {
+      console.warn("Storage access failed", e);
+    }
   }
   return null;
 }
 
 function setCache<T>(key: string, value: T): void {
   if (CACHE_MAP.size >= MAX_CACHE_SIZE) {
-    // Delete the oldest entry (first key in map iteration)
     const oldestKey = CACHE_MAP.keys().next().value;
     if (oldestKey !== undefined) CACHE_MAP.delete(oldestKey);
   }
   CACHE_MAP.set(key, value);
+  
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(`xtory_${key}`, JSON.stringify(value));
+    } catch (e) {
+      console.warn("Storage write failed", e);
+    }
+  }
 }
 
 // --- NEW PROMPT HELPERS & METADATA PARSING --- 
@@ -134,6 +198,51 @@ export const setApiKey = async (key: string) => {
   aiInstance = new GoogleGenAIClass({ apiKey: key });
 };
 
+// --- GEO-CORRECTION HELPERS ---
+
+/**
+ * Maps a year to a representative historical EraKey.
+ * Used to cross-reference AI results against hardcoded eraPresence data.
+ */
+function getEraForYear(year: number): { id: EraKey } {
+  if (year < -1000) return { id: 'elamite' };
+  if (year >= -1000 && year < -550) return { id: 'median' };
+  if (year >= -550 && year < -330) return { id: 'achaemenid' };
+  if (year >= -330 && year < -247) return { id: 'seleucid' };
+  if (year >= -247 && year < 224) return { id: 'parthian' };
+  if (year >= 224 && year < 651) return { id: 'sasanian' };
+  if (year >= 651 && year < 750) return { id: 'umayyad' };
+  if (year >= 750 && year < 850) return { id: 'abbasid' };
+  if (year >= 850 && year < 950) return { id: 'samanid' };
+  if (year >= 950 && year < 1030) return { id: 'buyid' };
+  if (year >= 1030 && year < 1186) return { id: 'ghaznavid' };
+  if (year >= 1186 && year < 1250) return { id: 'seljuk' };
+  if (year >= 1250 && year < 1350) return { id: 'ilkhanid' };
+  if (year >= 1350 && year < 1500) return { id: 'timurid' };
+  return { id: 'safavid' };
+}
+
+/**
+ * Validates AI results against known geographic constraints.
+ * If AI places a ruler with "low" confidence in a region where that era's
+ * presence is not pre-authored, we flag it as contested.
+ */
+function validateRegionResult(result: DynamicRulerData, year: number): DynamicRulerData {
+  const region = getRegionById(result.regionId as any);
+  if (!region) return result;
+
+  const era = getEraForYear(year);
+  const knownPresence = region.eraPresence[era.id];
+
+  // AI occasionally assigns a ruler to the wrong region (especially contested border regions).
+  // If we have zero hardcoded record of this era's presence in the region AND the AI is unsure:
+  if (!knownPresence && result.confidence === "low") {
+    result.status = "Contested/Warzone"; // Flag rather than render wrong data
+  }
+  
+  return result;
+}
+
 const getAiAsync = async () => {
   if (!aiInstance) throw new Error("API key not set");
   return aiInstance;
@@ -155,6 +264,7 @@ export interface DynamicRulerData {
   endDate: number;
   regionId: string;
   status: 'Direct Control' | 'Vassal State' | 'Contested/Warzone' | 'Sphere of Influence';
+  confidence?: 'high' | 'low';
 }
 
 export interface SearchResult {
@@ -343,8 +453,7 @@ export async function fetchHistoricalEventsForYear(year: number, lang: 'en' | 'f
     setCache(cacheKey, result);
     return result;
   } catch (error) {
-    console.error("Error fetching historical events:", error);
-    return [];
+    throw new Error(handleAIError(error, lang));
   }
 }
 
@@ -408,8 +517,7 @@ export async function fetchHistoricalFiguresForYear(year: number, lang: 'en' | '
     setCache(cacheKey, result);
     return result;
   } catch (error) {
-    console.error("Error fetching historical figures:", error);
-    return [];
+    throw new Error(handleAIError(error, lang));
   }
 }
 
@@ -481,23 +589,31 @@ export async function fetchArtifactsForYear(year: number, lang: 'en' | 'fa'): Pr
     setCache(cacheKey, result);
     return result;
   } catch (error) {
-    console.error("Error fetching artifacts:", error);
-    return [];
+    throw new Error(handleAIError(error, lang));
   }
 }
 
 export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'): Promise<DynamicRulerData[]> {
-  const cacheKey = `data_${year}_${lang}`;
+  const cacheKey = getHybridCacheKey(year, 'rulers', lang);
   const cached = getCached<DynamicRulerData[]>(cacheKey);
   if (cached) return cached;
 
-  const prompt = `You are a strict data-entry historian mapping the exact political borders in Greater Iran for the year ${Math.abs(year)}${year<0?'BC':'AD'}.
-  You MUST provide the ruler and dynasty status for EVERY SINGLE ONE of these explicitly required regions:
-  ["anatolia", "caucasus", "mesopotamia", "jibal", "tabaristan", "fars", "khorasan", "transoxiana", "sistan", "bactria", "indus"].
-  
-  CRITICAL RULE: If a single large empire (e.g., Achaemenid, Sassanid, Caliphate) controls multiple regions, you MUST output a separate JSON object for EACH region it controls. Do not skip ANY of the 11 regions.
+  const regionManifest = regions.map(r => ({
+    id: r.id,
+    knownAs: r.aliases.slice(0, 2), // max 2 aliases — keeps tokens low
+    anchorCity: r.anchorCities[0].name // single most famous city
+  }));
 
-  Return ONLY a JSON array of exactly 11 objects (one for each region). Each object must contain:
+  const prompt = `You are a strict data-entry historian mapping the exact political borders in Greater Iran for the year ${Math.abs(year)}${year<0?'BC':'AD'}.
+  For each region in the manifest below, return the ruling dynasty/power and primary ruler name. 
+  The anchorCity and aliases are for geographic grounding—return who ruled that specific city.
+  Use the id field as your key. 
+  Return compact JSON ONLY. 
+  Do not skip ANY of the regions listed in the manifest.
+  
+  Regions Manifest: ${JSON.stringify(regionManifest)}
+
+  Required fields for each region object:
   - rulerNameEn: Ruler's name in English
   - rulerNameFa: Ruler's name in Persian
   - rulerTitleEn: Ruler's title in English (e.g., "King of Kings", "Emperor")
@@ -510,8 +626,9 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
   - capitalCityFa: Capital city in Persian
   - startDate: Start year of their reign (negative for BC)
   - endDate: End year of their reign (negative for BC)
-  - regionId: Must be exactly one of the 11 allowed strings.
-  - status: Must be exactly one of: "Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"`;
+  - regionId: Must be exactly the id from the manifest.
+  - status: Must be exactly one of: "Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"
+  - confidence: "high" if you are extremely certain of this ruler/region mapping, "low" if it's a fringe/contested area or historical sources are silent.`;
 
   try {
     const response = await (await getAiAsync()).models.generateContent({
@@ -536,29 +653,83 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
               capitalCityFa: { type: "STRING" },
               startDate: { type: "INTEGER" },
               endDate: { type: "INTEGER" },
-              regionId: { type: "STRING", enum: ["anatolia", "caucasus", "mesopotamia", "jibal", "tabaristan", "fars", "khorasan", "transoxiana", "sistan", "bactria", "indus"] },
-              status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] }
+              regionId: { type: "STRING", enum: regions.map(r => r.id) },
+              status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] },
+              confidence: { type: "STRING", enum: ["high", "low"] }
             },
-            required: ["rulerNameEn", "rulerNameFa", "rulerTitleEn", "rulerTitleFa", "dynastyNameEn", "dynastyNameFa", "dynastyColorFamily", "dynastyClassification", "capitalCityEn", "capitalCityFa", "startDate", "endDate", "regionId", "status"]
+            required: ["rulerNameEn", "rulerNameFa", "rulerTitleEn", "rulerTitleFa", "dynastyNameEn", "dynastyNameFa", "dynastyColorFamily", "dynastyClassification", "capitalCityEn", "capitalCityFa", "startDate", "endDate", "regionId", "status", "confidence"]
           }
         }
       }
     });
-    
+
     const text = response.text || "[]";
     const data = JSON.parse(text);
     
-    // Add unique IDs
-    const result = data.map((item: any, index: number) => ({
-      ...item,
-      id: `ai_${year}_${index}_${Date.now()}`
-    }));
+    const result = data.map((item: any, index: number) => {
+      const entry = {
+        ...item,
+        id: `ai_${year}_${index}_${Date.now()}`
+      };
+      return validateRegionResult(entry, year);
+    });
 
     setCache(cacheKey, result);
     return result;
-  } catch (error) {
-    console.error("Error fetching historical data:", error);
-    return [];
+  } catch (error: any) {
+    const msg = error?.message || "";
+    if (msg.includes("503") || msg.toLowerCase().includes("unavailable") || msg.toLowerCase().includes("high demand")) {
+      console.warn("Gemini 3 Flash busy, retrying in 2 seconds...");
+      await new Promise(r => setTimeout(r, 2000));
+      try {
+        // Simple retry once
+        const response = await (await getAiAsync()).models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  rulerNameEn: { type: "STRING" },
+                  rulerNameFa: { type: "STRING" },
+                  rulerTitleEn: { type: "STRING" },
+                  rulerTitleFa: { type: "STRING" },
+                  dynastyNameEn: { type: "STRING" },
+                  dynastyNameFa: { type: "STRING" },
+                  dynastyColorFamily: { type: "STRING", enum: ["persian", "arab", "turkic", "greek", "nomadic", "foreign", "semitic"] },
+                  dynastyClassification: { type: "STRING" },
+                  capitalCityEn: { type: "STRING" },
+                  capitalCityFa: { type: "STRING" },
+                  startDate: { type: "INTEGER" },
+                  endDate: { type: "INTEGER" },
+                  regionId: { type: "STRING", enum: regions.map(r => r.id) },
+                  status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] },
+                  confidence: { type: "STRING", enum: ["high", "low"] }
+                },
+                required: ["rulerNameEn", "rulerNameFa", "rulerTitleEn", "rulerTitleFa", "dynastyNameEn", "dynastyNameFa", "dynastyColorFamily", "dynastyClassification", "capitalCityEn", "capitalCityFa", "startDate", "endDate", "regionId", "status", "confidence"]
+              }
+            }
+          }
+        });
+        const text = response.text || "[]";
+        const data = JSON.parse(text);
+        const result = data.map((item: any, index: number) => {
+          const entry = {
+            ...item,
+            id: `ai_retry_${year}_${index}_${Date.now()}`
+          };
+          return validateRegionResult(entry, year);
+        });
+        setCache(cacheKey, result);
+        return result;
+      } catch (retryError) {
+        throw new Error(handleAIError(retryError, lang));
+      }
+    }
+    throw new Error(handleAIError(error, lang));
   }
 }
 

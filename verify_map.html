@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Region Verification Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map { height: 100vh; width: 100%; }
+        .city-label-green { background: rgba(0,255,0,0.5); border: 1px solid green; border-radius: 5px; padding: 2px; font-family: sans-serif; font-size: 10px; pointer-events: none; }
+        .city-label-red { background: rgba(255,0,0,0.5); border: 1px solid red; border-radius: 5px; padding: 2px; font-weight: bold; font-family: sans-serif; font-size: 10px; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        const geojson = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"id": "mesopotamia", "zone": "western_lowlands"}, "geometry": {"type": "Polygon", "coordinates": [[[43.0, 37.0], [44.3, 36.5], [44.8, 35.5], [45.5, 35.0], [45.0, 34.2], [44.5, 33.5], [44.0, 33.0], [44.2, 32.5], [44.8, 32.0], [45.5, 31.5], [46.5, 31.0], [47.5, 30.5], [48.0, 30.0], [48.5, 29.5], [48.0, 29.0], [47.5, 29.5], [46.5, 30.0], [45.5, 30.5], [44.5, 31.5], [43.5, 32.5], [43.0, 33.5], [42.5, 34.5], [42.5, 35.5], [42.8, 36.5], [43.0, 37.0]]]}}, {"type": "Feature", "properties": {"id": "khuzestan", "zone": "core_plateau"}, "geometry": {"type": "Polygon", "coordinates": [[[48.0, 30.0], [48.5, 29.5], [49.0, 29.0], [49.5, 28.5], [49.8, 29.0], [50.5, 29.5], [51.0, 30.0], [50.8, 30.8], [50.5, 31.5], [50.0, 32.0], [49.5, 32.5], [49.0, 33.0], [48.5, 33.0], [48.0, 32.5], [47.5, 32.0], [47.0, 31.5], [47.5, 30.5], [48.0, 30.0]]]}}, {"type": "Feature", "properties": {"id": "fars", "zone": "core_plateau"}, "geometry": {"type": "Polygon", "coordinates": [[[51.0, 30.0], [52.0, 29.5], [53.0, 28.5], [54.0, 27.5], [55.0, 27.0], [56.0, 27.2], [56.5, 28.0], [56.0, 29.0], [55.5, 30.0], [55.0, 30.5], [54.5, 31.0], [54.0, 31.5], [53.0, 32.0], [52.0, 32.5], [51.5, 32.0], [50.8, 31.5], [50.5, 31.0], [50.8, 30.5], [51.0, 30.0]]]}}, {"type": "Feature", "properties": {"id": "jibal", "zone": "core_plateau"}, "geometry": {"type": "Polygon", "coordinates": [[[49.0, 33.0], [49.5, 32.5], [50.0, 32.0], [50.5, 31.5], [51.5, 32.0], [52.0, 32.5], [53.0, 32.0], [54.0, 31.5], [54.5, 32.0], [55.0, 33.0], [55.5, 34.0], [55.0, 35.0], [54.5, 35.5], [53.5, 36.0], [52.5, 36.0], [51.5, 35.8], [50.5, 35.5], [49.5, 35.0], [49.0, 34.5], [48.5, 34.0], [48.5, 33.5], [49.0, 33.0]]]}}, {"type": "Feature", "properties": {"id": "azerbaijan", "zone": "north_caucasus"}, "geometry": {"type": "Polygon", "coordinates": [[[44.5, 39.5], [45.0, 38.5], [45.5, 38.0], [46.0, 37.5], [46.5, 37.0], [47.0, 36.5], [47.5, 36.0], [48.0, 35.5], [48.5, 36.0], [49.0, 36.5], [49.5, 37.0], [49.0, 37.5], [48.5, 38.0], [48.0, 38.5], [47.5, 39.0], [47.0, 39.5], [46.5, 39.8], [46.0, 40.0], [45.5, 40.0], [44.5, 39.5]]]}}, {"type": "Feature", "properties": {"id": "caucasus", "zone": "north_caucasus"}, "geometry": {"type": "Polygon", "coordinates": [[[43.0, 37.0], [42.8, 37.5], [42.5, 38.5], [43.0, 39.5], [43.5, 40.5], [43.0, 41.5], [43.5, 42.0], [44.5, 42.5], [45.5, 42.0], [46.5, 41.5], [47.5, 41.0], [48.5, 40.5], [49.5, 40.0], [49.0, 39.0], [48.5, 38.0], [48.0, 38.5], [47.5, 39.0], [47.0, 39.5], [46.5, 39.8], [46.0, 40.0], [45.5, 40.0], [44.5, 39.5], [44.0, 38.5], [43.5, 37.5], [43.0, 37.0]]]}}, {"type": "Feature", "properties": {"id": "caspian_coast", "zone": "north_caucasus"}, "geometry": {"type": "Polygon", "coordinates": [[[49.5, 37.0], [49.5, 40.0], [50.0, 39.5], [50.5, 39.0], [51.0, 38.5], [51.5, 38.0], [52.0, 37.5], [52.5, 37.0], [53.0, 36.8], [53.5, 36.8], [54.0, 37.0], [54.5, 37.2], [55.0, 37.5], [55.5, 37.8], [55.5, 37.0], [55.0, 36.5], [54.5, 36.0], [54.0, 35.8], [53.5, 36.0], [52.5, 36.0], [51.5, 35.8], [50.5, 35.5], [49.5, 35.0], [49.0, 35.5], [49.0, 36.0], [49.2, 36.5], [49.5, 37.0]]]}}, {"type": "Feature", "properties": {"id": "khorasan", "zone": "eastern_expanse"}, "geometry": {"type": "Polygon", "coordinates": [[[55.5, 37.8], [56.5, 38.0], [57.5, 37.5], [58.5, 37.0], [59.5, 36.5], [60.5, 36.0], [61.5, 36.5], [62.5, 37.0], [63.5, 36.5], [64.0, 36.0], [65.0, 35.5], [66.0, 35.0], [67.0, 35.5], [67.5, 35.0], [67.0, 34.0], [66.0, 33.5], [65.0, 33.0], [64.0, 32.5], [63.0, 32.0], [62.0, 31.5], [61.0, 31.5], [60.0, 32.0], [59.0, 32.5], [58.0, 33.0], [57.0, 33.5], [56.0, 33.5], [55.5, 34.0], [55.0, 35.0], [55.0, 36.0], [55.2, 36.5], [55.5, 37.0], [55.5, 37.8]]]}}, {"type": "Feature", "properties": {"id": "sistan", "zone": "eastern_expanse"}, "geometry": {"type": "Polygon", "coordinates": [[[60.0, 32.0], [61.0, 31.5], [62.0, 31.5], [63.0, 32.0], [64.0, 32.5], [65.0, 33.0], [66.0, 33.5], [67.0, 34.0], [68.0, 34.5], [69.0, 34.0], [69.5, 33.0], [69.0, 32.0], [68.5, 31.0], [68.0, 30.0], [67.5, 29.5], [67.0, 29.0], [66.0, 28.5], [65.0, 28.0], [64.0, 28.5], [63.0, 29.0], [62.0, 29.5], [61.0, 29.5], [60.0, 29.5], [59.5, 30.0], [59.5, 31.0], [60.0, 32.0]]]}}, {"type": "Feature", "properties": {"id": "makran", "zone": "eastern_expanse"}, "geometry": {"type": "Polygon", "coordinates": [[[56.5, 28.0], [57.0, 27.5], [57.5, 26.5], [58.0, 25.5], [59.0, 25.0], [60.0, 25.3], [61.0, 25.0], [62.0, 25.2], [63.5, 25.5], [64.5, 25.8], [65.5, 26.5], [66.5, 27.0], [67.0, 27.5], [67.0, 28.5], [66.5, 28.5], [66.0, 28.5], [65.0, 28.0], [64.0, 28.5], [63.0, 29.0], [62.0, 29.5], [61.0, 29.5], [60.0, 29.5], [59.5, 30.0], [59.0, 30.0], [58.5, 29.5], [58.0, 29.0], [57.5, 28.5], [56.5, 28.0]]]}}, {"type": "Feature", "properties": {"id": "transoxiana", "zone": "ne_frontier"}, "geometry": {"type": "Polygon", "coordinates": [[[62.5, 37.0], [63.0, 37.5], [63.5, 38.0], [64.5, 39.5], [65.5, 40.0], [66.5, 40.5], [67.5, 41.0], [68.5, 41.5], [69.5, 41.0], [70.5, 40.5], [71.0, 40.0], [71.5, 39.5], [71.0, 39.0], [70.5, 38.5], [70.0, 38.0], [69.5, 37.5], [69.0, 37.0], [68.5, 36.5], [68.0, 36.0], [67.5, 35.0], [67.0, 35.5], [66.0, 35.0], [65.0, 35.5], [64.0, 36.0], [63.5, 36.5], [62.5, 37.0]]]}}, {"type": "Feature", "properties": {"id": "chorasmia", "zone": "ne_frontier"}, "geometry": {"type": "Polygon", "coordinates": [[[56.5, 38.0], [57.0, 38.5], [57.5, 39.5], [58.0, 40.5], [58.5, 41.5], [59.0, 42.0], [60.0, 42.5], [61.0, 42.0], [61.5, 41.5], [62.0, 41.0], [62.5, 40.5], [63.0, 40.0], [63.5, 39.5], [64.0, 39.0], [64.5, 39.5], [65.5, 40.0], [64.5, 39.5], [63.5, 38.0], [63.0, 37.5], [62.5, 37.0], [61.5, 36.5], [60.5, 36.0], [59.5, 36.5], [58.5, 37.0], [57.5, 37.5], [56.5, 38.0]]]}}]};
+        const cities = [{"name": "Persepolis", "region_id": "fars", "lat": 29.935, "lng": 52.891}, {"name": "Shiraz", "region_id": "fars", "lat": 29.591, "lng": 52.583}, {"name": "Pasargadae", "region_id": "fars", "lat": 30.193, "lng": 53.168}, {"name": "Istakhr", "region_id": "fars", "lat": 29.979, "lng": 52.816}, {"name": "Bishapur", "region_id": "fars", "lat": 29.776, "lng": 51.57}, {"name": "Gor (Firuzabad)", "region_id": "fars", "lat": 28.852, "lng": 52.56}, {"name": "Ecbatana (Hamadan)", "region_id": "jibal", "lat": 34.799, "lng": 48.515}, {"name": "Isfahan", "region_id": "jibal", "lat": 32.661, "lng": 51.68}, {"name": "Rayy", "region_id": "jibal", "lat": 35.598, "lng": 51.503}, {"name": "Nihavand", "region_id": "jibal", "lat": 34.2, "lng": 48.367}, {"name": "Qazvin", "region_id": "jibal", "lat": 36.27, "lng": 50.004}, {"name": "Susa", "region_id": "khuzestan", "lat": 32.188, "lng": 48.258}, {"name": "Gundeshapur", "region_id": "khuzestan", "lat": 32.31, "lng": 48.55}, {"name": "Ahvaz", "region_id": "khuzestan", "lat": 31.319, "lng": 48.671}, {"name": "Shushtar", "region_id": "khuzestan", "lat": 32.045, "lng": 48.853}, {"name": "Chogha Zanbil", "region_id": "khuzestan", "lat": 32.01, "lng": 48.524}, {"name": "Ctesiphon", "region_id": "mesopotamia", "lat": 33.094, "lng": 44.581}, {"name": "Babylon", "region_id": "mesopotamia", "lat": 32.542, "lng": 44.421}, {"name": "Baghdad", "region_id": "mesopotamia", "lat": 33.341, "lng": 44.4}, {"name": "Al-Hira", "region_id": "mesopotamia", "lat": 31.99, "lng": 44.41}, {"name": "Seleucia", "region_id": "mesopotamia", "lat": 33.089, "lng": 44.559}, {"name": "Ganzak (Takht-e Soleyman)", "region_id": "azerbaijan", "lat": 36.602, "lng": 47.237}, {"name": "Tabriz", "region_id": "azerbaijan", "lat": 38.08, "lng": 46.293}, {"name": "Ardabil", "region_id": "azerbaijan", "lat": 38.249, "lng": 48.299}, {"name": "Maragheh", "region_id": "azerbaijan", "lat": 37.398, "lng": 46.237}, {"name": "Urmia", "region_id": "azerbaijan", "lat": 37.553, "lng": 45.075}, {"name": "Darband (Derbent)", "region_id": "caucasus", "lat": 42.058, "lng": 48.287}, {"name": "Artaxata", "region_id": "caucasus", "lat": 39.956, "lng": 44.549}, {"name": "Tbilisi", "region_id": "caucasus", "lat": 41.694, "lng": 44.834}, {"name": "Ganja", "region_id": "caucasus", "lat": 40.682, "lng": 46.36}, {"name": "Amul (Amol)", "region_id": "caspian_coast", "lat": 36.471, "lng": 52.357}, {"name": "Sari", "region_id": "caspian_coast", "lat": 36.563, "lng": 53.06}, {"name": "Gorgan", "region_id": "caspian_coast", "lat": 36.84, "lng": 54.443}, {"name": "Rasht", "region_id": "caspian_coast", "lat": 37.28, "lng": 49.583}, {"name": "Nishapur", "region_id": "khorasan", "lat": 36.213, "lng": 58.796}, {"name": "Merv", "region_id": "khorasan", "lat": 37.653, "lng": 62.191}, {"name": "Herat", "region_id": "khorasan", "lat": 34.352, "lng": 62.204}, {"name": "Balkh", "region_id": "khorasan", "lat": 36.756, "lng": 66.897}, {"name": "Tus", "region_id": "khorasan", "lat": 36.343, "lng": 59.513}, {"name": "Zaranj", "region_id": "sistan", "lat": 30.958, "lng": 61.864}, {"name": "Ghazni", "region_id": "sistan", "lat": 33.554, "lng": 68.422}, {"name": "Bust", "region_id": "sistan", "lat": 31.558, "lng": 64.357}, {"name": "Kandahar", "region_id": "sistan", "lat": 31.628, "lng": 65.71}, {"name": "Tiz (Chabahar)", "region_id": "makran", "lat": 25.289, "lng": 60.643}, {"name": "Quetta", "region_id": "makran", "lat": 30.183, "lng": 67.008}, {"name": "Panjgur", "region_id": "makran", "lat": 26.969, "lng": 64.101}, {"name": "Gwadar", "region_id": "makran", "lat": 25.121, "lng": 62.325}, {"name": "Samarkand", "region_id": "transoxiana", "lat": 39.655, "lng": 66.975}, {"name": "Bukhara", "region_id": "transoxiana", "lat": 39.768, "lng": 64.422}, {"name": "Panjikent", "region_id": "transoxiana", "lat": 39.492, "lng": 67.607}, {"name": "Khujand", "region_id": "transoxiana", "lat": 40.28, "lng": 69.62}, {"name": "Kath", "region_id": "chorasmia", "lat": 42.031, "lng": 61.119}, {"name": "Gurganj (Urgench)", "region_id": "chorasmia", "lat": 41.665, "lng": 60.632}, {"name": "Khiva", "region_id": "chorasmia", "lat": 41.378, "lng": 60.362}, {"name": "Toprak Kala", "region_id": "chorasmia", "lat": 41.925, "lng": 60.79}];
+
+        const map = L.map('map').setView([35, 55], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        function isPointInPolygon(point, polygon) {
+            const x = point[0], y = point[1];
+            let inside = false;
+            let list_of_rings = polygon;
+            if (!Array.isArray(list_of_rings[0][0])) {
+                list_of_rings = [polygon];
+            }
+
+            for (let ring of list_of_rings) {
+                for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+                    const xi = ring[i][0], yi = ring[i][1];
+                    const xj = ring[j][0], yj = ring[j][1];
+                    const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                    if (intersect) inside = !inside;
+                }
+            }
+            return inside;
+        }
+
+        const regionPolygons = {};
+        L.geoJSON(geojson, {
+            style: function(f) {
+                return { color: 'blue', fillOpacity: 0.1, weight: 1 };
+            },
+            onEachFeature: function(f, layer) {
+                regionPolygons[f.properties.id] = f.geometry.coordinates;
+                layer.bindPopup('Region: ' + f.properties.id);
+            }
+        }).addTo(map);
+
+        cities.forEach(city => {
+            const poly = regionPolygons[city.region_id];
+            let inside = false;
+            if (poly) {
+                inside = isPointInPolygon([city.lng, city.lat], poly);
+            }
+            
+            const color = inside ? '#2ecc71' : '#e74c3c';
+            const labelStyle = inside ? 'city-label-green' : 'city-label-red';
+            
+            L.circleMarker([city.lat, city.lng], {
+                radius: 4,
+                color: 'white',
+                fillColor: color,
+                weight: 1,
+                fillOpacity: 1
+            }).addTo(map).bindPopup('City: ' + city.name + '<br>Region: ' + city.region_id + '<br>Inside: ' + inside);
+
+            L.marker([city.lat, city.lng], {
+              icon: L.divIcon({
+                className: labelStyle,
+                html: city.name,
+                iconSize: [100, 16],
+                iconAnchor: [50, -8]
+              })
+            }).addTo(map);
+        });
+    </script>
+</body>
+</html>

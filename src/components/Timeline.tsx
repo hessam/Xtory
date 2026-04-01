@@ -4,7 +4,7 @@ import { Ruler } from '../data/rulers';
 import { Dynasty } from '../data/dynasties';
 import { HistoricalEvent } from '../data/historicalEvents';
 import { Artifact } from '../data/artifacts';
-import { regions } from '../data/regions';
+import { mapPolygons } from '../data/mapPolygons';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Loader2, Swords, Skull, Landmark, Globe2, Crown, Shield, ZoomIn, ZoomOut, Building2, Book, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useApiKey } from '../context/ApiKeyContext';
@@ -57,7 +57,7 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
   const TOTAL_WIDTH = (MAX_YEAR - MIN_YEAR) * PIXELS_PER_YEAR;
 
   const coreRegions = useMemo(() => {
-    return regions.filter(r => !r.isWater && !r.isNeighbor);
+    return mapPolygons.filter(r => !r.isWater && !r.isNeighbor);
   }, []);
 
   const regionToIndex = useMemo(() => {
@@ -71,9 +71,9 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
     if (item.coordinates) {
       // Find nearest region by center
       let minDistance = Infinity;
-      let nearestRegionId = regions[0].id;
+      let nearestRegionId = mapPolygons[0].id;
 
-      regions.forEach(r => {
+      mapPolygons.filter(r => !r.isWater && !r.isNeighbor).forEach(r => {
         const dx = r.center[0] - item.coordinates![0];
         const dy = r.center[1] - item.coordinates![1];
         const dist = dx * dx + dy * dy;
@@ -84,7 +84,7 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
       });
       return nearestRegionId;
     }
-    return regions[0].id; // Fallback
+    return mapPolygons.find(r => !r.isWater && !r.isNeighbor)!.id; // Fallback
   };
 
   const { eventRows, maxRow } = useMemo(() => {

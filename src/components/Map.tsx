@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { regions } from '../data/regions';
+import { mapPolygons, ZOOM_ANCHOR_CITIES, ZOOM_ALL_CITIES } from '../data/mapPolygons';
 import { ReignEvent } from '../data/events';
 import { Ruler } from '../data/rulers';
 import { Dynasty } from '../data/dynasties';
@@ -45,8 +45,8 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
     const clusters: VazirCluster[] = [];
 
     activeVazirs.forEach(v => {
-      const region = regions.find(r => r.id === v.regionId);
-      const center = region?.center;
+      const poly = mapPolygons.find(r => r.id === v.regionId);
+      const center = poly?.center;
       if (!center) return;
 
       const [x, y] = center;
@@ -73,8 +73,8 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
     // they are likely AI-generated geo-coordinates, not SVG pixel coordinates.
     if (coords[0] < 90 && coords[1] < 90) {
       if (regionId) {
-        const region = regions.find(r => r.id === regionId);
-        if (region) return region.center;
+        const poly = mapPolygons.find(r => r.id === regionId);
+        if (poly) return poly.center;
       }
       // Rough projection fallback: Lon 30-75 -> X 0-1000, Lat 20-45 -> Y 600-0
       const x = ((Math.max(30, Math.min(75, coords[0])) - 30) / 45) * 1000;
@@ -85,35 +85,16 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
   };
 
   /**
-   * AUTHORITATIVE PATH GENERATOR
-   * Strategy: Every 3rd vertex is a hard L (straight segment) — signals intentional borders.
-   * The other 2/3 use a tight Q (quadratic) with reduced handle distance (0.08 vs old 0.18).
-   * Result: borders read as shaped by geography, not by the Bezier interpolation algorithm.
+   * EXACT GEOGRAPHICAL PATH GENERATOR
+   * Converts generated SVG point strings into exact M/L paths.
+   * No Bezier smoothing is applied to preserve exactly coincident shared borders.
    */
   const createSmoothPath = (pointsStr: string) => {
-    const pts = pointsStr.split(' ').map(p => {
-      const [x, y] = p.split(',').map(Number);
-      return [x, y];
-    });
-    if (pts.length < 3) return `M ${pointsStr.replace(/,/g, ' ')}`;
-
-    let d = `M ${pts[0][0]} ${pts[0][1]}`;
-    for (let i = 0; i < pts.length; i++) {
-      const curr = pts[i];
-      const next = pts[(i + 1) % pts.length];
-      const after = pts[(i + 2) % pts.length];
-
-      if (i % 3 === 0) {
-        // Straight segment — authoritative, intentional boundary
-        d += ` L ${next[0]} ${next[1]}`;
-      } else {
-        // Tight quadratic — organic but controlled (handle = 8% of span, not 18%)
-        const cpx = next[0] + (after[0] - curr[0]) * 0.08;
-        const cpy = next[1] + (after[1] - curr[1]) * 0.08;
-        d += ` Q ${cpx.toFixed(1)} ${cpy.toFixed(1)} ${next[0]} ${next[1]}`;
-      }
-    }
-    return d + ' Z';
+    if (!pointsStr) return '';
+    const pts = pointsStr.trim().split(' ').map(p => p.replace(',', ' '));
+    if (pts.length === 0) return '';
+    
+    return `M ${pts.join(' L ')} Z`;
   };
 
   const createSmoothLine = (pts: [number, number][]) => {
@@ -162,12 +143,12 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
   }, [year, artifacts]);
 
   const getRegionStyle = (regionId: string) => {
-    const region = regions.find(r => r.id === regionId);
+    const poly = mapPolygons.find(r => r.id === regionId);
     
     // Explicit styling for water regions that act as map territories
-    if (region?.isWater) {
+    if (poly?.isWater) {
       return {
-        fill: '#0284c7', // Darker oceanic blue (was conflicting with Hellenic #0ea5e9)
+        fill: '#0284c7',
         stroke: '#0369a1',
         strokeWidth: 1.5,
         fillOpacity: 0.08,
@@ -179,7 +160,7 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
     const regionEvents = activeEvents.filter((e) => e.regionId === regionId);
     
     if (regionEvents.length === 0) {
-      if (region?.isNeighbor) {
+      if (poly?.isNeighbor) {
         return { 
           fill: 'transparent', 
           stroke: 'rgba(255,255,255,0.04)', 
@@ -219,7 +200,6 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
     return { 
       fill: baseColor, 
       stroke: baseColor, 
-      // Weight hierarchy: Direct Control — heavy. Sphere — thin.
       strokeWidth: isDirect ? 1.5 : 0.8,
       fillOpacity: isSphere ? 0.04 : 0.09, 
       mixBlendMode: 'screen' as const,
@@ -431,29 +411,29 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                   */}
 
                   {/* Political Regions — glass hologram over terrain */}
-                  {regions.map((region) => {
-                    const style = getRegionStyle(region.id);
-                    const regionEvents = activeEvents.filter((e) => e.regionId === region.id);
+                  {mapPolygons.map((poly) => {
+                    const style = getRegionStyle(poly.id);
+                    const regionEvents = activeEvents.filter((e) => e.regionId === poly.id);
                     const primaryEvent = regionEvents.find(e => e.status === 'Direct Control') || regionEvents[0];
                     const ruler = primaryEvent ? rulers[primaryEvent.rulerId] : null;
                     const dynasty = ruler ? dynasties[ruler.dynastyId] : null;
                     const controlText = dynasty ? `${dynasty.name[lang]} - ${primaryEvent.status}` : '';
-                    const atmosphericOpacity = style.active ? 0.88 + (region.center[1] / 600) * 0.12 : 1;
-                    const d = createSmoothPath(region.polygon);
+                    const atmosphericOpacity = style.active ? 0.88 + (poly.center[1] / 600) * 0.12 : 1;
+                    const d = createSmoothPath(poly.polygon);
 
                     return (
                       <g
-                        key={region.id}
+                        key={poly.id}
                         onClick={() => {
-                          onRegionClick(region.id);
+                          onRegionClick(poly.id);
                           pushToDataLayer('map_region_click', {
-                            region_id: region.id,
-                            region_name: region.name.en,
+                            region_id: poly.id,
+                            region_name: poly.name.en,
                             current_year: year
                           });
                         }}
                         onMouseMove={(e) => {
-                          setTooltip({ x: e.clientX, y: e.clientY, text: region.name[lang], subtext: controlText });
+                          setTooltip({ x: e.clientX, y: e.clientY, text: poly.name[lang], subtext: controlText });
                         }}
                         onMouseLeave={() => setTooltip(null)}
                         className="cursor-pointer transition-all duration-300 group"
@@ -501,66 +481,104 @@ export const Map: React.FC<MapProps> = ({ year, lang, onRegionClick, onGlobalCon
                           />
                         </>)}
 
-                        <text
-                          x={region.center[0]}
-                          y={region.center[1]}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          fontSize="7"
-                          fontWeight="600"
-                          direction={lang === 'fa' ? 'rtl' : 'ltr'}
-                          unicodeBidi="embed"
-                          className={`pointer-events-none transition-all duration-500 ${
-                            scale > 2.5 
-                              ? 'opacity-0' 
-                              : style.active 
-                                ? 'opacity-80 group-hover:opacity-100' 
-                                : 'opacity-25 group-hover:opacity-60'
-                          }`}
-                          fill={style.active ? '#ffffff' : '#64748b'}
-                          style={{ 
-                            fontFamily: 'Vazirmatn, Inter, system-ui, sans-serif',
-                            filter: style.active 
-                              ? 'drop-shadow(0px 2px 4px rgba(0,0,0,0.9)) drop-shadow(0px 0px 6px rgba(255,255,255,0.3))' 
-                              : 'drop-shadow(0px 2px 4px rgba(0,0,0,0.8))',
-                            letterSpacing: lang === 'fa' ? '0' : '2'
-                          }}
-                        >
-                          {lang === 'en' ? region.name[lang].toUpperCase() : region.name[lang]}
-                        </text>
-
-                      {/* Cities */}
-                      {region.cities?.map(city => (
-                        <g key={city.id} className="pointer-events-none calm-transition">
-                          <circle 
-                            cx={city.coordinates[0]} 
-                            cy={city.coordinates[1]} 
-                            r="1.2" 
-                            fill="#ffffff" 
-                            className={`transition-opacity duration-300 ${scale > 1.2 ? 'opacity-60' : 'opacity-0'}`}
-                          />
+                        {/* Region label — hidden when zoomed in (cities take over) */}
+                        {!poly.isWater && !poly.isNeighbor && (
                           <text
-                            x={city.coordinates[0]}
-                            y={city.coordinates[1] - 6}
+                            x={poly.center[0]}
+                            y={poly.center[1]}
                             textAnchor="middle"
                             dominantBaseline="central"
+                            fontSize="7"
+                            fontWeight="600"
                             direction={lang === 'fa' ? 'rtl' : 'ltr'}
                             unicodeBidi="embed"
-                            className={`text-[6px] font-medium transition-opacity duration-300 ${scale > 1.5 ? 'opacity-40' : 'opacity-0'}`}
-                            fill="#ffffff"
+                            className={`pointer-events-none transition-all duration-500 ${
+                              scale > 2.5 
+                                ? 'opacity-0' 
+                                : style.active 
+                                  ? 'opacity-80 group-hover:opacity-100' 
+                                  : 'opacity-25 group-hover:opacity-60'
+                            }`}
+                            fill={style.active ? '#ffffff' : '#64748b'}
                             style={{ 
                               fontFamily: 'Vazirmatn, Inter, system-ui, sans-serif',
-                              textShadow: '0px 1px 4px rgba(0,0,0,0.8)',
-                              letterSpacing: lang === 'fa' ? '0' : '0.5'
+                              filter: style.active 
+                                ? 'drop-shadow(0px 2px 4px rgba(0,0,0,0.9)) drop-shadow(0px 0px 6px rgba(255,255,255,0.3))' 
+                                : 'drop-shadow(0px 2px 4px rgba(0,0,0,0.8))',
+                              letterSpacing: lang === 'fa' ? '0' : '2'
                             }}
                           >
-                            {city.name[lang]}
+                            {lang === 'en' ? poly.name.en.toUpperCase() : poly.name.fa}
                           </text>
-                        </g>
-                      ))}
-                    </g>
-                  );
-                })}
+                        )}
+
+                        {/* ── Zoom-threshold city tiers ─────────────────────────
+                             Tier 1 anchor cities: appear at scale >= ZOOM_ANCHOR_CITIES (1.5)
+                             Tier 2 major cities:  appear at scale >= ZOOM_ALL_CITIES  (2.5)
+                             Tier 3 minor cities:  appear at scale >= 3.0 (researcher zoom)
+                          ──────────────────────────────────────────────────── */}
+                        {poly.cities?.map(city => {
+                          const dotVisible =
+                            (city.tier === 1 && scale >= ZOOM_ANCHOR_CITIES) ||
+                            (city.tier === 2 && scale >= ZOOM_ALL_CITIES) ||
+                            (city.tier === 3 && scale >= 3.0);
+                          const labelVisible =
+                            (city.tier === 1 && scale >= ZOOM_ALL_CITIES) ||
+                            (city.tier === 2 && scale >= 3.0) ||
+                            (city.tier === 3 && scale >= 3.0);
+                          const dotOpacity = city.tier === 1 ? 0.75 : city.tier === 2 ? 0.55 : 0.35;
+                          const dotRadius  = city.tier === 1 ? 2.0  : city.tier === 2 ? 1.4  : 1.0;
+
+                          return (
+                            <g key={city.id} className="pointer-events-none">
+                              {/* City dot */}
+                              <circle
+                                cx={city.coordinates[0]}
+                                cy={city.coordinates[1]}
+                                r={dotRadius}
+                                fill="#d4c49a"
+                                opacity={dotVisible ? dotOpacity : 0}
+                                style={{ transition: 'opacity 0.3s ease' }}
+                              />
+                              {/* Subtle outer ring for tier-1 cities only */}
+                              {city.tier === 1 && (
+                                <circle
+                                  cx={city.coordinates[0]}
+                                  cy={city.coordinates[1]}
+                                  r={3.5}
+                                  fill="none"
+                                  stroke="#d4c49a"
+                                  strokeWidth="0.5"
+                                  opacity={dotVisible ? 0.35 : 0}
+                                  style={{ transition: 'opacity 0.3s ease' }}
+                                />
+                              )}
+                              {/* City name label */}
+                              <text
+                                x={city.coordinates[0]}
+                                y={city.coordinates[1] - (dotRadius + 3)}
+                                textAnchor="middle"
+                                dominantBaseline="central"
+                                fontSize={city.tier === 1 ? '5.5' : '4.5'}
+                                direction={lang === 'fa' ? 'rtl' : 'ltr'}
+                                unicodeBidi="embed"
+                                fill="#e2d8bb"
+                                opacity={labelVisible ? (city.tier === 1 ? 0.80 : 0.60) : 0}
+                                style={{
+                                  fontFamily: 'Vazirmatn, Inter, system-ui, sans-serif',
+                                  filter: 'drop-shadow(0px 1px 3px rgba(0,0,0,0.95))',
+                                  letterSpacing: lang === 'fa' ? '0' : '0.3',
+                                  transition: 'opacity 0.3s ease'
+                                }}
+                              >
+                                {city.name[lang]}
+                              </text>
+                            </g>
+                          );
+                        })}
+                      </g>
+                    );
+                  })}
 
                 {/* Historical Events */}
                 {activeHistoricalEvents.map((event) => (

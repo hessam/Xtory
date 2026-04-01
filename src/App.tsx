@@ -21,7 +21,7 @@ import { ByokGate } from './components/ByokGate';
 import { Vazir } from './data/vazirs';
 
 // Heavy components — lazy loaded so they never block first paint
-const Map        = lazy(() => import('./components/Map').then(m => ({ default: m.Map })));
+const Map        = lazy(() => import('./components/MapLeaflet'));
 const Timeline   = lazy(() => import('./components/Timeline').then(m => ({ default: m.Timeline })));
 const EventsPanel = lazy(() => import('./components/EventsPanel').then(m => ({ default: m.EventsPanel })));
 const BottomSheet = lazy(() => import('./components/BottomSheet').then(m => ({ default: m.BottomSheet })));
@@ -57,6 +57,15 @@ export default function App() {
   const [selectedVazir, setSelectedVazir] = useState<Vazir | null>(null);
   const [selectedBanner, setSelectedBanner] = useState<{ url: string, title: string } | null>(null);
   const [legendMode, setLegendMode] = useState<'simple' | 'detailed'>('simple');
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  // Auto-dismiss AI error after 6 seconds
+  useEffect(() => {
+    if (aiError) {
+      const timer = setTimeout(() => setAiError(null), 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [aiError]);
 
   // Keyboard shortcut for search (Cmd+K)
   useEffect(() => {
@@ -228,38 +237,54 @@ export default function App() {
 
   const handleYearContextClick = async (y: number) => {
     setIsLoadingAI(true);
+    setAiError(null);
     try {
       const data = await fetchHistoricalDataForYear(y, lang);
       if (data?.length) handleAddDynamicData(data);
-    } catch (err) { console.error(err); }
-    finally { setIsLoadingAI(false); }
+    } catch (err: any) {
+      setAiError(err.message || 'Error fetching era context');
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   const handleFetchAIEvents = async (y: number) => {
     setIsLoadingAIEvents(true);
+    setAiError(null);
     try {
       const data = await fetchHistoricalEventsForYear(y, lang);
       if (data?.length) handleAddDynamicHistoricalEvents(data);
-    } catch (err) { console.error(err); }
-    finally { setIsLoadingAIEvents(false); }
+    } catch (err: any) {
+      setAiError(err.message || 'Error fetching AI events');
+    } finally {
+      setIsLoadingAIEvents(false);
+    }
   };
 
   const handleFetchAIFigures = async (y: number) => {
     setIsLoadingAIFigures(true);
+    setAiError(null);
     try {
       const data = await fetchHistoricalFiguresForYear(y, lang);
       if (data?.length) handleAddDynamicFigures(data);
-    } catch (err) { console.error(err); }
-    finally { setIsLoadingAIFigures(false); }
+    } catch (err: any) {
+      setAiError(err.message || 'Error fetching AI figures');
+    } finally {
+      setIsLoadingAIFigures(false);
+    }
   };
 
   const handleFetchAIArtifacts = async (y: number) => {
     setIsLoadingAIArtifacts(true);
+    setAiError(null);
     try {
       const data = await fetchArtifactsForYear(y, lang);
       if (data?.length) handleAddDynamicArtifacts(data);
-    } catch (err) { console.error(err); }
-    finally { setIsLoadingAIArtifacts(false); }
+    } catch (err: any) {
+      setAiError(err.message || 'Error fetching AI artifacts');
+    } finally {
+      setIsLoadingAIArtifacts(false);
+    }
   };
 
   const closeModal = clearSelection;
@@ -747,6 +772,38 @@ export default function App() {
         lang={lang} 
       />
       
+      {/* AI Error Notification Toast */}
+      <AnimatePresence>
+        {aiError && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[300] w-full max-w-sm px-4 pointer-events-none ${lang === 'fa' ? 'font-vazirmatn' : ''}`}
+          >
+            <div className="liquid-glass-heavy border border-amber-500/40 rounded-2xl shadow-2xl p-4 flex gap-4 pointer-events-auto">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center shrink-0">
+                <AlertCircle className="w-6 h-6 text-amber-500" />
+              </div>
+              <div className="flex-1 flex flex-col gap-1 pr-8">
+                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest leading-none">
+                  {lang === 'en' ? 'Historian Unavailable' : 'مورخ در دسترس نیست'}
+                </span>
+                <p className="text-sm text-slate-200 font-medium leading-relaxed">
+                  {aiError}
+                </p>
+                <button 
+                  onClick={() => setAiError(null)}
+                  className="absolute top-4 right-4 p-1 hover:bg-white/10 rounded-md transition-colors"
+                >
+                  <X className="w-4 h-4 text-slate-400" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {activeQuizQuestions && (
         <QuizModal
           year={year}
