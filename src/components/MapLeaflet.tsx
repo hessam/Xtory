@@ -145,6 +145,20 @@ export default function MapLeaflet(props: MapLeafletProps) {
     return () => clearTimeout(t);
   }, []);
 
+  // Pre-calculate neighbor centroids to avoid turf.centerOfMass in render loop
+  const neighborMarkers = useMemo(() => {
+    if (!neighboursGeoJSON) return [];
+    return (neighboursGeoJSON as any).features.map((feat: any) => {
+      const centroid = turf.centerOfMass(feat).geometry.coordinates;
+      return {
+        id: feat.properties.id,
+        position: [centroid[1], centroid[0]] as [number, number],
+        name: feat.properties.name,
+        nameFa: feat.properties.nameFa
+      };
+    });
+  }, [neighboursGeoJSON]);
+
   const allCities = useMemo(() => {
     return regions.flatMap(r => (r.anchorCities || []).map((c, i) => ({
       id: c.name.toLowerCase().replace(/\s+/g, '_'),
@@ -375,161 +389,119 @@ export default function MapLeaflet(props: MapLeafletProps) {
         {/* Static Background Neighbours (Hidden below zoom 4) */}
         {currentZoom <= 4 && neighboursGeoJSON && (
           <GeoJSON 
-            key={`neighbours-${year}`} 
             data={neighboursGeoJSON as GeoJsonObject} 
-          style={{ 
-            fillColor: '#000000', 
-            fillOpacity: 0.15, 
-            color: 'rgba(255, 255, 255, 0.05)', 
-            weight: 1.5, 
-            dashArray: '10, 15', 
-            lineCap: 'butt', 
-            lineJoin: 'miter', 
-            className: 'pointer-events-none'
-          }} 
-          interactive={false} 
-        />
+            interactive={false}
+            style={{ 
+              fillColor: '#000000', 
+              fillOpacity: 0.15, 
+              color: 'rgba(255, 255, 255, 0.05)', 
+              weight: 1.5, 
+              dashArray: '10, 15', 
+              lineCap: 'butt', 
+              lineJoin: 'miter', 
+              className: 'pointer-events-none'
+            }} 
+          />
         )}
 
-        {/* ── Era-Gated Empire Fill Overlays ─────────────────────────────────────
-            These render the FULL historical max-extent of great empires using the
-            same GeoJSON sources as the ghost-border overlays, but as colored fills.
-            They are PURELY DECORATIVE:
-              • non-interactive (no clicks, no AI connection)
-              • era-gated (only visible when year is within the dynasty's range)
-              • rendered BELOW the interactive region polygons (zIndex 290)
-            This lets us show Anatolia, Egypt, Thrace etc. in Achaemenid purple
-            without ever adding those regions to the events system, which would
-            cause false AI data for later centuries.
+        {/* ── Area Fills & Effects (Consolidated for Performance) ───────────────
+            We render 5 global layers instead of 1,400+ individual components.
+            This drastically reduces INP by lowering the Leaflet/React overhead.
         ─────────────────────────────────────────────────────────────────────── */}
-        <Pane name="empire-fills-pane" style={{ zIndex: 290 }}>
-          {/* Achaemenid Empire: 559 BC – 330 BC */}
-          {year >= -559 && year <= -330 && (
-            <GeoJSON
-              key={`achaemenid-fill-${year}`}
-              data={achaemenidMaxGeoJSON as GeoJsonObject}
-              interactive={false}
-              style={() => ({
-                fillColor: '#a855f7',
-                fillOpacity: 0.10,
-                color: 'transparent',
-                weight: 0,
-                className: 'pointer-events-none calm-transition'
-              })}
-            />
-          )}
-          {/* Sasanian Empire: 224 AD – 651 AD */}
-          {year >= 224 && year <= 651 && (
-            <GeoJSON
-              key={`sasanian-fill-${year}`}
-              data={sasanianMaxGeoJSON as GeoJsonObject}
-              interactive={false}
-              style={() => ({
-                fillColor: '#a855f7',
-                fillOpacity: 0.10,
-                color: 'transparent',
-                weight: 0,
-                className: 'pointer-events-none calm-transition'
-              })}
-            />
-          )}
-        </Pane>
+        
+        {/* 1. Primary Area Fills & Interaction Layer */}
+        <GeoJSON
+          key="regions-primary-layer"
+          data={regionsGeoJSON as GeoJsonObject}
+          style={(feature) => ({ ...styleRegion(feature), weight: 0 })}
+          onEachFeature={onEachRegion}
+        />
 
-        {/* 1. Area Fills (Layered for Multi-Dynasty/Era Fallback) */}
-        {(regionsGeoJSON as any).features.map((feature: any, idx: number) => {
-          const regionId = feature.properties?.id as RegionId;
-          const regionEvents = getRegionEvents(regionId);
-          const baseStyle = styleRegion(feature);
-          
-          return (
-            <React.Fragment key={`region-layer-group-${regionId}-${year}-${currentZoom}`}>
-              {/* Primary Layer: The most direct control or the era-fallback */}
-              <GeoJSON 
-                data={feature} 
-                style={() => ({ ...baseStyle, weight: 0 })}
-                onEachFeature={onEachRegion}
-              />
-              
-              {/* Overlapping Secondary Dynasties if Contested */}
-              {regionEvents.length > 1 && regionEvents.slice(1).map((event, sIdx) => {
-                const ruler = rulers[event.rulerId];
-                if (!ruler) return null;
-                const dynasty = dynasties[ruler.dynastyId];
-                const color = dynasty ? getDynastyColor(dynasty) : '#ffffff';
-                const opacity = event.influence !== undefined ? (event.influence / 10) * 0.4 : 0.12;
-                return (
-                  <GeoJSON
-                    key={`secondary-${regionId}-${event.id}-${sIdx}`}
-                    data={feature}
-                    interactive={false}
-                    style={() => ({
-                      fillColor: color,
-                      fillOpacity: opacity,
-                      weight: 0,
-                      className: 'pointer-events-none mix-blend-screen'
-                    })}
-                  />
-                );
-              })}
+        {/* 2. Secondary Control Layers (Contested Regions) */}
+        <GeoJSON
+          key="regions-secondary-layer"
+          data={regionsGeoJSON as GeoJsonObject}
+          interactive={false}
+          style={(feature) => {
+            const regionId = feature?.properties?.id;
+            const events = getRegionEvents(regionId);
+            if (events.length <= 1) return { fillOpacity: 0, weight: 0, stroke: false };
+            
+            const event = events[1];
+            const ruler = rulers[event.rulerId];
+            if (!ruler) return { fillOpacity: 0, weight: 0, stroke: false };
+            
+            const dynasty = dynasties[ruler.dynastyId];
+            const color = dynasty ? getDynastyColor(dynasty) : '#ffffff';
+            const opacity = event.influence !== undefined ? (event.influence / 10) * 0.4 : 0.12;
+            
+            return {
+              fillColor: color,
+              fillOpacity: opacity,
+              weight: 0,
+              className: 'pointer-events-none mix-blend-screen'
+            };
+          }}
+        />
 
-              {/* Cinematic Halos (Inherited from primary or fallback visuals) */}
-              <GeoJSON 
-                data={feature} 
-                interactive={false}
-                style={() => ({ fillOpacity: 0, weight: 11, color: baseStyle.color, opacity: 0.15, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
-              />
-              <GeoJSON 
-                data={feature} 
-                interactive={false}
-                style={() => ({ fillOpacity: 0, weight: 6, color: baseStyle.color, opacity: 0.35, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
-              />
-              <GeoJSON 
-                data={feature} 
-                interactive={false}
-                style={() => ({ fillOpacity: 0, weight: 3, color: baseStyle.color, opacity: 0.65, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })} 
-              />
-            </React.Fragment>
-          );
-        })}
+        {/* 3. Cinematic Halos (Triple-pass for soft atmospheric glow) */}
+        <GeoJSON
+          key="regions-halo-outer"
+          data={regionsGeoJSON as GeoJsonObject}
+          interactive={false}
+          style={(feat) => ({ fillOpacity: 0, weight: 11, color: styleRegion(feat).color, opacity: 0.15, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })}
+        />
+        <GeoJSON
+          key="regions-halo-mid"
+          data={regionsGeoJSON as GeoJsonObject}
+          interactive={false}
+          style={(feat) => ({ fillOpacity: 0, weight: 6, color: styleRegion(feat).color, opacity: 0.35, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })}
+        />
+        <GeoJSON
+          key="regions-halo-inner"
+          data={regionsGeoJSON as GeoJsonObject}
+          interactive={false}
+          style={(feat) => ({ fillOpacity: 0, weight: 3, color: styleRegion(feat).color, opacity: 0.65, lineJoin: 'miter', lineCap: 'butt', className: 'pointer-events-none' })}
+        />
 
-        {/* 5. The Sketched Ink Border (3 Overlapping Displaced Solid Paths) */}
+        {/* 5. The Sketched Ink Border */}
         <GeoJSON 
-          key={`regions-drawn-1-${year}`} 
+          key="regions-ink-1"
           data={regionsGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ fillOpacity: 0, weight: 2.0, color: '#8a252f', opacity: 0.8, lineJoin: 'miter', lineCap: 'butt', className: 'sketch-path-1 pointer-events-none' })} 
+          style={() => ({ fillOpacity: 0, weight: 2.0, color: '#8a252f', opacity: 0.8, lineJoin: 'miter', lineCap: 'butt', className: 'sketch-path-1 pointer-events-none' })} 
           interactive={false} 
         />
         <GeoJSON 
-          key={`regions-drawn-2-${year}`} 
+          key="regions-ink-2"
           data={regionsGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ fillOpacity: 0, weight: 1.2, color: '#6e1d25', opacity: 0.6, lineJoin: 'miter', lineCap: 'butt', className: 'sketch-path-2 pointer-events-none' })} 
+          style={() => ({ fillOpacity: 0, weight: 1.2, color: '#6e1d25', opacity: 0.6, lineJoin: 'miter', lineCap: 'butt', className: 'sketch-path-2 pointer-events-none' })} 
           interactive={false} 
         />
         <GeoJSON 
-          key={`regions-drawn-3-${year}`} 
+          key="regions-ink-3"
           data={regionsGeoJSON as GeoJsonObject} 
-          style={(feat) => ({ fillOpacity: 0, weight: 1.0, color: '#a62d39', opacity: 0.7, lineJoin: 'miter', lineCap: 'butt', className: 'sketch-path-3 pointer-events-none' })} 
+          style={() => ({ fillOpacity: 0, weight: 1.0, color: '#a62d39', opacity: 0.7, lineJoin: 'miter', lineCap: 'butt', className: 'sketch-path-3 pointer-events-none' })} 
           interactive={false} 
         />
 
-        {/* 6. Ghost Overlays: Reference Bounds for Max Historical Extents */}
+        {/* 6. Ghost Overlays: Max Historical Extents */}
         <GeoJSON 
-          key={`achaemenid-ghost-${year}`} 
+          key="achaemenid-ghost"
           data={achaemenidMaxGeoJSON as GeoJsonObject} 
           style={() => ({ fillOpacity: 0.02, fillColor: '#f59e0b', weight: 1.8, color: '#f59e0b', opacity: 0.35, dashArray: '6, 8', lineJoin: 'round', className: 'pointer-events-none' })} 
           interactive={false} 
         />
         <GeoJSON 
-          key={`sasanian-ghost-${year}`} 
+          key="sasanian-ghost"
           data={sasanianMaxGeoJSON as GeoJsonObject} 
           style={() => ({ fillOpacity: 0.02, fillColor: '#818cf8', weight: 1.8, color: '#818cf8', opacity: 0.35, dashArray: '4, 6', lineJoin: 'round', className: 'pointer-events-none' })} 
           interactive={false} 
         />
 
-        {/* 7. Modern Iran (2026) — rendered in a high-z Pane so it is always on top */}
+        {/* 7. Modern Iran (2026) */}
         <Pane name="iran-modern-pane" style={{ zIndex: 450 }}>
           <GeoJSON 
-            key={`iran-modern-${year}`} 
+            key="iran-modern"
             data={iranModernGeoJSON as GeoJsonObject} 
             style={() => ({ fillOpacity: 0, weight: 2.0, color: '#10b981', opacity: 0.55, lineJoin: 'round', lineCap: 'round', dashArray: '5, 8', className: 'pointer-events-none' })} 
             interactive={false} 
@@ -538,11 +510,9 @@ export default function MapLeaflet(props: MapLeafletProps) {
 
         {/* 8. Marker Layers: Labels, Cities, Events, Artifacts (Highest Index) */}
         <Pane name="markers-pane" style={{ zIndex: 600 }}>
-          {/* Static Contiguous Neighbour Labels */}
-          {neighboursGeoJSON && (neighboursGeoJSON as any).features.map((feat: any) => {
-            if (currentZoom > 7) return null; // Hide background labels when zooming in tight
-            const centroid = turf.centerOfMass(feat).geometry.coordinates;
-            const title = lang === 'fa' && feat.properties.nameFa ? feat.properties.nameFa : feat.properties.name;
+          {/* Static Contiguous Neighbour Labels (using pre-calculated centroids) */}
+          {currentZoom <= 7 && neighborMarkers.map((marker) => {
+            const title = lang === 'fa' && marker.nameFa ? marker.nameFa : marker.name;
             const fontClass = lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel';
             const icon = L.divIcon({
               className: 'neighbour-label-container',
@@ -550,7 +520,7 @@ export default function MapLeaflet(props: MapLeafletProps) {
               iconSize: [200, 30],
               iconAnchor: [100, 15]
             });
-            return <Marker key={`neighbour-label-${feat.properties.id}`} position={[centroid[1], centroid[0]] as [number, number]} icon={icon} interactive={false} />;
+            return <Marker key={`neighbour-label-${marker.id}`} position={marker.position} icon={icon} interactive={false} />;
           })}
 
           {/* Core Region Titles at Hand-Picked Centroids */}
