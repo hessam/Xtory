@@ -45,21 +45,49 @@ export default defineConfig(({ mode }) => {
           entryFileNames: 'assets/[name]-[hash].js',
           chunkFileNames: 'assets/[name]-[hash].js',
           assetFileNames: 'assets/[name]-[hash].[ext]',
-          manualChunks: {
-            // Core React runtime
-            'vendor-react': ['react', 'react-dom'],
-            // Map engine and GIS tools
-            'vendor-map': ['leaflet', 'react-leaflet', '@turf/turf'],
-            // Animation engine
-            'vendor-motion': ['motion'],
-            // Heavy intro morphing libs (now dynamically loaded)
-            'vendor-intro': ['flubber', 'd3'],
-            // AI description and markdown rendering
-            'vendor-ai-content': ['react-markdown', 'remark-gfm'],
-            // Onboarding tour
-            'vendor-tour': ['react-joyride'],
-            // Large utility/UI components
-            'vendor-ui': ['react-virtuoso', 'react-zoom-pan-pinch'],
+          manualChunks(id) {
+            // ── React: catch ALL react sub-paths in one chunk ──────────────
+            // Must use a function (not object) to match react/jsx-runtime,
+            // react-dom/client, react/compiler etc. — object form only matches
+            // the exact package entry and causes duplicate-React crashes.
+            if (id.includes('node_modules/react/') ||
+                id.includes('node_modules/react-dom/') ||
+                id.includes('node_modules/scheduler/')) {
+              return 'vendor-react';
+            }
+            // ── Map / GIS ──────────────────────────────────────────────────
+            if (id.includes('node_modules/leaflet/') ||
+                id.includes('node_modules/react-leaflet/') ||
+                id.includes('node_modules/@turf/')) {
+              return 'vendor-map';
+            }
+            // ── Animation (motion/react, framer internals) ─────────────────
+            if (id.includes('node_modules/motion/')) {
+              return 'vendor-motion';
+            }
+            // ── Intro morph libs (dynamically imported — kept separate) ────
+            if (id.includes('node_modules/flubber/') ||
+                id.includes('node_modules/d3')) {
+              return 'vendor-intro';
+            }
+            // ── AI / Markdown rendering ────────────────────────────────────
+            if (id.includes('node_modules/react-markdown/') ||
+                id.includes('node_modules/remark') ||
+                id.includes('node_modules/rehype') ||
+                id.includes('node_modules/micromark') ||
+                id.includes('node_modules/mdast') ||
+                id.includes('node_modules/unified')) {
+              return 'vendor-ai-content';
+            }
+            // ── Tour ───────────────────────────────────────────────────────
+            if (id.includes('node_modules/react-joyride/')) {
+              return 'vendor-tour';
+            }
+            // ── Large UI utilities ─────────────────────────────────────────
+            if (id.includes('node_modules/react-virtuoso/') ||
+                id.includes('node_modules/react-zoom-pan-pinch/')) {
+              return 'vendor-ui';
+            }
           },
         },
       },
