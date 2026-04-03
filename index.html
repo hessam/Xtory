@@ -49,6 +49,9 @@
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
 
+    <!-- Main App Entry: Placed ABOVE GTM so the browser queues the heavy app chunks first -->
+    <script type="module" src="/src/main.tsx"></script>
+
     <!-- Google Tag Manager: baked into static HTML so Preview Mode & crawlers detect it immediately -->
     <!-- Vite replaces %VITE_GTM_ID% at build time (and in dev via loadEnv) -->
     <script>
@@ -75,6 +78,5 @@
         height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
