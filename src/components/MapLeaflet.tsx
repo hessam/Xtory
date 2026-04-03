@@ -244,7 +244,7 @@ export default function MapLeaflet(props: MapLeafletProps) {
       click: (e: L.LeafletMouseEvent) => {
         L.DomEvent.stopPropagation(e);
         onRegionClick(regionId);
-        pushToDataLayer('map_region_click', { region_id: regionId, region_name: regionData?.displayName.en || regionId, current_year: year });
+        pushToDataLayer('map_region_click', { region_id: regionId, region_name: regionData?.displayName.en.full || regionId, current_year: year });
       },
       mouseover: (e: L.LeafletMouseEvent) => { 
         // Use a slight increase in opacity to provide feedback without losing the procedural colors
