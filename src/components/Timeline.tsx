@@ -8,7 +8,7 @@ import { mapPolygons } from '../data/mapPolygons';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Loader2, Swords, Skull, Landmark, Globe2, Crown, Shield, ZoomIn, ZoomOut, Building2, Book, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useApiKey } from '../context/ApiKeyContext';
-import { formatYear } from '../utils/format';
+import { formatYear, formatDuration } from '../utils/format';
 import { ERAS } from '../data/eras';
 import { pushToDataLayer } from '../services/tagManager';
 
@@ -415,7 +415,7 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
                       top: '50%',
                       transform: 'translate(-50%, -50%)',
                     }}
-                    title={`${event.title[lang]} · ${Math.abs(event.year)} ${event.year < 0 ? 'BC' : 'AD'}`}
+                    title={`${event.title[lang]} · ${formatYear(event.year, lang)}`}
                   />
                 );
               })}
@@ -902,8 +902,8 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
                         <span className="font-bold text-xs text-white drop-shadow-md truncate">{ruler.name[lang]}</span>
                       </div>
                       <span className="text-[10px] text-slate-300 truncate">{dynasty.name[lang]}</span>
-                      <span className="text-[9px] text-slate-400 font-mono bg-black/40 px-1 py-0.5 rounded w-fit">
-                        {formatYear(event.startDate, lang)} - {formatYear(event.endDate, lang)} ({event.endDate - event.startDate} yrs)
+                       <span className="text-[9px] text-slate-400 font-mono bg-black/40 px-1 py-0.5 rounded w-fit">
+                        {formatYear(event.startDate, lang)} - {formatYear(event.endDate, lang)} ({formatDuration(event.endDate - event.startDate, lang)})
                       </span>
                       <div className="mt-0.5 text-[9px] text-emerald-300/90 font-medium flex items-center gap-1 bg-emerald-500/10 px-1.5 py-0.5 rounded-md w-fit">
                         <Sparkles className="w-2.5 h-2.5" /> {lang === 'en' ? 'Click to explore' : 'برای کاوش کلیک کنید'}

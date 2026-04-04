@@ -4,6 +4,7 @@ import { historianCards } from '../data/historianCards';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { getHistorianCard } from '../utils/getHistorianCard';
 import { Vazir, vazirs } from '../data/vazirs';
+import { formatYear } from '../utils/format';
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -71,7 +72,26 @@ export const HistorianCardSection: React.FC<Props> = ({
     'modern': '/Modern-banner.webp',
   };
 
+  const bannerMetadataMap: Record<string, { caption: {en: string, fa: string}, source: {en: string, fa: string} }> = {
+    'prehistoric': { caption: { en: 'Sialk Ziggurat', fa: 'زیگورات سیلک' }, source: { en: 'Historical Reconstruction', fa: 'بازسازی تاریخی' } },
+    'median': { caption: { en: 'Ecbatana Ruins', fa: 'ویرانه‌های هگمتانه' }, source: { en: 'Archaeological Archive', fa: 'آرشیو باستان‌شناسی' } },
+    'achaemenid': { caption: { en: 'Persepolis Grand Staircase', fa: 'پلکان بزرگ تخت جمشید' }, source: { en: 'National Museum', fa: 'موزه ملی' } },
+    'hellenistic': { caption: { en: 'Seleucid Coinage', fa: 'سکه‌شناسی سلوکی' }, source: { en: 'British Museum', fa: 'موزه بریتانیا' } },
+    'parthian': { caption: { en: 'Parthian Cavalry', fa: 'سوارنظام اشکانی' }, source: { en: 'Historical Relief', fa: 'نقش‌برجسته تاریخی' } },
+    'sasanian': { caption: { en: 'Taq Kasra', fa: 'طاق کسری' }, source: { en: 'Ctesiphon Archives', fa: 'آرشیو تیسفون' } },
+    'early_islamic': { caption: { en: 'Early Mosque Architecture', fa: 'معماری اولیه مساجد' }, source: { en: 'Islamic Art Collection', fa: 'مجموعه هنر اسلامی' } },
+    'iranian_renaissance': { caption: { en: 'Samanid Mausoleum', fa: 'آرامگاه سامانیان' }, source: { en: 'Bukhara Heritage', fa: 'میراث بخارا' } },
+    'seljuk': { caption: { en: 'Seljuk Dome', fa: 'گنبد سلجوقی' }, source: { en: 'Isfahan Archives', fa: 'آرشیو اصفهان' } },
+    'mongol_invasion': { caption: { en: 'Ilkhanate Manuscript', fa: 'نسخه خطی ایلخانی' }, source: { en: 'Topkapi Palace', fa: 'کاخ توپکاپی' } },
+    'timurid': { caption: { en: 'Gur-e-Amir', fa: 'گور امیر' }, source: { en: 'Samarkand Register', fa: 'ثبت سمرقند' } },
+    'safavid': { caption: { en: 'Naqsh-e Jahan', fa: 'نقش جهان' }, source: { en: 'Royal Collection', fa: 'مجموعه سلطنتی' } },
+    'afsharid_zand': { caption: { en: 'Naderi Throne', fa: 'تخت نادری' }, source: { en: 'Jewelry Museum', fa: 'موزه جواهرات' } },
+    'qajar': { caption: { en: 'Golestan Palace', fa: 'کاخ گلستان' }, source: { en: 'Tehran Archives', fa: 'آرشیو تهران' } },
+    'modern': { caption: { en: 'Azadi Tower', fa: 'برج آزادی' }, source: { en: 'Contemporary Archive', fa: 'آرشیو معاصر' } },
+  };
+
   const eraBanner = bannerMap[card.eraId] || '/Achaemenid-banner.webp'; 
+  const bannerMeta = bannerMetadataMap[card.eraId] || bannerMetadataMap['achaemenid'];
 
   return (
     <AnimatePresence mode="wait">
@@ -107,17 +127,53 @@ export const HistorianCardSection: React.FC<Props> = ({
             </h2>
           </div>
         </div>
+        
+        {/* Caption */}
+        <div className="px-4 py-1.5 flex justify-end">
+          <span className="text-[11px] text-slate-500 font-medium" dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+            {bannerMeta.caption[lang]} — {bannerMeta.source[lang]}
+          </span>
+        </div>
+
+        {/* Connection Navigation - Sticky */}
+        <div className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-slate-950/80 backdrop-blur-md border-b border-white/5" dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+          {prevCard ? (
+            <button
+               onClick={() => onNavigate(prevCard.card.yearRange.start)}
+               className={`flex items-center gap-2 group hover:text-amber-400 transition-colors ${lang === 'fa' ? '' : ''}`}
+            >
+              <ChevronLeft className={`w-4 h-4 text-slate-500 group-hover:text-amber-400 transition-transform ${lang === 'fa' ? 'rotate-180 group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
+              <div className="flex flex-col items-start overflow-hidden">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300 group-hover:text-amber-400">{prevCard.card.eraName[lang]}</span>
+                <span className="text-[9px] font-mono opacity-50">{formatYear(prevCard.card.yearRange.start, lang)} — {formatYear(prevCard.card.yearRange.end, lang)}</span>
+              </div>
+            </button>
+          ) : <div className="flex-1" />}
+          
+          <div className="w-px h-6 bg-white/10 mx-2" />
+
+          {nextCard ? (
+            <button
+               onClick={() => onNavigate(nextCard.card.yearRange.start)}
+               className="flex items-center justify-end gap-2 group hover:text-amber-400 transition-colors text-right"
+            >
+              <div className="flex flex-col items-end overflow-hidden">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300 group-hover:text-amber-400">{nextCard.card.eraName[lang]}</span>
+                <span className="text-[9px] font-mono opacity-50">{formatYear(nextCard.card.yearRange.start, lang)} — {formatYear(nextCard.card.yearRange.end, lang)}</span>
+              </div>
+              <ChevronRight className={`w-4 h-4 text-slate-500 group-hover:text-amber-400 transition-transform ${lang === 'fa' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
+            </button>
+          ) : <div className="flex-1" />}
+        </div>
 
         {/* Text Content Area */}
         <div className="px-4 py-2 flex flex-col gap-4">
           {/* Year info - Whisper Volume */}
-          <div className="flex items-center gap-2 opacity-30">
-            <span className="h-px bg-white/30 flex-1" />
-            <p className="text-[9px] font-mono text-white tracking-widest uppercase">
-              {Math.abs(card.yearRange.start)}{card.yearRange.start < 0 ? ' BC' : ' AD'} – {Math.abs(card.yearRange.end)}{card.yearRange.end < 0 ? ' BC' : ' AD'}
-            </p>
-            <span className="h-px bg-white/30 flex-1" />
-          </div>
+           <div className={`flex items-center opacity-40 mb-2 ${lang === 'fa' ? 'justify-end' : 'justify-start'}`} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+             <p className="text-[11px] font-mono text-white tracking-widest uppercase">
+               {formatYear(card.yearRange.start, lang)} — {formatYear(card.yearRange.end, lang)}
+             </p>
+           </div>
 
           {/* Full Summary */}
           <p className="text-slate-200 text-sm leading-relaxed font-normal">
@@ -125,35 +181,6 @@ export const HistorianCardSection: React.FC<Props> = ({
               ? card.fullSummary.fa
               : card.fullSummary.en}
           </p>
-
-          {/* Connection Navigation - Compact 2-col on mobile */}
-          <div className={`flex sm:flex-col items-stretch gap-2 mt-2 ${lang === 'fa' ? 'max-sm:flex-row-reverse' : ''}`} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
-            {prevCard && (
-              <button
-                onClick={() => onNavigate(prevCard.card.yearRange.start)}
-                className={`flex-1 flex items-center gap-3 px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white active:scale-95 group transition-all ${lang === 'fa' ? 'max-sm:flex-row-reverse' : ''}`}
-              >
-                <ChevronLeft className={`w-3.5 h-3.5 shrink-0 transition-transform ${lang === 'fa' ? 'sm:rotate-180 sm:group-hover:translate-x-0.5 max-sm:group-hover:-translate-x-0.5' : 'group-hover:-translate-x-0.5'}`} />
-                <div className="flex flex-col items-start overflow-hidden">
-                  <span className="text-[8px] uppercase tracking-wider opacity-60 leading-none mb-1">{lang === 'en' ? 'PREV' : 'قبلی'}</span>
-                  <span className="text-[10px] font-bold truncate w-full uppercase tracking-widest">{prevCard.card.eraName[lang]}</span>
-                </div>
-              </button>
-            )}
-            
-            {nextCard && (
-              <button
-                onClick={() => onNavigate(nextCard.card.yearRange.start)}
-                className={`flex-1 flex items-center justify-between px-3 py-2.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-300 hover:text-indigo-100 active:scale-95 group transition-all ${lang === 'fa' ? 'max-sm:flex-row-reverse' : ''}`}
-              >
-                <div className="flex flex-col items-start overflow-hidden">
-                  <span className="text-[8px] uppercase tracking-wider opacity-60 leading-none mb-1">{lang === 'en' ? 'NEXT' : 'بعدی'}</span>
-                  <span className="text-[10px] font-bold truncate w-full uppercase tracking-widest">{nextCard.card.eraName[lang]}</span>
-                </div>
-                <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${lang === 'fa' ? 'sm:rotate-180 sm:group-hover:-translate-x-0.5 max-sm:group-hover:translate-x-0.5' : 'group-hover:translate-x-0.5'}`} />
-              </button>
-            )}
-          </div>
 
           {/* Vazir Interaction Logic */}
           {selectedVazir ? (

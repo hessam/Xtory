@@ -11,6 +11,7 @@ import { QuizQuestion } from '../types/quiz';
 import { HistorianCardSection } from './HistorianCardSection';
 import { getHistorianCard } from '../utils/getHistorianCard';
 import { Vazir } from '../data/vazirs';
+import { formatYear } from '../utils/format';
 
 interface EventsPanelProps {
   year: number;
@@ -162,7 +163,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
               {lang === 'en' ? 'Context of this Era' : 'زمینه این دوره'}
             </h3>
             <span className="text-xs font-mono text-slate-400 bg-black/20 px-2 py-0.5 rounded-lg border border-white/10">
-              {Math.abs(year)}{year < 0 ? ' BC' : ' AD'}
+              {formatYear(year, lang)}
             </span>
           </div>
         </div>
@@ -219,7 +220,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                   {lang === 'en' ? 'Context of this Era' : 'زمینه این دوره'}
                 </h3>
                 <span className="text-xs font-mono text-slate-400 bg-black/20 px-2 py-1 rounded-lg border border-white/10">
-                  {Math.abs(year)}{year < 0 ? ' BC' : ' AD'}
+                  {formatYear(year, lang)}
                 </span>
               </div>
               
@@ -265,7 +266,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{event.title[lang]}</h4>
                               <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">
-                                {Math.abs(event.year)} {event.year < 0 ? 'BC' : 'AD'}
+                                {formatYear(event.year, lang)}
                               </span>
                             </div>
                             <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{event.description[lang]}</p>
@@ -274,8 +275,16 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                       </motion.div>
                     ))
                   ) : (
-                    <div className="text-center py-12 text-slate-500 text-sm italic">
-                      {lang === 'en' ? 'No major events recorded in this era.' : 'هیچ رویداد مهمی در این دوره ثبت نشده است.'}
+                    <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+                      <div className="p-3 bg-indigo-500/10 rounded-2xl mb-4 border border-indigo-500/20">
+                        <Sparkles className="w-6 h-6 text-indigo-400" />
+                      </div>
+                      <h4 className="text-slate-200 font-bold text-sm mb-1">
+                        {lang === 'en' ? 'Explore this Era with AI' : 'کاوش این دوره با هوش مصنوعی'}
+                      </h4>
+                      <p className="text-slate-500 text-[11px] leading-relaxed max-w-[200px]">
+                        {lang === 'en' ? 'Discover hidden events and details from this period.' : 'رویدادهای این دوره را با کمک هوش مصنوعی کشف کنید.'}
+                      </p>
                     </div>
                   )}
 
@@ -321,7 +330,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{figure.name[lang]}</h4>
                             <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">
-                              {Math.abs(figure.birthYear)}{figure.birthYear < 0 ? ' BC' : ''} – {Math.abs(figure.deathYear)}{figure.deathYear < 0 ? ' BC' : ''}
+                              {formatYear(figure.birthYear, lang)} – {formatYear(figure.deathYear, lang)}
                             </span>
                           </div>
                           <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{figure.description[lang]}</p>
@@ -330,8 +339,16 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                     </motion.div>
                   ))
                 ) : (
-                  <div className="text-center py-12 text-slate-500 text-sm italic">
-                    {lang === 'en' ? 'No major figures recorded in this era.' : 'هیچ شخصیت مهمی در این دوره ثبت نشده است.'}
+                  <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+                    <div className="p-3 bg-indigo-500/10 rounded-2xl mb-4 border border-indigo-500/20">
+                      <User className="w-6 h-6 text-indigo-400" />
+                    </div>
+                    <h4 className="text-slate-200 font-bold text-sm mb-1">
+                      {lang === 'en' ? 'Find Historical Figures' : 'یافتن شخصیت‌های تاریخی'}
+                    </h4>
+                    <p className="text-slate-500 text-[11px] leading-relaxed max-w-[200px]">
+                      {lang === 'en' ? 'Ask AI to identify notable figures active in this era.' : 'شخصیت‌های اثرگذار این دوره را با هوش مصنوعی بیابید.'}
+                    </p>
                   </div>
                 )
               )}
@@ -354,7 +371,7 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{artifact.name[lang]}</h4>
                             <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">
-                              {Math.abs(artifact.year)}{artifact.year < 0 ? ' BC' : ' AD'}
+                              {formatYear(artifact.year, lang)}
                             </span>
                           </div>
                           <div className="flex items-center gap-1 mt-1 text-xs text-slate-400">
@@ -366,8 +383,16 @@ export const EventsPanel: React.FC<EventsPanelProps> = ({ year, lang, events, fi
                     </motion.div>
                   ))
                 ) : (
-                  <div className="text-center py-12 text-slate-500 text-sm italic">
-                    {lang === 'en' ? 'No major heritage recorded in this era.' : 'هیچ میراث مهمی در این دوره ثبت نشده است.'}
+                  <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+                    <div className="p-3 bg-indigo-500/10 rounded-2xl mb-4 border border-indigo-500/20">
+                      <Landmark className="w-6 h-6 text-indigo-400" />
+                    </div>
+                    <h4 className="text-slate-200 font-bold text-sm mb-1">
+                      {lang === 'en' ? 'Uncover Cultural Heritage' : 'کشف میراث فرهنگی'}
+                    </h4>
+                    <p className="text-slate-500 text-[11px] leading-relaxed max-w-[200px]">
+                      {lang === 'en' ? 'Discover monuments and artifacts from this period.' : 'آثار و بناهای تاریخی این دوره را با هوش مصنوعی کشف کنید.'}
+                    </p>
                   </div>
                 )
               )}

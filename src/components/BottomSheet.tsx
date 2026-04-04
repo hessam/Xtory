@@ -14,6 +14,7 @@ import { QuizQuestion } from '../types/quiz';
 import { HistorianCardSection } from './HistorianCardSection';
 import { ByokGate } from './ByokGate';
 import { getHistorianCard } from '../utils/getHistorianCard';
+import { formatYear } from '../utils/format';
 import { mapPolygons } from '../data/mapPolygons';
 
 // ── Snap definitions ────────────────────────────────────────────────────────
@@ -149,18 +150,38 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     return map;
   }, []);
 
-  // One card per active reign event = one card per region
+  // Group reign events by ruler and show region summary
   const activeRulerCards = useMemo(() => {
-    return reignEvents
-      .filter(e => year >= e.startDate && year <= e.endDate)
-      .map(e => {
-        const ruler = rulers[e.rulerId];
-        const dynasty = dynasties[ruler?.dynastyId];
-        const regionName = regionNameMap[e.regionId];
-        return { eventId: e.id, ruler, dynasty, startDate: e.startDate, endDate: e.endDate, regionId: e.regionId, regionName };
-      })
-      .filter(x => x.ruler && x.dynasty && x.regionName);
-  }, [reignEvents, year, rulers, dynasties, regionNameMap]);
+    const currentYearEvents = reignEvents.filter(e => year >= e.startDate && year <= e.endDate);
+    const rulerGroups: Record<string, typeof currentYearEvents> = {};
+    
+    currentYearEvents.forEach(e => {
+      if (!rulerGroups[e.rulerId]) rulerGroups[e.rulerId] = [];
+      rulerGroups[e.rulerId].push(e);
+    });
+
+    return Object.entries(rulerGroups).map(([rulerId, events]) => {
+      const ruler = rulers[rulerId];
+      const dynasty = dynasties[ruler?.dynastyId];
+      if (!ruler || !dynasty) return null;
+
+      const currentCount = events.length;
+      const allRulerEvents = reignEvents.filter(e => e.rulerId === rulerId);
+      
+      // Calculate growth story
+      const startCount = allRulerEvents.filter(e => ruler.startDate >= e.startDate && ruler.startDate <= e.endDate).length;
+      const endCount = allRulerEvents.filter(e => ruler.endDate >= e.startDate && ruler.endDate <= e.endDate).length;
+      
+      return { 
+        eventId: events[0].id, 
+        ruler, 
+        dynasty, 
+        currentCount,
+        startCount,
+        endCount
+      };
+    }).filter(Boolean);
+  }, [reignEvents, year, rulers, dynasties]);
 
   // Drag tracking
   const [isDragging, setIsDragging] = useState(false);
@@ -633,20 +654,17 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        {/* Pill indicator */}
-        <div className="w-10 h-1.5 rounded-full bg-white/30 mb-2" />
-          <div className="flex w-full px-5 justify-between items-center">
-            <span className="text-[10px] font-mono text-slate-500 bg-white/5 px-2 py-0.5 rounded-lg border border-white/5">
-              {Math.abs(year)}{year < 0 ? ' BC' : ' AD'}
-            </span>
-            <span className={`${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel tracking-widest'} font-bold text-amber-400 text-sm leading-none grow text-center`}>
-               {historianResult.card.eraName[lang]}
-            </span>
-            <ChevronUp
-              className="w-4 h-4 text-slate-500 transition-transform"
-              style={{ transform: snap === 'full' ? 'rotate(180deg)' : snap === 'half' ? 'rotate(90deg)' : 'rotate(0deg)' }}
-            />
-          </div>
+        {/* Drag handle */}
+        <div className="w-12 h-1 bg-white/20 rounded-full mb-3 shadow-[0_1px_3px_rgba(0,0,0,0.5)]" />
+        {/* Content Row: exactly two elements */}
+        <div className="flex w-full px-6 justify-between items-center" dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+          <span className={`${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel tracking-widest'} font-bold text-slate-200 text-sm leading-none`}>
+            {historianResult.card.eraName[lang]}
+          </span>
+          <span className="text-[11px] font-mono text-slate-500 bg-white/5 px-2 py-0.5 rounded border border-white/5">
+            {formatYear(year, lang)}
+          </span>
+        </div>
       </div>
       {/* Thin separator line — appears only when full + scrolled (like Google Maps) */}
       <div
@@ -685,10 +703,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                 <span className={`${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel tracking-widest'} text-amber-400 text-[11px] font-bold truncate flex-1`}>
                   {historianResult.card.eraName[lang]}
                 </span>
-                <span className="text-[9px] font-mono text-slate-600 shrink-0">
-                  {Math.abs(historianResult.card.yearRange.start)}{historianResult.card.yearRange.start < 0 ? ' BC' : ' AD'}
+                 <span className="text-[9px] font-mono text-slate-600 shrink-0">
+                  {formatYear(historianResult.card.yearRange.start, lang)}
                   {' – '}
-                  {Math.abs(historianResult.card.yearRange.end)}{historianResult.card.yearRange.end < 0 ? ' BC' : ' AD'}
+                  {formatYear(historianResult.card.yearRange.end, lang)}
                 </span>
               </div>
 
@@ -710,7 +728,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               </div>
               {activeRulerCards.length > 0 && (
                 <div className="overflow-x-auto custom-scrollbar flex gap-3 px-4 pb-3 pt-1 snap-x">
-                  {activeRulerCards.map(({ eventId, ruler, dynasty, startDate, endDate, regionName }) => {
+                   {activeRulerCards.map(({ eventId, ruler, dynasty, currentCount, startCount, endCount }) => {
                     let bgColor = 'bg-slate-500/30';
                     let borderColor = 'border-slate-400/30';
                     let icon = <Crown className="w-3.5 h-3.5 text-white/80 shrink-0" />;
@@ -731,6 +749,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                       bgColor = 'bg-amber-900/30'; borderColor = 'border-amber-700/40'; icon = <Crown className="w-3.5 h-3.5 text-amber-100 shrink-0" />;
                     }
 
+                    const hasGrown = endCount > startCount;
+                    const summaryLabel = lang === 'en' 
+                      ? (hasGrown ? `Expanded from ${startCount} to ${endCount} regions` : `${currentCount} ${currentCount === 1 ? 'region' : 'regions'} controlled`)
+                      : (hasGrown ? `از ${formatYear(startCount, 'fa').replace(/[^۰-۹]/g,'')} تا ${formatYear(endCount, 'fa').replace(/[^۰-۹]/g,'')} منطقه گسترش یافت` : `${formatYear(currentCount, 'fa').replace(/[^۰-۹]/g,'')} منطقه تحت حکومت`);
+
                     return (
                         <div
                             key={eventId}
@@ -741,11 +764,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                                 {icon}
                                 <span className="text-[12px] font-bold text-white truncate drop-shadow-md leading-tight">{ruler.name[lang]}</span>
                             </div>
-                            <span className="text-[10px] text-white/60 font-medium truncate ml-[18px] rtl:ml-0 rtl:mr-[18px] mb-0.5">
-                                {regionName[lang]}
+                            <span className="text-[10px] text-white/50 font-medium truncate ml-[18px] rtl:ml-0 rtl:mr-[18px] mb-0.5">
+                                {dynasty.name[lang]}
                             </span>
-                            <span className="text-[9px] text-white/50 font-mono ml-[18px] rtl:ml-0 rtl:mr-[18px]">
-                                {Math.abs(startDate)}{startDate < 0 ? ' BC' : ' AD'} – {Math.abs(endDate)}{endDate < 0 ? ' BC' : ' AD'}
+                            <span className="text-[10px] text-white/70 font-semibold ml-[18px] rtl:ml-0 rtl:mr-[18px]">
+                                {summaryLabel}
                             </span>
                         </div>
                     );
@@ -824,12 +847,16 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                         )}
 
                         {/* 3. Empty State Message */}
-                        <div className="px-4 py-3 flex flex-col gap-2">
-                          {activeEvents.length === 0 && !mythsForEra.length && (
-                            <div className="text-center py-8 text-slate-500 text-sm italic">
-                              {lang === 'en' ? 'No major events in this era.' : 'رویداد مهمی در این دوره ثبت نشده است.'}
-                            </div>
-                          )}
+                        <div className="px-6 py-12 flex flex-col items-center justify-center text-center">
+                          <div className="p-4 bg-indigo-500/10 rounded-2xl mb-5 border border-indigo-500/20 shadow-inner">
+                            <Sparkles className="w-8 h-8 text-indigo-400" />
+                          </div>
+                          <h4 className="text-slate-200 font-bold text-base mb-2">
+                            {lang === 'en' ? 'Explore this Era with AI' : 'کاوش این دوره با هوش مصنوعی'}
+                          </h4>
+                          <p className="text-slate-500 text-xs leading-relaxed max-w-[240px]">
+                            {lang === 'en' ? 'Discover hidden events, characters, and cultural details from this period.' : 'رویدادها، شخصیت‌ها و میراث این دوره را با کمک هوش مصنوعی کشف کنید.'}
+                          </p>
                         </div>
                       </div>
                     ),
@@ -870,7 +897,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                           <div className="flex-1 min-w-0 overflow-hidden">
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{event.title[lang]}</h4>
-                              <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{Math.abs(event.year)} {event.year < 0 ? 'BC' : 'AD'}</span>
+                              <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{formatYear(event.year, lang)}</span>
                             </div>
                             <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{event.description[lang]}</p>
                           </div>
@@ -927,10 +954,16 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
                         {/* 3. Empty State Message */}
                         {activeFigures.length === 0 && (
-                          <div className="px-4 pt-3">
-                            <div className="text-center py-8 text-slate-500 text-sm italic">
-                              {lang === 'en' ? 'No major figures in this era.' : 'شخصیت مهمی در این دوره ثبت نشده است.'}
+                          <div className="px-6 py-12 flex flex-col items-center justify-center text-center">
+                            <div className="p-4 bg-indigo-500/10 rounded-2xl mb-5 border border-indigo-500/20 shadow-inner">
+                              <User className="w-8 h-8 text-indigo-400" />
                             </div>
+                            <h4 className="text-slate-200 font-bold text-base mb-2">
+                              {lang === 'en' ? 'Find Historical Figures' : 'یافتن شخصیت‌های تاریخی'}
+                            </h4>
+                            <p className="text-slate-500 text-xs leading-relaxed max-w-[240px]">
+                              {lang === 'en' ? 'Ask AI to identify notable figures and leaders active in this period.' : 'شخصیت‌های اثرگذار و رهبران این دوره را با هوش مصنوعی بیابید.'}
+                            </p>
                           </div>
                         )}
                       </div>
@@ -965,7 +998,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{figure.name[lang]}</h4>
                               <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">
-                                {Math.abs(figure.birthYear)}{figure.birthYear < 0 ? ' BC' : ''} – {Math.abs(figure.deathYear)}{figure.deathYear < 0 ? ' BC' : ''}
+                                {formatYear(figure.birthYear, lang)} – {formatYear(figure.deathYear, lang)}
                               </span>
                             </div>
                             <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{figure.description[lang]}</p>
@@ -1060,7 +1093,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                           <div className="flex-1 min-w-0 overflow-hidden">
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="font-bold text-slate-200 text-sm leading-tight truncate flex-1">{artifact.name[lang]}</h4>
-                              <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{Math.abs(artifact.year)}{artifact.year < 0 ? ' BC' : ' AD'}</span>
+                              <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap shrink-0">{formatYear(artifact.year, lang)}</span>
                             </div>
                             <div className="flex items-center gap-1 text-xs text-slate-400">
                               <MapPin className="w-3 h-3 shrink-0" />

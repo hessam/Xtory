@@ -398,12 +398,12 @@ export default function App() {
             </button>
             <AIKeyButton onClick={() => setShowSettings(true)} className="!p-1.5" />
             <button
-              id="tour-lang-mobile"
-              onClick={() => setLang(lang === 'en' ? 'fa' : 'en')}
-              className="p-2 rounded-xl liquid-glass hover:bg-white/10 calm-transition text-xs font-bold text-white min-w-[36px]"
-            >
-              {lang === 'en' ? 'FA' : 'EN'}
-            </button>
+               id="tour-lang-mobile"
+               onClick={() => setLang(lang === 'en' ? 'fa' : 'en')}
+               className="p-2 calm-transition text-xs font-bold text-white/70 hover:text-white min-w-[36px]"
+             >
+               {lang === 'en' ? 'گ' : 'E'}
+             </button>
           </div>
         </header>
 
@@ -546,13 +546,13 @@ export default function App() {
               {lang === 'en' ? 'API Key' : 'کلید API'}
             </button>
             <button
-              id="tour-lang-desktop"
-              onClick={() => setLang(lang === 'en' ? 'fa' : 'en')}
-              className="flex items-center gap-2 px-5 py-4 rounded-3xl liquid-glass hover:bg-white/10 calm-transition text-sm font-medium text-white shrink-0"
-            >
-              <Languages className="w-4 h-4 mr-2" />
-              {lang === 'en' ? 'فارسی' : 'English'}
-            </button>
+               id="tour-lang-desktop"
+               onClick={() => setLang(lang === 'en' ? 'fa' : 'en')}
+               className="flex items-center gap-2 px-3 py-2 calm-transition text-sm font-medium text-white/70 hover:text-white shrink-0"
+             >
+               <Languages className="w-4 h-4" />
+               <span className="font-bold">{lang === 'en' ? 'گ' : 'E'}</span>
+             </button>
           </div>
         </header>
 

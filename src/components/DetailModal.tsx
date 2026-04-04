@@ -12,6 +12,15 @@ import { generateBiography, generateAlternateHistory, chatWithAssistant, generat
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { markAIUsed } from '../services/tagManager';
+import { formatYear, formatDuration } from '../utils/format';
+
+const statusLabels: Record<string, {en: string, fa: string}> = {
+  'Direct Control': { en: 'Direct Control', fa: 'کنترل مستقیم' },
+  'Partial Control': { en: 'Partial Control', fa: 'کنترل نسبی' },
+  'Vassal State': { en: 'Vassal State', fa: 'دولت دست‌نشانده' },
+  'Sphere of Influence': { en: 'Sphere of Influence', fa: 'حوزه نفوذ' },
+  'Contested/Warzone': { en: 'Contested/Warzone', fa: 'مناقشه/جنگ' },
+};
 
 const LineageDisplay = ({ data, lang }: { data: LineageData, lang: 'en' | 'fa' }) => {
   const renderSection = (titleEn: string, titleFa: string, items: any[]) => {
@@ -162,8 +171,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
     setIsGenerating(true);
     setActiveTab('context');
     const prompt = lang === 'en'
-      ? `Provide a brief historical context for the region of ${regionName} around the year ${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}. What was life like? Who was in control? What were the major cultural or political shifts happening? Keep it engaging and around 150-200 words.`
-      : `یک زمینه تاریخی مختصر برای منطقه ${regionName} در حدود سال ${Math.abs(year)} ${year < 0 ? 'ق.م' : 'م'} ارائه دهید. زندگی چگونه بود؟ چه کسی کنترل را در دست داشت؟ تغییرات عمده فرهنگی یا سیاسی چه بود؟ جذاب و حدود ۱۵۰ تا ۲۰۰ کلمه باشد.`;
+      ? `Provide a brief historical context for the region of ${regionName} around the year ${formatYear(year, 'en')}. What was life like? Who was in control? What were the major cultural or political shifts happening? Keep it engaging and around 150-200 words.`
+      : `یک زمینه تاریخی مختصر برای منطقه ${regionName} در حدود سال ${formatYear(year, 'fa')} ارائه دهید. زندگی چگونه بود؟ چه کسی کنترل را در دست داشت؟ تغییرات عمده فرهنگی یا سیاسی چه بود؟ جذاب و حدود ۱۵۰ تا ۲۰۰ کلمه باشد.`;
     
     const content = await chatWithAssistant([], prompt, lang);
     setAiContent(content);
@@ -175,8 +184,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
     setIsGenerating(true);
     setActiveTab('context');
     const prompt = lang === 'en'
-      ? `Provide a detailed historical context and the aftermath of the event "${eventTitle}" (${eventDesc}) which occurred around ${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}. Why did it happen and what were its consequences? Keep it engaging and around 200-300 words.`
-      : `زمینه تاریخی دقیق و پیامدهای رویداد "${eventTitle}" (${eventDesc}) که در حدود سال ${Math.abs(year)} ${year < 0 ? 'ق.م' : 'م'} رخ داد را ارائه دهید. چرا اتفاق افتاد و پیامدهای آن چه بود؟ جذاب و حدود ۲۰۰ تا ۳۰۰ کلمه باشد.`;
+      ? `Provide a detailed historical context and the aftermath of the event "${eventTitle}" (${eventDesc}) which occurred around ${formatYear(year, 'en')}. Why did it happen and what were its consequences? Keep it engaging and around 200-300 words.`
+      : `زمینه تاریخی دقیق و پیامدهای رویداد "${eventTitle}" (${eventDesc}) که در حدود سال ${formatYear(year, 'fa')} رخ داد را ارائه دهید. چرا اتفاق افتاد و پیامدهای آن چه بود؟ جذاب و حدود ۲۰۰ تا ۳۰۰ کلمه باشد.`;
     
     const content = await chatWithAssistant([], prompt, lang);
     setAiContent(content);
@@ -188,8 +197,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
     setIsGenerating(true);
     setActiveTab('context');
     const prompt = lang === 'en'
-      ? `Provide a detailed historical context about the heritage/artifact "${artifactName}" (${artifactDesc}) from around ${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}. Discuss its significance, creation, and its journey to its current location. Keep it engaging and around 200-300 words.`
-      : `زمینه تاریخی دقیقی درباره میراث/اثر باستانی "${artifactName}" (${artifactDesc}) از حدود سال ${Math.abs(year)} ${year < 0 ? 'ق.م' : 'م'} ارائه دهید. در مورد اهمیت، ساخت، و سفر آن به مکان فعلی‌اش بحث کنید. جذاب و حدود ۲۰۰ تا ۳۰۰ کلمه باشد.`;
+      ? `Provide a detailed historical context about the heritage/artifact "${artifactName}" (${artifactDesc}) from around ${formatYear(year, 'en')}. Discuss its significance, creation, and its journey to its current location. Keep it engaging and around 200-300 words.`
+      : `زمینه تاریخی دقیقی درباره میراث/اثر باستانی "${artifactName}" (${artifactDesc}) از حدود سال ${formatYear(year, 'fa')} ارائه دهید. در مورد اهمیت، ساخت، و سفر آن به مکان فعلی‌اش بحث کنید. جذاب و حدود ۲۰۰ تا ۳۰۰ کلمه باشد.`;
     
     const content = await chatWithAssistant([], prompt, lang);
     setAiContent(content);
@@ -235,7 +244,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
             <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{lang === 'en' ? searchResult.nameEn : searchResult.nameFa}</h2>
             <div className="flex items-center gap-2 text-sm text-slate-400">
                 <Calendar className="w-4 h-4" />
-                <span>{Math.abs(searchResult.year)}{searchResult.year < 0 ? (lang === 'en' ? ' BC' : ' ق.م') : (lang === 'en' ? ' AD' : ' م')}</span>
+                <span>{formatYear(searchResult.year, lang)}</span>
             </div>
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white shrink-0 mt-1">
@@ -251,7 +260,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
           </div>
           <div className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{lang === 'en' ? 'Year' : 'سال'}</span>
-            <span className="text-sm font-semibold text-white">{Math.abs(searchResult.year)} {searchResult.year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}</span>
+            <span className="text-sm font-semibold text-white">{formatYear(searchResult.year, lang)}</span>
           </div>
         </div>
 
@@ -339,7 +348,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
             </div>
             <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{artifact.name[lang]}</h2>
             <p className="text-sm text-slate-400">
-              {Math.abs(artifact.year)} {artifact.year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}
+              {formatYear(artifact.year, lang)}
             </p>
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white shrink-0 mt-1">
@@ -355,7 +364,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
           </div>
           <div className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{lang === 'en' ? 'Date' : 'تاریخ'}</span>
-            <span className="text-sm font-semibold text-white">{Math.abs(artifact.year)} {artifact.year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}</span>
+            <span className="text-sm font-semibold text-white">{formatYear(artifact.year, lang)}</span>
           </div>
         </div>
 
@@ -426,9 +435,9 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
             </div>
             <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{figure.name[lang]}</h2>
             <p className="text-sm text-slate-400">
-              {Math.abs(figure.birthYear)}{figure.birthYear < 0 ? (lang === 'en' ? ' BC' : ' ق.م') : ''}
+              {formatYear(figure.birthYear, lang)}
               {' – '}
-              {Math.abs(figure.deathYear)}{figure.deathYear < 0 ? (lang === 'en' ? ' BC' : ' ق.م') : ''}
+              {formatYear(figure.deathYear, lang)}
             </p>
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white shrink-0 mt-1">
@@ -440,11 +449,11 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
         <div className="grid grid-cols-3 gap-2 mb-5">
           <div className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{lang === 'en' ? 'Born' : 'تولد'}</span>
-            <span className="text-sm font-semibold text-white">{Math.abs(figure.birthYear)}{figure.birthYear < 0 ? (lang === 'en' ? ' BC' : ' ق.م') : ''}</span>
+            <span className="text-sm font-semibold text-white">{formatYear(figure.birthYear, lang)}</span>
           </div>
           <div className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{lang === 'en' ? 'Died' : 'وفات'}</span>
-            <span className="text-sm font-semibold text-white">{Math.abs(figure.deathYear)}{figure.deathYear < 0 ? (lang === 'en' ? ' BC' : ' ق.م') : ''}</span>
+            <span className="text-sm font-semibold text-white">{formatYear(figure.deathYear, lang)}</span>
           </div>
           <div className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{lang === 'en' ? 'Field' : 'حوزه'}</span>
@@ -487,8 +496,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
                 setActiveTab('biography');
                 setIsGenerating(true);
                 const prompt = lang === 'en'
-                  ? `Write a detailed biography of the historical figure ${figure.name.en} (${Math.abs(figure.birthYear)}${figure.birthYear < 0 ? 'BC' : ''} - ${Math.abs(figure.deathYear)}${figure.deathYear < 0 ? 'BC' : ''}). Discuss their major works, philosophical or scientific contributions, and their impact on history.`
-                  : `یک بیوگرافی مفصل از شخصیت تاریخی ${figure.name.fa} (${Math.abs(figure.birthYear)}${figure.birthYear < 0 ? 'ق.م' : ''} - ${Math.abs(figure.deathYear)}${figure.deathYear < 0 ? 'ق.م' : ''}) بنویسید. در مورد آثار عمده، کمک‌های فلسفی یا علمی و تأثیر آنها بر تاریخ بحث کنید.`;
+                  ? `Write a detailed biography of the historical figure ${figure.name.en} (${formatYear(figure.birthYear, 'en')} - ${formatYear(figure.deathYear, 'en')}). Discuss their major works, philosophical or scientific contributions, and their impact on history.`
+                  : `یک بیوگرافی مفصل از شخصیت تاریخی ${figure.name.fa} (${formatYear(figure.birthYear, 'fa')} - ${formatYear(figure.deathYear, 'fa')}) بنویسید. در مورد آثار عمده، کمک‌های فلسفی یا علمی و تأثیر آنها بر تاریخ بحث کنید.`;
                 chatWithAssistant([], prompt, lang).then(c => { setAiContent(c); setIsGenerating(false); });
               } else {
                 setActiveTab('details');
@@ -545,7 +554,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
             </div>
             <h2 className={`text-2xl font-bold text-white leading-tight ${lang === 'fa' ? 'font-vazirmatn' : 'font-serif'}`}>{historicalEvent.title[lang]}</h2>
             <p className="text-sm text-slate-400">
-              {Math.abs(historicalEvent.year)} {historicalEvent.year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}
+              {formatYear(historicalEvent.year, lang)}
             </p>
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white shrink-0 mt-1">
@@ -625,7 +634,6 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
     const region = regions.find((r) => r.id === event.regionId);
 
     const reignDuration = ruler.endDate - ruler.startDate;
-    const formatYear = (y: number) => `${Math.abs(y)} ${y < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}`;
 
     const dynastyColors: Record<string, string> = {
       persian: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
@@ -666,14 +674,14 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
         {/* ── Reign Bar ── */}
         <div className="mb-5">
           <div className="flex justify-between text-xs text-slate-500 mb-1.5 font-mono">
-            <span>{formatYear(ruler.startDate)}</span>
-            <span>{formatYear(ruler.endDate)}</span>
+            <span>{formatYear(ruler.startDate, lang)}</span>
+            <span>{formatYear(ruler.endDate, lang)}</span>
           </div>
           <div className="relative h-2 bg-white/5 rounded-full overflow-hidden border border-white/10">
             <div className="absolute inset-y-0 left-0 right-0 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" />
           </div>
           <p className="text-center text-xs text-slate-400 mt-1.5">
-            {Math.abs(reignDuration)}{lang === 'en' ? '-year reign' : ' سال حکومت'}
+            {formatDuration(reignDuration, lang)} {lang === 'en' ? 'reign' : 'حکومت'}
           </p>
         </div>
 
@@ -700,7 +708,9 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
           <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{region?.displayName[lang]?.full.toUpperCase()}</p>
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className={`w-2 h-2 rounded-full shrink-0 ${isDirect ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-            <p className="text-sm text-slate-300 leading-none font-semibold">{event.status}</p>
+            <p className="text-sm text-slate-300 leading-none font-semibold">
+              {lang === 'fa' && statusLabels[event.status] ? statusLabels[event.status].fa : event.status}
+            </p>
             {event.isAiGenerated && (
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                 {lang === 'en' ? 'AI Inferred' : 'تخمین هوش مصنوعی'}
@@ -826,7 +836,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
               {isGlobal ? (lang === 'en' ? 'Greater Iran' : 'ایران بزرگ') : region?.displayName[lang]?.full}
             </h2>
             <p className="text-sm text-slate-400">
-              {Math.abs(year)} {year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}
+              {formatYear(year, lang)}
             </p>
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white shrink-0 mt-1">
@@ -838,7 +848,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
         <div className="grid grid-cols-2 gap-2 mb-5">
           <div className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{lang === 'en' ? 'Year' : 'سال'}</span>
-            <span className="text-sm font-semibold text-white">{Math.abs(year)} {year < 0 ? (lang === 'en' ? 'BC' : 'ق.م') : (lang === 'en' ? 'AD' : 'م')}</span>
+            <span className="text-sm font-semibold text-white">{formatYear(year, lang)}</span>
           </div>
           <div className="p-3 liquid-glass rounded-2xl border border-white/5 flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{lang === 'en' ? 'Active Rulers' : 'حاکمان فعال'}</span>
@@ -863,7 +873,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({ eventId, regionId, his
                       </div>
                     </div>
                     <span className={`text-xs px-2 py-1 rounded-full border flex-shrink-0 ${event.isAiGenerated ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'}`}>
-                      {event.status} {event.isAiGenerated && (lang === 'en' ? '(AI)' : '(تخمین)')}
+                      {lang === 'fa' && statusLabels[event.status] ? statusLabels[event.status].fa : event.status} {event.isAiGenerated && (lang === 'en' ? '(AI)' : '(تخمین)')}
                     </span>
                   </div>
                   <p className="text-[10px] text-slate-400 border-t border-white/5 pt-2 mt-1 leading-relaxed">
