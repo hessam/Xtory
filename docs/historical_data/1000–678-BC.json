@@ -1,0 +1,170 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Elamite (Anshanite) Governors",
+        "approximate_years_active": "1000–750 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Early Persian Tribal Chiefs",
+        "approximate_years_active": "850–700 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Achaemenid (Early Persian)",
+        "approximate_years_active": "705–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Independent Tribal City-Lords",
+        "approximate_years_active": "1000–727 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Median Kingdom (Deioces)",
+        "approximate_years_active": "727–678 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Neo-Elamite I (Local Powers)",
+        "approximate_years_active": "1000–743 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Hubanid Dynasty",
+        "approximate_years_active": "743–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Babylonian Dynasty X (Chaldean)",
+        "approximate_years_active": "1000–729 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Neo-Assyrian Empire",
+        "approximate_years_active": "911–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Mannaean Kingdom",
+        "approximate_years_active": "1000–611 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Urartu (Kingdom of Van)",
+        "approximate_years_active": "850–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Koban Culture",
+        "approximate_years_active": "1100–400 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Colchis",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Urartu (Southern Sector)",
+        "approximate_years_active": "850–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Cimmerian/Scythian Bands",
+        "approximate_years_active": "750–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Amardian (Mardi) Tribes",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Cadusian (Cadusii) Tribes",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Gelae/Anariacae",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Yaz II Culture (Early)",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kayanian Dynasty",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "Low"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mundigak V-VI Elite",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ichthyophagoi Tribes",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Bampur Chiefdoms",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Oreitans",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "Low"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Sogdian Principalities",
+        "approximate_years_active": "1000–678 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Amirabad Culture",
+        "approximate_years_active": "1000–700 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Saka (Chorasmii)",
+        "approximate_years_active": "800–678 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Chorasmian Kingdom",
+        "approximate_years_active": "700–678 BC",
+        "confidence": "Low"
+    }
+]

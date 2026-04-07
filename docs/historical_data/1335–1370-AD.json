@@ -1,0 +1,164 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Injuid Dynasty",
+        "approximate_years_active": "1335–1357",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years_active": "1314–1393",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Chobanid Dynasty",
+        "approximate_years_active": "1338–1357",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years_active": "1335–1432",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years_active": "1314–1393",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years_active": "1335–1432",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years_active": "1314–1393",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years_active": "1335–1432",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Chobanid Dynasty",
+        "approximate_years_active": "1335–1357",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years_active": "1357–1432",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs",
+        "approximate_years_active": "861–1538",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Georgia",
+        "approximate_years_active": "1008–1490",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Chobanid Dynasty",
+        "approximate_years_active": "1338–1357",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years_active": "1357–1432",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandid Dynasty",
+        "approximate_years_active": "651–1349",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanid Dynasty",
+        "approximate_years_active": "665–1598",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Afrasiyab Dynasty",
+        "approximate_years_active": "1349–1504",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Mar'ashis",
+        "approximate_years_active": "1359–1596",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Togha Temür (Ilkhanid Claimant)",
+        "approximate_years_active": "1335–1353",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kartid Dynasty",
+        "approximate_years_active": "1244–1381",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Sarbadars",
+        "approximate_years_active": "1332–1386",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Jauni-Qurbani Dynasty",
+        "approximate_years_active": "1335–1381",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mihrabanid Dynasty",
+        "approximate_years_active": "1236–1537",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Raees Dynasty",
+        "approximate_years_active": "1320–1620",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Chagatai Khanate",
+        "approximate_years_active": "1225–c. 1370",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Golden Horde",
+        "approximate_years_active": "1242–1502",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Chagatai Khanate",
+        "approximate_years_active": "1225–c. 1370",
+        "confidence": "High"
+    }
+]

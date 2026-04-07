@@ -1,0 +1,224 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "632–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Mihran (Rayy Branch)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Karen (Nihavand Branch)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "632–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "638–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–637 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "637–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "House of Sasan (Direct Rule/Marzbans)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "642–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Sasanian Marzbans (Satrapy of Albania)",
+        "approximate_years_active": "461–636 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Mihranid Dynasty",
+        "approximate_years_active": "630–651+ AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Rashidun Caliphate (Islamic Conquest / Arran)",
+        "approximate_years_active": "633–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Khazar Khaganate (Incursions / Control)",
+        "approximate_years_active": "c. 650–969 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Zarmihrids",
+        "approximate_years_active": "6th century–785 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Dabuyid Dynasty",
+        "approximate_years_active": "642–760 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandid Dynasty",
+        "approximate_years_active": "651–1349 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Masmughans of Damavand",
+        "approximate_years_active": "651–760 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanid Dynasty",
+        "approximate_years_active": "655–1598 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "House of Sasan (Restored Rule)",
+        "approximate_years_active": "560–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Western Turkic Khaganate",
+        "approximate_years_active": "c. 560–651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "651–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "House of Sasan (Direct/Marzban Rule)",
+        "approximate_years_active": "400–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Zunbil Dynasty (Zabulistan)",
+        "approximate_years_active": "c. 6th century–870 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "643–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Sasanian Empire (Paradan & Makran)",
+        "approximate_years_active": "c. 250–655 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Brahman Dynasty",
+        "approximate_years_active": "641–725 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "643–661 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Sogdian City-States",
+        "approximate_years_active": "6th century BC–11th century AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Sasanian Empire (Influence)",
+        "approximate_years_active": "565–651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Western Turkic Khaganate (Göktürks)",
+        "approximate_years_active": "c. 560–651+ AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Tang China",
+        "approximate_years_active": "660–669 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Sasanian Overlordship (Nominal)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Afrighid Dynasty",
+        "approximate_years_active": "305–995 AD",
+        "confidence": "High"
+    }
+]

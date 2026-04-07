@@ -1,0 +1,182 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1709–1724",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Hotak Dynasty",
+        "approximate_years": "1724–1729",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1729–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1709–1722",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Hotak Dynasty",
+        "approximate_years": "1722–1729",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1729–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Safavid Dynasty (nominal)",
+        "approximate_years": "1709–1722",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Musha'sha' Dynasty (Local Power)",
+        "approximate_years": "1709–1730",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Banu Ka'b (Local Power)",
+        "approximate_years": "1720–1738",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1730–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1709–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1709–1723",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1724–1735",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1735–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1709–1722",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Ottoman Empire (Western / Partition)",
+        "approximate_years": "1723–1735",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Russian Empire (Eastern / Baku)",
+        "approximate_years": "1723–1735",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1735–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1709–1723",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Russian Empire",
+        "approximate_years": "1723–1735",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1735–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1709–1722",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Malek Mahmud Sistani (Independent)",
+        "approximate_years": "1722–1726",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1726–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Kayani Dynasty (Malik Mahmud)",
+        "approximate_years": "1709–1726",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1726–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Local Sardars / Tribal Chiefs",
+        "approximate_years": "1709–1736",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1736–1738",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Janid (Ashtarkhanid) Dynasty",
+        "approximate_years": "1711–1738",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Khanate of Khiva",
+        "approximate_years": "1709–1738",
+        "confidence": "medium"
+    }
+]

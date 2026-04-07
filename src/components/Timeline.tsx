@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { ReignEvent } from '../data/events';
 import { Ruler } from '../data/rulers';
 import { Dynasty } from '../data/dynasties';
@@ -35,12 +36,16 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [viewWidth, setViewWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [viewHeight, setViewHeight] = useState(0);
 
   useEffect(() => {
     const el = containerRef.current;
     if (el) {
       const observer = new ResizeObserver(entries => {
-        if (entries[0]) setViewWidth(entries[0].contentRect.width);
+        if (entries[0]) {
+          setViewWidth(entries[0].contentRect.width);
+          setViewHeight(entries[0].contentRect.height);
+        }
       });
       observer.observe(el);
       return () => observer.disconnect();
@@ -87,12 +92,51 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
     return mapPolygons.find(r => !r.isWater && !r.isNeighbor)!.id; // Fallback
   };
 
-  const { eventRows, maxRow } = useMemo(() => {
+  const { eventRows, maxRow, eventSubLanes } = useMemo(() => {
     const rows: { [eventId: string]: number } = {};
     events.forEach((event) => {
       rows[event.id] = regionToIndex[resolveRegion(event)] ?? 0;
     });
-    return { eventRows: rows, maxRow: coreRegions.length - 1 };
+
+    // Sub-lane stacking: detect overlapping events in the same region
+    // and assign each a vertical sub-position within the 40px lane
+    const subLanes: Record<string, { subIndex: number; subCount: number }> = {};
+    const byRegion: Record<string, ReignEvent[]> = {};
+    events.forEach(event => {
+      const rId = resolveRegion(event);
+      if (!byRegion[rId]) byRegion[rId] = [];
+      byRegion[rId].push(event);
+    });
+
+    Object.values(byRegion).forEach(regionEvents => {
+      // Sort by start date for greedy interval scheduling
+      const sorted = [...regionEvents].sort((a, b) => a.startDate - b.startDate);
+      const lanes: number[] = []; // tracks the end date of each sub-lane
+
+      sorted.forEach(event => {
+        let placed = false;
+        for (let i = 0; i < lanes.length; i++) {
+          if (event.startDate >= lanes[i]) {
+            lanes[i] = event.endDate;
+            subLanes[event.id] = { subIndex: i, subCount: 0 };
+            placed = true;
+            break;
+          }
+        }
+        if (!placed) {
+          subLanes[event.id] = { subIndex: lanes.length, subCount: 0 };
+          lanes.push(event.endDate);
+        }
+      });
+
+      // Fill in total sub-lane count for all events in this region
+      const totalLanes = lanes.length;
+      regionEvents.forEach(event => {
+        if (subLanes[event.id]) subLanes[event.id].subCount = totalLanes;
+      });
+    });
+
+    return { eventRows: rows, maxRow: coreRegions.length - 1, eventSubLanes: subLanes };
   }, [events, regionToIndex, coreRegions]);
 
   const clusteredHistoricalEvents = useMemo(() => {
@@ -172,6 +216,7 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
       setYear(Math.max(MIN_YEAR, Math.min(MAX_YEAR, newYear)));
     }
   };
+
 
   useEffect(() => {
     if (containerRef.current) {
@@ -658,9 +703,38 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
 
             return (
               <motion.div
-                key={`cluster-${index}`}
-                onMouseEnter={() => setHoveredEvent(`cluster-${index}`)}
+                key={`he-${index}`}
+                onMouseEnter={(e) => {
+                  setHoveredEvent(`cluster-${index}`);
+                  const cx = e.clientX, cy = e.clientY;
+                  requestAnimationFrame(() => {
+                    const tooltip = document.getElementById(`tooltip-wrap-he-${index}`);
+                    if (tooltip) {
+                      tooltip.style.left = `${cx}px`;
+                      if (cy > window.innerHeight * 0.6) {
+                        tooltip.style.top = `${cy - 15}px`;
+                        tooltip.style.transform = 'translate(-50%, -100%)';
+                      } else {
+                        tooltip.style.top = `${cy + 25}px`;
+                        tooltip.style.transform = 'translate(-50%, 0)';
+                      }
+                    }
+                  });
+                }}
                 onMouseLeave={() => setHoveredEvent(null)}
+                onMouseMove={(e) => {
+                  const tooltip = document.getElementById(`tooltip-wrap-he-${index}`);
+                  if (tooltip) {
+                    tooltip.style.left = `${e.clientX}px`;
+                    if (e.clientY > window.innerHeight * 0.6) {
+                      tooltip.style.top = `${e.clientY - 15}px`;
+                      tooltip.style.transform = 'translate(-50%, -100%)';
+                    } else {
+                      tooltip.style.top = `${e.clientY + 25}px`;
+                      tooltip.style.transform = 'translate(-50%, 0)';
+                    }
+                  }
+                }}
                 onClick={() => {
                   if (isSingle && onHistoricalEventClick) {
                     onHistoricalEventClick(primaryEvent);
@@ -682,15 +756,14 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
               >
                 {isSingle ? getEventIcon(primaryEvent.type) : <span className="text-[10px] font-bold text-white drop-shadow-md">{cluster.events.length}</span>}
 
-                {/* Cooltip for Historical Events */}
-                <AnimatePresence>
-                  {isHovered && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-[200px] p-2 rounded-xl bg-slate-900/80 backdrop-blur-xl border border-white/10 shadow-lg z-50 flex flex-col gap-1 pointer-events-none"
-                    >
+                {/* Tooltip for Historical Events — portal to body */}
+                {isHovered && createPortal(
+                  <div
+                    id={`tooltip-wrap-he-${index}`}
+                    className="fixed z-[99999] pointer-events-none"
+                    style={{ top: '-9999px', left: '-9999px' }}
+                  >
+                    <div className="w-max max-w-[200px] p-2 rounded-xl bg-slate-950/95 backdrop-blur-xl border border-white/10 shadow-lg flex flex-col gap-1 animate-[fadeIn_100ms_ease-out]">
                       {isSingle ? (
                         <>
                           <div className="flex items-center gap-1.5 border-b border-white/10 pb-1">
@@ -724,9 +797,10 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
                           </div>
                         </>
                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </div>,
+                  document.body
+                )}
               </motion.div>
             );
           })}
@@ -740,8 +814,37 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
             return (
               <motion.div
                 key={`artifact-cluster-${i}`}
-                onMouseEnter={() => setHoveredEvent(`artifact-cluster-${i}`)}
+                onMouseEnter={(e) => {
+                  setHoveredEvent(`artifact-cluster-${i}`);
+                  const cx = e.clientX, cy = e.clientY;
+                  requestAnimationFrame(() => {
+                    const tooltip = document.getElementById(`tooltip-wrap-art-${i}`);
+                    if (tooltip) {
+                      tooltip.style.left = `${cx}px`;
+                      if (cy > window.innerHeight * 0.6) {
+                        tooltip.style.top = `${cy - 15}px`;
+                        tooltip.style.transform = 'translate(-50%, -100%)';
+                      } else {
+                        tooltip.style.top = `${cy + 25}px`;
+                        tooltip.style.transform = 'translate(-50%, 0)';
+                      }
+                    }
+                  });
+                }}
                 onMouseLeave={() => setHoveredEvent(null)}
+                onMouseMove={(e) => {
+                  const tooltip = document.getElementById(`tooltip-wrap-art-${i}`);
+                  if (tooltip) {
+                    tooltip.style.left = `${e.clientX}px`;
+                    if (e.clientY > window.innerHeight * 0.6) {
+                      tooltip.style.top = `${e.clientY - 15}px`;
+                      tooltip.style.transform = 'translate(-50%, -100%)';
+                    } else {
+                      tooltip.style.top = `${e.clientY + 25}px`;
+                      tooltip.style.transform = 'translate(-50%, 0)';
+                    }
+                  }
+                }}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (isSingle && onArtifactClick) {
@@ -773,14 +876,14 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
                   )}
                 </div>
 
-                <AnimatePresence>
-                  {isHovered && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-[200px] p-2 rounded-xl bg-slate-900/80 backdrop-blur-xl border border-amber-500/30 shadow-lg z-50 flex flex-col gap-1 pointer-events-none"
-                    >
+                {/* Tooltip for Artifacts — portal to body */}
+                {isHovered && createPortal(
+                  <div
+                    id={`tooltip-wrap-art-${i}`}
+                    className="fixed z-[99999] pointer-events-none"
+                    style={{ top: '-9999px', left: '-9999px' }}
+                  >
+                    <div className="w-max max-w-[200px] p-2 rounded-xl bg-slate-950/95 backdrop-blur-xl border border-amber-500/30 shadow-lg flex flex-col gap-1 animate-[fadeIn_100ms_ease-out]">
                       {isSingle ? (
                         <>
                           <div className="flex items-center gap-1.5 border-b border-amber-500/30 pb-1">
@@ -812,9 +915,10 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
                           </div>
                         </>
                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </div>,
+                  document.body
+                )}
               </motion.div>
             );
           })}
@@ -826,6 +930,28 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
             const row = eventRows[event.id];
             
             if (!ruler || !dynasty) return null; // Safety check for dynamic data
+
+            // ── Three-mode display for AI events ──
+            // isPlaceholder: ruler name IS the dynasty name (Pass 1 didn't find a specific ruler)
+            const isPlaceholder = event.isAiGenerated && ruler.name.en === dynasty.name.en;
+            // isDynastyWide: the dates span an unreasonable range (dynasty dates, not ruler dates)
+            const isDynastyWide = (event.endDate - event.startDate) > 80;
+            
+            // Calculate display bounds
+            let displayStart = event.startDate;
+            let displayEnd = event.endDate;
+            let barMode: 'known' | 'uncertain' | 'unknown' = 'known';
+            
+            if (event.isAiGenerated && isDynastyWide) {
+              // Dates are dynasty-wide — clamp to ±25yr window around current year
+              const WINDOW = 25;
+              displayStart = Math.max(event.startDate, year - WINDOW);
+              displayEnd = Math.min(event.endDate, year + WINDOW);
+              // Only mark as uncertain if we also don't have a real ruler name
+              barMode = isPlaceholder ? 'uncertain' : 'known';
+            } else if (isPlaceholder) {
+              barMode = 'uncertain';
+            }
 
             let bgColor = 'bg-slate-500/30';
             let borderColor = 'border-slate-400/30';
@@ -861,56 +987,129 @@ export const Timeline: React.FC<TimelineProps> = ({ year, setYear, lang, onEvent
               icon = <Crown className="w-3 h-3 min-w-[12px] opacity-80 text-amber-100" />;
             }
 
-            const left = (event.startDate - MIN_YEAR) * PIXELS_PER_YEAR;
-            const width = Math.max(4, (event.endDate - event.startDate) * PIXELS_PER_YEAR);
+            // Mode-specific visual overrides
+            const modeOpacity = barMode === 'known' ? 1 : barMode === 'uncertain' ? 0.55 : 0.25;
+            const modeBorderStyle = barMode === 'known' ? 'solid' : barMode === 'uncertain' ? 'dashed' : 'dotted';
+
+            const left = (displayStart - MIN_YEAR) * PIXELS_PER_YEAR;
+            const width = Math.max(4, (displayEnd - displayStart) * PIXELS_PER_YEAR);
             const isHovered = hoveredEvent === event.id;
 
             // Semantic zoom: hide text if capsule is too small
             const showText = width > 50;
             const showIcon = width > 20;
 
+            // Display label: real ruler name or dynasty placeholder
+            const displayLabel = barMode === 'uncertain' && isPlaceholder
+              ? `${dynasty.name[lang]} ?`
+              : ruler.name[lang];
+
+            // Sub-lane stacking: compute bar height and vertical offset
+            const subLane = eventSubLanes[event.id] || { subIndex: 0, subCount: 1 };
+            const LANE_HEIGHT = 36; // usable height within 40px row
+            const LANE_PAD = 2;     // top padding within row
+            const barHeight = subLane.subCount > 1
+              ? Math.max(10, Math.floor(LANE_HEIGHT / subLane.subCount) - 1)
+              : 32; // default h-8
+            const barTop = 40 + row * 40 + LANE_PAD + (subLane.subIndex * (LANE_HEIGHT / subLane.subCount));
+
             return (
               <motion.div
                 key={event.id}
-                onMouseEnter={() => setHoveredEvent(event.id)}
+                onMouseEnter={(e) => {
+                  setHoveredEvent(event.id);
+                  // Position on next animation frame when the portal DOM node exists
+                  const cx = e.clientX, cy = e.clientY;
+                  requestAnimationFrame(() => {
+                    const tooltip = document.getElementById(`tooltip-wrap-${event.id}`);
+                    if (tooltip) {
+                      tooltip.style.left = `${cx}px`;
+                      if (cy > window.innerHeight * 0.6) {
+                        tooltip.style.top = `${cy - 15}px`;
+                        tooltip.style.transform = 'translate(-50%, -100%)';
+                      } else {
+                        tooltip.style.top = `${cy + 25}px`;
+                        tooltip.style.transform = 'translate(-50%, 0)';
+                      }
+                    }
+                  });
+                }}
                 onMouseLeave={() => setHoveredEvent(null)}
+                onMouseMove={(e) => {
+                  const tooltip = document.getElementById(`tooltip-wrap-${event.id}`);
+                  if (tooltip) {
+                    tooltip.style.left = `${e.clientX}px`;
+                    if (e.clientY > window.innerHeight * 0.6) {
+                      tooltip.style.top = `${e.clientY - 15}px`;
+                      tooltip.style.transform = 'translate(-50%, -100%)';
+                    } else {
+                      tooltip.style.top = `${e.clientY + 25}px`;
+                      tooltip.style.transform = 'translate(-50%, 0)';
+                    }
+                  }
+                }}
                 onClick={() => onEventClick(event.id)}
-                className={`absolute h-8 rounded-xl cursor-pointer flex items-center px-1.5 text-[11px] font-medium text-white ${bgColor} ${borderColor} border shadow-sm backdrop-blur-md hover:brightness-125 transition-all ${isHovered ? 'z-40 ring-1 ring-white/50' : 'z-10'}`}
+                className={`absolute rounded-xl cursor-pointer group transition-all ${isHovered ? 'z-40' : 'z-10'}`}
                 style={{
                   left: `${left}px`,
                   width: `${width}px`,
-                  top: `${40 + row * 40}px`,
+                  top: `${barTop}px`,
+                  height: `${barHeight}px`,
+                  zIndex: isHovered ? 50 : 10,
                 }}
-                whileHover={{ scale: 1.02, y: -2 }}
+                whileHover={{ scale: 1.02, y: -1 }}
               >
-                <div className="flex items-center gap-1.5 overflow-hidden w-full pointer-events-none">
-                  {showIcon && icon}
-                  {showText && <span className="truncate drop-shadow-md">{ruler.name[lang]}</span>}
+                {/* Visual Bar Background & Border - Opacity applied here */}
+                <div 
+                  className={`absolute inset-0 rounded-xl ${bgColor} ${borderColor} border shadow-sm backdrop-blur-md transition-all group-hover:brightness-125 ${isHovered ? 'ring-1 ring-white/50 shadow-lg shadow-white/10' : ''}`}
+                  style={{ 
+                    opacity: modeOpacity,
+                    borderStyle: modeBorderStyle,
+                    borderWidth: barMode !== 'known' ? '2px' : '1px',
+                    borderRadius: barHeight < 20 ? '6px' : '12px',
+                  }}
+                />
+
+                {/* Bar Content - Opacity applied here */}
+                <div 
+                  className="relative flex items-center gap-1 overflow-hidden w-full h-full px-1.5 pointer-events-none"
+                  style={{ 
+                    opacity: modeOpacity,
+                    fontSize: barHeight < 16 ? '9px' : '11px',
+                  }}
+                >
+                  {showIcon && barHeight >= 14 && icon}
+                  {showText && <span className={`truncate drop-shadow-md leading-none ${barMode === 'uncertain' ? 'italic' : ''}`}>{displayLabel}</span>}
                 </div>
 
-                {/* Cooltip */}
-                <AnimatePresence>
-                  {isHovered && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-[200px] p-2 rounded-xl bg-slate-900/80 backdrop-blur-xl border border-white/10 shadow-lg z-50 flex flex-col gap-1 pointer-events-none"
-                    >
+                {/* Tooltip — portal to body, no AnimatePresence */}
+                {isHovered && createPortal(
+                  <div
+                    id={`tooltip-wrap-${event.id}`}
+                    className="fixed z-[99999] pointer-events-none"
+                    style={{ top: '-9999px', left: '-9999px' }}
+                  >
+                    <div className="w-max max-w-[220px] p-2 rounded-xl bg-slate-950/95 backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col gap-1 animate-[fadeIn_100ms_ease-out]">
                       <div className="flex items-center gap-1.5 border-b border-white/10 pb-1">
                         {icon}
                         <span className="font-bold text-xs text-white drop-shadow-md truncate">{ruler.name[lang]}</span>
                       </div>
                       <span className="text-[10px] text-slate-300 truncate">{dynasty.name[lang]}</span>
-                       <span className="text-[9px] text-slate-400 font-mono bg-black/40 px-1 py-0.5 rounded w-fit">
+                      {barMode === 'uncertain' && (
+                        <span className="text-[9px] text-amber-400/80 italic">
+                          {lang === 'en' ? '~ Ruler uncertain for this period' : '~ حاکم این دوره نامشخص است'}
+                        </span>
+                      )}
+                      <span className="text-[9px] text-slate-400 font-mono bg-black/40 px-1 py-0.5 rounded w-fit">
                         {formatYear(event.startDate, lang)} - {formatYear(event.endDate, lang)} ({formatDuration(event.endDate - event.startDate, lang)})
                       </span>
                       <div className="mt-0.5 text-[9px] text-emerald-300/90 font-medium flex items-center gap-1 bg-emerald-500/10 px-1.5 py-0.5 rounded-md w-fit">
                         <Sparkles className="w-2.5 h-2.5" /> {lang === 'en' ? 'Click to explore' : 'برای کاوش کلیک کنید'}
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </div>,
+                  document.body
+                )}
               </motion.div>
             );
           })}

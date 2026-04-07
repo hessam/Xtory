@@ -1,0 +1,380 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Seljuk Empire",
+        "approximate_years": "1077–1148",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Salghurids",
+        "approximate_years": "1148–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Shabankara",
+        "approximate_years": "1077–1231",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years": "1203–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Injuid Dynasty",
+        "approximate_years": "1335–1353",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years": "1353–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Seljuk Empire",
+        "approximate_years": "1077–1194",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Eldiguzids",
+        "approximate_years": "1160–1194",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years": "1194–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Hazaraspids",
+        "approximate_years": "1155–1231",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Chupanid Dynasty",
+        "approximate_years": "1338–1357",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Injuid Dynasty",
+        "approximate_years": "1335–1357",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years": "1357–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years": "1358–1370+",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Seljuk Empire",
+        "approximate_years": "1077–1150",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Abbasid Caliphate",
+        "approximate_years": "1150–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Hazaraspids",
+        "approximate_years": "1155–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years": "1210–1231",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Hazaraspids",
+        "approximate_years": "1335–1370",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years": "1336–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Chupanid Dynasty",
+        "approximate_years": "1338–1340",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Chupanid Dynasty",
+        "approximate_years": "1335–1357",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years": "1358–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs",
+        "approximate_years": "1077–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Seljuk Empire",
+        "approximate_years": "1077–1194",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Georgia",
+        "approximate_years": "1124–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shaddadids",
+        "approximate_years": "1077–1199",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Eldiguzids",
+        "approximate_years": "1135–1225",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshah Dynasty",
+        "approximate_years": "1335–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Georgia",
+        "approximate_years": "1335–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Zakarid Armenia",
+        "approximate_years": "1335–1370",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandids",
+        "approximate_years": "1077–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanids",
+        "approximate_years": "1077–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Nizari Ismaili state",
+        "approximate_years": "1090–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Baduspanid Dynasty",
+        "approximate_years": "1335–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavand Dynasty",
+        "approximate_years": "1335–1349",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Afrasiyabid Dynasty",
+        "approximate_years": "1349–1359",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Mar'ashi Dynasty",
+        "approximate_years": "1359–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Seljuk Empire",
+        "approximate_years": "1077–1157",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Oghuz Tribal Confederations",
+        "approximate_years": "1153–1180",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Ghurid Empire",
+        "approximate_years": "1150–1215",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years": "1200–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kartid Dynasty",
+        "approximate_years": "1335–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Sarbadar Dynasty",
+        "approximate_years": "1337–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Togha Temur",
+        "approximate_years": "1337–1353",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Nasrid Dynasty",
+        "approximate_years": "1077–1225",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Ghurid Empire",
+        "approximate_years": "1150–1215",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years": "1215–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mihrabanid Dynasty",
+        "approximate_years": "1335–1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ma'danid Dynasty",
+        "approximate_years": "1077–1078",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Maliks of Makran",
+        "approximate_years": "1100–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ghurid Empire",
+        "approximate_years": "1150–1205",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ghaznavid Empire",
+        "approximate_years": "1077–1186",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Local Maliks",
+        "approximate_years": "1335–1370+",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Qarakhanids",
+        "approximate_years": "1077–1212",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Qara Khitai",
+        "approximate_years": "1141–1210",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Chagatai Khanate",
+        "approximate_years": "1335–1370",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1370+",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years": "1077–1231",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Seljuk Empire",
+        "approximate_years": "1077–1141",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Qara Khitai",
+        "approximate_years": "1141–1190",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Golden Horde/Chagatai",
+        "approximate_years": "1335–1359",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Sufid Dynasty",
+        "approximate_years": "1359–1370+",
+        "confidence": "high"
+    }
+]

@@ -34,13 +34,23 @@ export type EraKey =
   | 'sasanian'
   | 'umayyad'
   | 'abbasid'
+  | 'tahirid'
+  | 'saffarid'
   | 'samanid'
+  | 'alavid'
+  | 'bavandid'
+  | 'paduspanid'
+  | 'justanid'
   | 'buyid'
   | 'ghaznavid'
   | 'seljuk'
   | 'ilkhanid'
   | 'timurid'
-  | 'safavid';
+  | 'safavid'
+  | 'afsharid'
+  | 'zand'
+  | 'qajar'
+  | 'pahlavi';
 
 export type EraRole = 'heartland' | 'province' | 'frontier' | 'contested' | 'independent' | 'nominal';
 
@@ -305,6 +315,8 @@ export const regions: Region[] = [
       { name: 'Sari', nameFa: 'ساری', lat: 36.563, lng: 53.060, historicalNames: ['Shahr-e Tabaristan'] },
       { name: 'Gorgan', nameFa: 'گرگان', lat: 36.840, lng: 54.443, historicalNames: ['Gurgan', 'Hyrcania', 'Jurjan'] },
       { name: 'Rasht', nameFa: 'رشت', lat: 37.280, lng: 49.583 },
+      { name: 'Noor (Ruyan)', nameFa: 'نور (رویان)', lat: 36.577, lng: 52.016, historicalNames: ['Nūr', 'Ruyan'] },
+      { name: 'Kajur (Kujur)', nameFa: 'کجور', lat: 36.495, lng: 51.722, historicalNames: ['Kojur', 'Kujur'] },
     ],
     centroid: { lat: 36.7, lng: 52.5 },
     eraPresence: {
@@ -312,7 +324,11 @@ export const regions: Region[] = [
       parthian: 'province',
       sasanian: 'province',
       umayyad: 'contested',
-      abbasid: 'independent',
+      abbasid: 'nominal',
+      alavid: 'heartland',
+      bavandid: 'heartland',
+      paduspanid: 'heartland',
+      justanid: 'heartland',
       buyid: 'heartland',
       seljuk: 'province',
       safavid: 'province',
@@ -345,6 +361,7 @@ export const regions: Region[] = [
       sasanian: 'province',
       umayyad: 'contested',
       abbasid: 'province',
+      tahirid: 'heartland',
       samanid: 'heartland',
       ghaznavid: 'heartland',
       seljuk: 'heartland',
@@ -376,6 +393,7 @@ export const regions: Region[] = [
       sasanian: 'province',
       umayyad: 'contested',
       abbasid: 'province',
+      saffarid: 'heartland',
       samanid: 'province',
       ghaznavid: 'heartland',
       seljuk: 'province',

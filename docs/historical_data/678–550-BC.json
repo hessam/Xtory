@@ -1,0 +1,176 @@
+[
+  {
+    "region_id": "fars",
+    "dynasty_name": "Teispid Dynasty (Achaemenes/Teispes)",
+    "approximate_years_active": "678–640 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "fars",
+    "dynasty_name": "Teispid Dynasty (Anshan/Persis lines)",
+    "approximate_years_active": "640–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "fars",
+    "dynasty_name": "Median Empire (Suzerainty)",
+    "approximate_years_active": "625–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "jibal",
+    "dynasty_name": "Neo-Assyrian Empire (Suzerainty)",
+    "approximate_years_active": "678–672 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "jibal",
+    "dynasty_name": "Median Dynasty (Phraortes)",
+    "approximate_years_active": "678–653 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "jibal",
+    "dynasty_name": "Scythian Interregnum (Madyes)",
+    "approximate_years_active": "653–625 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "jibal",
+    "dynasty_name": "Median Dynasty (Cyaxares/Astyages)",
+    "approximate_years_active": "625–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "khuzestan",
+    "dynasty_name": "Neo-Elamite Dynasty (Humban-haltash III)",
+    "approximate_years_active": "678–646 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "khuzestan",
+    "dynasty_name": "Neo-Assyrian Empire (Occupation)",
+    "approximate_years_active": "646–625 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "khuzestan",
+    "dynasty_name": "Local Elamite/Persian Successors",
+    "approximate_years_active": "625–550 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "mesopotamia",
+    "dynasty_name": "Neo-Assyrian Dynasty (Sargonids)",
+    "approximate_years_active": "678–612 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "mesopotamia",
+    "dynasty_name": "Neo-Babylonian Dynasty (Chaldeans)",
+    "approximate_years_active": "625–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "azerbaijan",
+    "dynasty_name": "Kingdom of Mannai",
+    "approximate_years_active": "678–611 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "azerbaijan",
+    "dynasty_name": "Scythian Kingdom (Ishkuza)",
+    "approximate_years_active": "c. 670–625 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "azerbaijan",
+    "dynasty_name": "Median Empire (Little Media)",
+    "approximate_years_active": "612–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "caucasus",
+    "dynasty_name": "Kingdom of Urartu (Rusa II to Rusa IV)",
+    "approximate_years_active": "678–585 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "caucasus",
+    "dynasty_name": "Median Empire (Conquest)",
+    "approximate_years_active": "585–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "caucasus",
+    "dynasty_name": "Local Tribes (Colchians/Albanians)",
+    "approximate_years_active": "678–550 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "caspian_coast",
+    "dynasty_name": "Median Empire (Hyrcania Satrapy)",
+    "approximate_years_active": "600–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "caspian_coast",
+    "dynasty_name": "Cadusian Tribal Leadership",
+    "approximate_years_active": "678–550 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "caspian_coast",
+    "dynasty_name": "Amardian/Mardi Tribal Leadership",
+    "approximate_years_active": "678–550 BC",
+    "confidence": "Low"
+  },
+  {
+    "region_id": "khorasan",
+    "dynasty_name": "Local Parthian/Arian Chiefdoms",
+    "approximate_years_active": "678–600 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "khorasan",
+    "dynasty_name": "Median Empire (Suzerainty)",
+    "approximate_years_active": "600–550 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "sistan",
+    "dynasty_name": "Drangian Tribal Leadership",
+    "approximate_years_active": "678–600 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "sistan",
+    "dynasty_name": "Median Empire (Suzerainty)",
+    "approximate_years_active": "600–550 BC",
+    "confidence": "Low"
+  },
+  {
+    "region_id": "makran",
+    "dynasty_name": "Local Hakim/Tribal Leadership",
+    "approximate_years_active": "678–550 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "transoxiana",
+    "dynasty_name": "Sogdian Principalities",
+    "approximate_years_active": "678–550 BC",
+    "confidence": "High"
+  },
+  {
+    "region_id": "chorasmia",
+    "dynasty_name": "Greater Chorasmian Kingdom",
+    "approximate_years_active": "678–550 BC",
+    "confidence": "Medium"
+  },
+  {
+    "region_id": "chorasmia",
+    "dynasty_name": "Kayanian Dynasty (Vishtaspa)",
+    "approximate_years_active": "c. 600–550 BC",
+    "confidence": "Medium"
+  }
+]

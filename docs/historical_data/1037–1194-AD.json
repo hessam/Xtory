@@ -1,0 +1,254 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Buyid Dynasty",
+        "approximate_years_active": "934–1062",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Great Seljuq Empire",
+        "approximate_years_active": "1062–1148",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Salghurids (Atabegs of Fars)",
+        "approximate_years_active": "1148–1282",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Kakuyid Dynasty",
+        "approximate_years_active": "1008–1051",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Great Seljuq Empire",
+        "approximate_years_active": "1051–1194",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years_active": "1194–1220",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Buyid Dynasty",
+        "approximate_years_active": "941–1055",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Great Seljuq Empire",
+        "approximate_years_active": "1055–1194",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Buyid Dynasty",
+        "approximate_years_active": "945–1055",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Great Seljuq Empire",
+        "approximate_years_active": "1055–1194",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Abbasid Caliphate (Revival)",
+        "approximate_years_active": "1194–1258",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Rawwadid Dynasty",
+        "approximate_years_active": "979–1070",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Great Seljuq Empire",
+        "approximate_years_active": "1070–1136",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Ahmadilis (Atabegs of Maragha)",
+        "approximate_years_active": "1122–1225",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Eldiguzids (Atabegs of Azerbaijan)",
+        "approximate_years_active": "1136–1225",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs",
+        "approximate_years_active": "861–1538",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shaddadids",
+        "approximate_years_active": "951–1199",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Georgia",
+        "approximate_years_active": "1008–1490",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Great Seljuq Empire (Suzerainty)",
+        "approximate_years_active": "1060s–1136",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Eldiguzids (Vassalage & Influence)",
+        "approximate_years_active": "1136–1225",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Ziyarid Dynasty",
+        "approximate_years_active": "928–1090",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandid Dynasty",
+        "approximate_years_active": "651–1349",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanid Dynasty",
+        "approximate_years_active": "665–1598",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Nizari Ismaili State",
+        "approximate_years_active": "1090–1256",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Ghaznavid Empire",
+        "approximate_years_active": "999–1040",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Great Seljuq Empire",
+        "approximate_years_active": "1040–1157",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years_active": "1157–1220",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Ghurid Dynasty",
+        "approximate_years_active": "1170–1215",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Ghaznavid Empire (Suzerainty)",
+        "approximate_years_active": "1002–1040",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Nasrid Dynasty (Second Saffarids)",
+        "approximate_years_active": "1029–1225",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Great Seljuq Empire (Suzerainty)",
+        "approximate_years_active": "c. 1040–1157",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Ghurid Dynasty (Suzerainty)",
+        "approximate_years_active": "1175–1215",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ma'danid Dynasty",
+        "approximate_years_active": "900–1100",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ghaznavid Empire (Suzerainty)",
+        "approximate_years_active": "1000–1078",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Great Seljuq Empire (Suzerainty)",
+        "approximate_years_active": "c. 1078–1150",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ghurid Dynasty",
+        "approximate_years_active": "c. 1170–1215",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Qarakhanid Khanate",
+        "approximate_years_active": "999–1212",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Great Seljuq Empire (Suzerainty)",
+        "approximate_years_active": "1089–1141",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Qara Khitai (Western Liao)",
+        "approximate_years_active": "1141–1211",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Ghaznavid Empire",
+        "approximate_years_active": "1017–1041",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Great Seljuq Empire (Governors)",
+        "approximate_years_active": "1041–1077",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Khwarazmian Empire (Anushtegin Dynasty)",
+        "approximate_years_active": "1077–1231",
+        "confidence": "High"
+    }
+]

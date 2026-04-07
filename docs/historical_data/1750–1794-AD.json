@@ -1,0 +1,332 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Local Tribal Contenders (Zand, Bakhtiari, Qajar)",
+        "approximate_years": "1747–1751",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Zand Dynasty (Karim Khan)",
+        "approximate_years": "1751–1779",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Zand Successors (Zaki, Sadiq, Ali Murad, Jafar)",
+        "approximate_years": "1779–1789",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Zand Dynasty (Lotf Ali Khan)",
+        "approximate_years": "1789–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1791–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Zand-Bakhtiari Alliance",
+        "approximate_years": "1750–1751",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Zand Dynasty",
+        "approximate_years": "1751–1785",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Ardalan (Walis of Kurdistan)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1785–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Musha'sha'iya Dynasty (Governors of Hoveizeh)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Banu Ka'b (Sheikhdom)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Zand Dynasty (Imperial Governors/Nominal)",
+        "approximate_years": "1751–1779",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Qajar Dynasty (Nominal suzerainty)",
+        "approximate_years": "1791–1794",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Mamluk Dynasty of Iraq (Autonomous Pashas)",
+        "approximate_years": "1750–1776",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Zand Dynasty (Occupation of Basra)",
+        "approximate_years": "1776–1779",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Mamluk Dynasty of Iraq (Restored)",
+        "approximate_years": "1779–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Ottoman Empire (Nominal suzerainty)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Azad Khan Afghan",
+        "approximate_years": "1750–1757",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Urmia Khanate (Afshar tribe)",
+        "approximate_years": "1747–1763",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Khoy Khanate (Donboli tribe)",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Maragha Khanate (Muqaddam tribe)",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Tabriz Khanate (Donboli/Local)",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Garadagh Khanate",
+        "approximate_years": "1747–1791",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Zanjan Khanate (Afshar tribe)",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Sarab Khanate (Shaqaqi tribe)",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Zand Dynasty (Suzerainty)",
+        "approximate_years": "1763–1779",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Qajar Dynasty (Conquest)",
+        "approximate_years": "1791–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Karabakh Khanate (Javanshir tribe)",
+        "approximate_years": "1748–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Guba Khanate (Fatali Khan)",
+        "approximate_years": "1758–1789",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Erivan Khanate (Qajar branch)",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Ganja Khanate (Ziyadoglu Qajar)",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Baku Khanate",
+        "approximate_years": "1747–1766",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shaki Khanate",
+        "approximate_years": "1743–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvan Khanate",
+        "approximate_years": "1748–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Nakhchivan Khanate",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Talysh Khanate",
+        "approximate_years": "1747–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Georgia (Kartli-Kakheti)",
+        "approximate_years": "1762–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Qajar Dynasty (Mazandaran/Astarabad)",
+        "approximate_years": "1750–1759",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Zand Dynasty (Nominal control)",
+        "approximate_years": "1760–1779",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Gilan Khanate (Hedayat-Allah Khan)",
+        "approximate_years": "1753–1786",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Qajar Dynasty (Unification)",
+        "approximate_years": "1779–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Afsharid Dynasty (Shahrokh Shah)",
+        "approximate_years": "1749–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Qara Bayat (Amirdom of Nishapur)",
+        "approximate_years": "1750–1755",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Durrani Empire (Suzerainty)",
+        "approximate_years": "1755–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Kayani Maleks (Local rulers)",
+        "approximate_years": "1750–1794",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Durrani Empire (Suzerainty)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Khanate of Kalat (Nasir Khan I)",
+        "approximate_years": "1749–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Durrani Empire (Suzerainty/Vassalage)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Local Tribes (Gichki, etc.)",
+        "approximate_years": "1750–1794",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Janid Dynasty (Puppet Khans)",
+        "approximate_years": "1747–1756",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Manghit Dynasty (Muhammad Rahim Bi)",
+        "approximate_years": "1747–1758",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Manghit Dynasty (Daniyal Bi)",
+        "approximate_years": "1758–1785",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Manghit Dynasty (Shah Murad)",
+        "approximate_years": "1785–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Tore/Kazakh Dynasty (Puppet Khans)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Qungrat Inaks (Hereditary rulers)",
+        "approximate_years": "1750–1794",
+        "confidence": "high"
+    }
+]

@@ -1,0 +1,212 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Saffarid Dynasty",
+        "approximate_years_active": "873–910",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Buyid Dynasty",
+        "approximate_years_active": "934–1062",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Abbasid Caliphate",
+        "approximate_years_active": "750–930",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Ziyarid Dynasty",
+        "approximate_years_active": "930–935",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Buyid Dynasty (Northern Branch)",
+        "approximate_years_active": "935–1020",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Abbasid Caliphate",
+        "approximate_years_active": "750–927",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Baridi Dynasty",
+        "approximate_years_active": "927–941",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Buyid Dynasty",
+        "approximate_years_active": "941–1055",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Abbasid Caliphate (Direct)",
+        "approximate_years_active": "750–945",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Buyid Dynasty",
+        "approximate_years_active": "945–1055",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Sajid Dynasty",
+        "approximate_years_active": "889–929",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Sallarid Dynasty",
+        "approximate_years_active": "941–979",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Hasanwayhid Dynasty",
+        "approximate_years_active": "959–1015",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Rawwadid Dynasty",
+        "approximate_years_active": "979–1070",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Khazar Khaganate",
+        "approximate_years_active": "c. 650–969",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs",
+        "approximate_years_active": "861–1538",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Bagratid Armenia",
+        "approximate_years_active": "880s–1045",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Sajid Dynasty",
+        "approximate_years_active": "889–929",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Sallarid Dynasty",
+        "approximate_years_active": "919–1062",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shaddadid Dynasty",
+        "approximate_years_active": "951–1199",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandid Dynasty",
+        "approximate_years_active": "651–1349",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanid Dynasty",
+        "approximate_years_active": "665–1598",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Justanid Dynasty",
+        "approximate_years_active": "791–11th century",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Alid Zaydi Dynasty",
+        "approximate_years_active": "864–928",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Ziyarid Dynasty",
+        "approximate_years_active": "928–1043",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Samanid Empire",
+        "approximate_years_active": "900–999",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Ghaznavid Empire",
+        "approximate_years_active": "999–1040",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Saffarid Dynasty (First)",
+        "approximate_years_active": "861–1002",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Abbasid Caliphate",
+        "approximate_years_active": "750–900",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ma'danid Dynasty",
+        "approximate_years_active": "900–1100",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Ghaznavid Empire (Vassalage)",
+        "approximate_years_active": "1000–1078",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Samanid Empire",
+        "approximate_years_active": "819–999",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Qarakhanid Khanate",
+        "approximate_years_active": "999–1212",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Afrighid Dynasty",
+        "approximate_years_active": "305–995",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Ma'munid Dynasty",
+        "approximate_years_active": "995–1017",
+        "confidence": "High"
+    }
+]

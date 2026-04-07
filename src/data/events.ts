@@ -9,7 +9,10 @@ export interface ReignEvent {
   status: StatusInRegion;
   isAiGenerated?: boolean;
   influence?: number; // 0 to 10
+  capitalCityEn?: string;
+  capitalCityFa?: string;
 }
+
 
 // ── Regions Reference ──
 // fars, jibal, khuzestan, mesopotamia, azerbaijan, caucasus,

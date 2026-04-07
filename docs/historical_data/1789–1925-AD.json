@@ -1,0 +1,266 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Zand Dynasty",
+        "approximate_years": "1789–1794",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1794–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Qashqai Confederation",
+        "approximate_years": "1818–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Khamseh Confederation",
+        "approximate_years": "1861–1925",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1789–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Bakhtiari Khans",
+        "approximate_years": "1846–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Qajar Dynasty (Nominal Suzerain)",
+        "approximate_years": "1789–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Banu Ka'b (Al Bu Nasir House)",
+        "approximate_years": "1740–1840",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Sheikhdom of Mohammerah (Al Bu Kasib)",
+        "approximate_years": "1812–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Mamluk Dynasty of Iraq",
+        "approximate_years": "1789–1831",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Al-Muntafiq Emirate (Al Sadun)",
+        "approximate_years": "1789–1918",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1831–1918",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "British Mandate of Iraq",
+        "approximate_years": "1918–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1789–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Tabriz Khanate",
+        "approximate_years": "1747–1802",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Urmia Khanate",
+        "approximate_years": "1747–late 18th century",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Maku Khanate",
+        "approximate_years": "1747–1922",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Khoy Khanate",
+        "approximate_years": "1747–1813",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Qajar Dynasty (Suzerain)",
+        "approximate_years": "1789–1828",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Russian Empire",
+        "approximate_years": "1801–1917",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Erivan Khanate",
+        "approximate_years": "1747–1828",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Karabakh Khanate",
+        "approximate_years": "1748–1822",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Ganja Khanate",
+        "approximate_years": "1747–1804",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvan Khanate",
+        "approximate_years": "1748–1820",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shaki Khanate",
+        "approximate_years": "1743–1819",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1789–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Russian Empire",
+        "approximate_years": "1907–1917",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Soviet Socialist Republic of Gilan",
+        "approximate_years": "1920–1921",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1789–1796",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1796–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Durrani Empire (Herat Enclave)",
+        "approximate_years": "1789–1857",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Russian Empire (Northern Annexation)",
+        "approximate_years": "1881–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Qajar Dynasty",
+        "approximate_years": "1789–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Alam Family",
+        "approximate_years": "1789–1925",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Qajar Dynasty (Nominal)",
+        "approximate_years": "1789–1925",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Khanate of Kalat (Suzerain)",
+        "approximate_years": "1789–1876",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Gichki Nawabs (Kech/Panjgur)",
+        "approximate_years": "1789–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Sultanate of Muscat and Oman (Gwadar)",
+        "approximate_years": "1797–1925",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Manghit Dynasty (Emirate of Bukhara)",
+        "approximate_years": "1785–1920",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Russian Empire (Protectorate)",
+        "approximate_years": "1868–1917",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Arabshahid Dynasty (Residual)",
+        "approximate_years": "1789–1804",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Qungrat Dynasty (Khanate of Khiva)",
+        "approximate_years": "1804–1920",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Russian Empire (Protectorate)",
+        "approximate_years": "1873–1917",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Khorezm People's Soviet Republic",
+        "approximate_years": "1920–1924",
+        "confidence": "high"
+    }
+]

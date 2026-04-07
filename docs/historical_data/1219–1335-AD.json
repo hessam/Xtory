@@ -1,0 +1,224 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Salghurids (Atabegs of Fars)",
+        "approximate_years_active": "1219–1282",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1256–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years_active": "1314–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Injuid Dynasty",
+        "approximate_years_active": "1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years_active": "1219–1220",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1220–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Abbasid Caliphate",
+        "approximate_years_active": "1219–1258",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1258–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Abbasid Caliphate",
+        "approximate_years_active": "1219–1258",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1258–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Eldiguzids (Atabegs of Azerbaijan)",
+        "approximate_years_active": "1219–1225",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Ahmadilis (Atabegs of Maragha)",
+        "approximate_years_active": "1219–1225",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Khwarazmian Empire (Jalal al-Din Mingburnu)",
+        "approximate_years_active": "1225–1231",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1231–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs",
+        "approximate_years_active": "1219–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Georgia",
+        "approximate_years_active": "1219–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Eldiguzids (Influence/Vassalage)",
+        "approximate_years_active": "1219–1225",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Khwarazmian Empire (Jalal al-Din Mingburnu)",
+        "approximate_years_active": "1225–1231",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1231–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandid Dynasty",
+        "approximate_years_active": "1219–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanid Dynasty",
+        "approximate_years_active": "1219–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Nizari Ismaili State",
+        "approximate_years_active": "1219–1256",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1256–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years_active": "1219–1220",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1220–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kartid Dynasty",
+        "approximate_years_active": "1244–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Sarbadars",
+        "approximate_years_active": "1332–1335",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years_active": "1219–1221",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Nasrid Dynasty",
+        "approximate_years_active": "1219–1225",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1221–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mihrabanid Dynasty",
+        "approximate_years_active": "1236–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Mongol Empire / Ilkhanate",
+        "approximate_years_active": "1221–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Raees Dynasty",
+        "approximate_years_active": "1320–1335",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years_active": "1219–1220",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Mongol Empire / Chagatai Khanate",
+        "approximate_years_active": "1220–1335",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Khwarazmian Empire",
+        "approximate_years_active": "1219–1231",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Mongol Empire / Golden Horde / Chagatai Khanate",
+        "approximate_years_active": "1220–1335",
+        "confidence": "High"
+    }
+]

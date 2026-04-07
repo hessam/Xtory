@@ -18,7 +18,7 @@ import { Artifact } from '../data/artifacts';
 import { Vazir } from '../data/vazirs';
 import { pushToDataLayer } from '../services/tagManager';
 import { MapFilters } from './MapFilters';
-import { Sparkles, Swords, Skull, Landmark, Globe2, Building2, Book, ZoomIn, ZoomOut, Maximize, X } from 'lucide-react';
+import { Sparkles, Swords, Skull, Landmark, Globe2, Building2, Book, ZoomIn, ZoomOut, Maximize, X, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { mapPolygons, ZOOM_ANCHOR_CITIES, ZOOM_ALL_CITIES } from '../data/mapPolygons';
 
@@ -135,6 +135,35 @@ export default function MapLeaflet(props: MapLeafletProps) {
         return { ...v, latLng: centerLatLng };
       });
   }, [vazirs, year]);
+
+  const activeRulerCapitals = useMemo(() => {
+    return activeEvents.map(event => {
+      if (!event.capitalCityEn) return null;
+      // find coordinates: check all regions to be safe (AI might put city in wrong id region)
+      const allAnchorCities = regions.flatMap(r => r.anchorCities);
+      const normalizedQuery = event.capitalCityEn.toLowerCase().split('(')[0].trim();
+      const city = allAnchorCities.find(c => {
+         const nameMatch = c.name.toLowerCase().includes(normalizedQuery);
+         const histMatch = c.historicalNames?.some(h => h.toLowerCase().includes(normalizedQuery));
+         return nameMatch || histMatch;
+      });
+      
+      if (!city) return null;
+      
+      const ruler = rulers[event.rulerId];
+      if (!ruler) return null;
+      const dynasty = dynasties[ruler.dynastyId];
+      const color = dynasty ? getDynastyColor(dynasty) : '#ffffff';
+
+      return {
+        id: event.id,
+        latLng: [city.lat, city.lng] as [number, number],
+        name: { en: event.capitalCityEn, fa: event.capitalCityFa || event.capitalCityEn },
+        color,
+        regionId: event.regionId
+      };
+    }).filter(Boolean);
+  }, [activeEvents, rulers, dynasties]);
 
   const [neighboursGeoJSON, setNeighboursGeoJSON] = useState<any>(null);
   useEffect(() => {
@@ -626,7 +655,36 @@ export default function MapLeaflet(props: MapLeafletProps) {
             </CircleMarker>
           ))}
 
+          {activeRulerCapitals.map(cap => (
+             <CircleMarker 
+              key={`cap-${cap!!.id}`} 
+              center={cap!!.latLng} 
+              radius={7} 
+              pathOptions={{ 
+                fillColor: cap!!.color, 
+                color: '#fff', 
+                weight: 1.5, 
+                fillOpacity: 1,
+                className: 'ruler-capital-marker animate-pulse'
+              }}
+              eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onRegionClick(cap!!.regionId); } }}
+            >
+              <Tooltip 
+                direction="top" 
+                offset={[0, -4]} 
+                className={`event-label ${lang === 'fa' ? 'font-vazirmatn' : 'font-cinzel'}`}
+                permanent={currentZoom >= 6}
+              >
+                <div className="flex items-center gap-1.5 px-0.5">
+                  <Crown className="w-3 h-3" style={{ color: cap!!.color }} />
+                  <span className="tooltip-text">{cap!!.name[lang]}</span>
+                </div>
+              </Tooltip>
+            </CircleMarker>
+          ))}
+
           {activeVazirs.map(v => (
+
             <CircleMarker key={v.id} center={v.latLng} radius={6} pathOptions={{ fillColor: '#c9a96e', color: '#0a1410', weight: 1, fillOpacity: 1 }} eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); onVazirClick?.(v as any); } }}>
               <Tooltip 
                 direction="top" 

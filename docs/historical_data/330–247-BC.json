@@ -1,0 +1,272 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "330–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Argead/Macedonian Empire (Peucestas)",
+        "approximate_years_active": "323–316 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Antigonid Dynasty (Antigonus I)",
+        "approximate_years_active": "316–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Frataraka (Local Autonomy)",
+        "approximate_years_active": "c. 295–247 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "330–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Argead/Macedonian Empire (Peithon)",
+        "approximate_years_active": "323–316 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Antigonid Dynasty (Antigonus I)",
+        "approximate_years_active": "316–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "330–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Argead/Macedonian Empire (Antigenes)",
+        "approximate_years_active": "323–316 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Antigonid Dynasty (Antigonus I)",
+        "approximate_years_active": "316–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "330–331 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "331–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Argead/Macedonian Empire (Archon/Seleucus)",
+        "approximate_years_active": "323–316 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Antigonid Dynasty (Antigonus I)",
+        "approximate_years_active": "316–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "330–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Atropatid Dynasty (Independent)",
+        "approximate_years_active": "323–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Achaemenid Dynasty (Orontids)",
+        "approximate_years_active": "330–331 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Argead/Macedonian Empire (Mithrenes/Neoptolemus)",
+        "approximate_years_active": "331–321 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Orontid Dynasty (Kingdom of Armenia)",
+        "approximate_years_active": "321–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Pharnavazid Dynasty (Kingdom of Iberia)",
+        "approximate_years_active": "302–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "330–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Argead/Macedonian Empire (Phrataphernes/Philip)",
+        "approximate_years_active": "323–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Independent Mountain Tribes (Cadusians/Amardians)",
+        "approximate_years_active": "330–247 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "330–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Argead/Macedonian Empire (Various Satraps)",
+        "approximate_years_active": "323–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Arsacid Dynasty (Arsaces I)",
+        "approximate_years_active": "c. 247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "330–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Argead/Macedonian Empire (Stasanor/Stasander)",
+        "approximate_years_active": "323–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "330–325 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "325–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Argead/Macedonian Empire (Sibyrtius)",
+        "approximate_years_active": "323–303 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Maurya Empire",
+        "approximate_years_active": "303–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Achaemenid Dynasty (Bessus/Artaxerxes V)",
+        "approximate_years_active": "330–329 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Argead/Macedonian Empire (Alexander III)",
+        "approximate_years_active": "329–323 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Argead/Macedonian Empire (Philip/Stasanor)",
+        "approximate_years_active": "323–312 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "312–250 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Diodotid Dynasty (Graeco-Bactrian)",
+        "approximate_years_active": "c. 250–247 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Chorasmian Local Kings (Independent)",
+        "approximate_years_active": "330–247 BC",
+        "confidence": "High"
+    }
+]

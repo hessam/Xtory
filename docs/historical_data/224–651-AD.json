@@ -1,0 +1,344 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Bazrangid Dynasty",
+        "approximate_years_active": "c. 200–224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Mihran (Rayy Branch)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Karen (Nihavand Branch)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Bestam / Vistahm (Rebel Regime)",
+        "approximate_years_active": "c. 591–597 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "House of Sasan (Direct Rule)",
+        "approximate_years_active": "224–637 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Roman/Byzantine Empire (Occupations/Incursions)",
+        "approximate_years_active": "283, 298–363, 624–628 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Rashidun Caliphate",
+        "approximate_years_active": "637–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "House of Sasan (Direct Rule/Marzbans)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Byzantine Empire (Brief Occupation)",
+        "approximate_years_active": "623–624 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Arsacid Dynasty of Albania",
+        "approximate_years_active": "c. 252–461 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Sasanian Marzbans (Direct Rule)",
+        "approximate_years_active": "461–630 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Khazar Khanate (Incursions)",
+        "approximate_years_active": "c. 628–630 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Mihranid Dynasty",
+        "approximate_years_active": "630–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Gushnaspid Dynasty",
+        "approximate_years_active": "224–c. 531 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Kawus (Sasanian Appointee)",
+        "approximate_years_active": "c. 531–560s AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Zarmihrids",
+        "approximate_years_active": "6th–7th Century AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Dabuyid Dynasty",
+        "approximate_years_active": "642–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandid Dynasty (Highlands)",
+        "approximate_years_active": "651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kushano-Sasanian (Kushanshahs)",
+        "approximate_years_active": "c. 230–360 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kidarite Huns",
+        "approximate_years_active": "c. 360–450 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Hephthalite Empire",
+        "approximate_years_active": "c. 484–560 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "House of Sasan (Restored Rule)",
+        "approximate_years_active": "560–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Western Turkic Khaganate",
+        "approximate_years_active": "c. 560–651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Indo-Parthian Kingdom",
+        "approximate_years_active": "224–c. 240 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "House of Sasan (Sakanshahs)",
+        "approximate_years_active": "c. 240–400 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "House of Sasan (Direct/Marzban Rule)",
+        "approximate_years_active": "400–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Zunbil Dynasty (Zabulistan/Arachosia)",
+        "approximate_years_active": "c. 6th Century–651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Kushan Vassals",
+        "approximate_years_active": "224–c. 270 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Local Kings of Makuran (Sasanian Vassals)",
+        "approximate_years_active": "262–6th Century AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Sewa Dynasty",
+        "approximate_years_active": "c. 5th Century–631 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Brahman Dynasty",
+        "approximate_years_active": "631–651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Sogdian City-States",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Kushan Empire",
+        "approximate_years_active": "224–275 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Hephthalite Empire",
+        "approximate_years_active": "c. 425–557 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Sasanian Empire (Direct Rule/Influence)",
+        "approximate_years_active": "565–651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Göktürks / Western Turks",
+        "approximate_years_active": "c. 560–651 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Sasanian Overlordship (Nominal)",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Afrighid Dynasty",
+        "approximate_years_active": "305–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Hephthalite Overlordship",
+        "approximate_years_active": "425–557 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "kirman",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "turan",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "paradan",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "hind",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mazun",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "arbayistan",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "adiabene",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "balasagan",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "machelonia",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "armenia",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "iberia",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "224–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "yemen",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "570–651 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "egypt",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "619–628 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "levant",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "614–628 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "anatolia",
+        "dynasty_name": "Sasanian Empire",
+        "approximate_years_active": "605–628 AD",
+        "confidence": "High"
+    }
+]

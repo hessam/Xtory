@@ -9,7 +9,7 @@ import { dynasties as initialDynasties, Dynasty, Classification } from './data/d
 import { historicalEvents as initialHistoricalEvents, HistoricalEvent } from './data/historicalEvents';
 import { historicalFigures, HistoricalFigure } from './data/figures';
 import { artifacts as initialArtifacts, Artifact } from './data/artifacts';
-import { DynamicRulerData, fetchHistoricalDataForYear, fetchHistoricalEventsForYear, fetchHistoricalFiguresForYear, fetchArtifactsForYear, SearchResult } from './services/geminiService';
+import { DynamicRulerData, RulerDetailResult, fetchHistoricalDataForYear, fetchRulerDetail, fetchHistoricalEventsForYear, fetchHistoricalFiguresForYear, fetchArtifactsForYear, SearchResult } from './services/geminiService';
 import { useApiKey } from './context/ApiKeyContext';
 import { generateQuizQuestion } from './services/geminiService';
 import { getQuestionsForYear } from './data/quizQuestions';
@@ -165,11 +165,13 @@ export default function App() {
       const newDynasties: Record<string, Dynasty> = {};
 
       newData.forEach(item => {
-        // AI events are now safely injected and rely on MapLeaflet's render-time prioritization.
-        // This stops massive AI temporal blocks from being rejected by tiny static temporal blocks.
-
         const dynastyId = `dyn_${item.dynastyNameEn.toLowerCase().replace(/\s+/g, '_')}`;
-        const rulerId = `rul_${item.rulerNameEn.toLowerCase().replace(/\s+/g, '_')}`;
+        // Pass 1: ruler name is null — use dynasty name as display placeholder
+        const displayName = item.rulerNameEn || item.dynastyNameEn;
+        const displayNameFa = item.rulerNameFa || item.dynastyNameFa;
+        const displayTitle = item.rulerTitleEn || item.dynastyClassification;
+        const displayTitleFa = item.rulerTitleFa || item.dynastyClassification;
+        const rulerId = `rul_${displayName.toLowerCase().replace(/\s+/g, '_')}`;
         const eventId = item.id;
 
         if (!newDynasties[dynastyId] && !initialDynasties[dynastyId]) {
@@ -185,8 +187,8 @@ export default function App() {
         if (!newRulers[rulerId] && !initialRulers[rulerId]) {
           newRulers[rulerId] = {
             id: rulerId,
-            name: { en: item.rulerNameEn, fa: item.rulerNameFa },
-            title: { en: item.rulerTitleEn, fa: item.rulerTitleFa },
+            name: { en: displayName, fa: displayNameFa },
+            title: { en: displayTitle, fa: displayTitleFa },
             dynastyId: dynastyId,
             rulerType: 'Central Monarch',
             startDate: item.startDate,
@@ -201,8 +203,11 @@ export default function App() {
           startDate: item.startDate,
           endDate: item.endDate,
           status: item.status,
+          capitalCityEn: item.capitalCityEn,
+          capitalCityFa: item.capitalCityFa,
           isAiGenerated: true
         });
+
       });
 
       return {
@@ -212,6 +217,57 @@ export default function App() {
         dynasties: { ...prev.dynasties, ...newDynasties }
       };
     });
+  };
+
+  // Pass 2: Resolve a specific ruler on-demand (fired on ruler chip tap)
+  const handleResolveRuler = async (dynastyData: DynamicRulerData) => {
+    if (dynastyData.rulerResolved) return; // already resolved
+    
+    try {
+      const detail = await fetchRulerDetail(
+        dynastyData.dynastyNameEn,
+        dynastyData.dynastyNameFa,
+        dynastyData.dynastyStartYear,
+        dynastyData.dynastyEndYear,
+        dynastyData.regionId,
+        year,
+        lang
+      );
+
+      if (detail.rulerNameEn && detail.confidence !== 'unknown') {
+        // Update the ruler record in-place with the real name
+        const oldRulerId = `rul_${dynastyData.dynastyNameEn.toLowerCase().replace(/\s+/g, '_')}`;
+        const newRulerId = `rul_${detail.rulerNameEn.toLowerCase().replace(/\s+/g, '_')}`;
+        const dynastyId = `dyn_${dynastyData.dynastyNameEn.toLowerCase().replace(/\s+/g, '_')}`;
+        
+        setDynamicData(prev => {
+          const updatedRulers = { ...prev.rulers };
+          // Remove placeholder, add real ruler
+          delete updatedRulers[oldRulerId];
+          updatedRulers[newRulerId] = {
+            id: newRulerId,
+            name: { en: detail.rulerNameEn || dynastyData.dynastyNameEn, fa: detail.rulerNameFa || dynastyData.dynastyNameFa },
+            title: { en: detail.rulerTitleEn || dynastyData.dynastyClassification, fa: detail.rulerTitleFa || dynastyData.dynastyClassification },
+            dynastyId: dynastyId,
+            rulerType: 'Central Monarch',
+            startDate: detail.rulerReignStart || dynastyData.startDate,
+            endDate: detail.rulerReignEnd || dynastyData.endDate
+          };
+          
+          // Update events to point to new ruler ID
+          const updatedEvents = prev.events.map(e => 
+            e.rulerId === oldRulerId ? { ...e, rulerId: newRulerId } : e
+          );
+          
+          return { ...prev, rulers: updatedRulers, events: updatedEvents };
+        });
+      }
+      // Mark as resolved (even if null — don't re-fetch)
+      dynastyData.rulerResolved = true;
+    } catch (err) {
+      console.warn('[Pass 2] Ruler resolution failed:', err);
+      dynastyData.rulerResolved = true;
+    }
   };
 
   const handleAddDynamicHistoricalEvents = (newEvents: HistoricalEvent[]) => {

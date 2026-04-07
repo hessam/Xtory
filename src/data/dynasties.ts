@@ -10,7 +10,7 @@ export interface Dynasty {
 
 export const dynasties: Record<string, Dynasty> = {
   achaemenid: { id: 'achaemenid', name: { en: 'Achaemenid Empire', fa: 'شاهنشاهی هخامنشی' }, classification: 'Native Empire', capitalCity: { en: 'Persepolis', fa: 'تخت جمشید' }, colorFamily: 'persian' },
-  parthian: { id: 'parthian', name: { en: 'Parthian Empire', fa: 'شاهنشاهی اشکانی' }, classification: 'Native Empire', capitalCity: { en: 'Ctesiphon', fa: 'تیسفون' }, colorFamily: 'nomadic' },
+  parthian: { id: 'parthian', name: { en: 'Parthian Empire', fa: 'شاهنشاهی اشکانی' }, classification: 'Native Empire', capitalCity: { en: 'Ctesiphon', fa: 'تیسفون' }, colorFamily: 'persian' },
   sasanian: { id: 'sasanian', name: { en: 'Sasanian Empire', fa: 'شاهنشاهی ساسانی' }, classification: 'Native Empire', capitalCity: { en: 'Ctesiphon', fa: 'تیسفون' }, colorFamily: 'persian' },
   umayyad: { id: 'umayyad', name: { en: 'Umayyad Caliphate', fa: 'خلافت اموی' }, classification: 'Foreign Empire', capitalCity: { en: 'Damascus', fa: 'دمشق' }, colorFamily: 'arab' },
   abbasid: { id: 'abbasid', name: { en: 'Abbasid Caliphate', fa: 'خلافت عباسی' }, classification: 'Foreign Empire', capitalCity: { en: 'Baghdad', fa: 'بغداد' }, colorFamily: 'arab' },
@@ -23,8 +23,8 @@ export const dynasties: Record<string, Dynasty> = {
   muzaffarid: { id: 'muzaffarid', name: { en: 'Muzaffarid Dynasty', fa: 'آل مظفر' }, classification: 'Native Empire', capitalCity: { en: 'Shiraz', fa: 'شیراز' }, colorFamily: 'persian' },
   timurid: { id: 'timurid', name: { en: 'Timurid Empire', fa: 'امپراتوری تیموری' }, classification: 'Nomadic Intruder', capitalCity: { en: 'Samarkand', fa: 'سمرقند' }, colorFamily: 'turkic' },
   safavid: { id: 'safavid', name: { en: 'Safavid Empire', fa: 'امپراتوری صفوی' }, classification: 'Native Empire', capitalCity: { en: 'Isfahan', fa: 'اصفهان' }, colorFamily: 'persian' },
-  afsharid: { id: 'afsharid', name: { en: 'Afsharid Dynasty', fa: 'افشاریان' }, classification: 'Native Empire', capitalCity: { en: 'Mashhad', fa: 'مشهد' }, colorFamily: 'turkic' },
+  afsharid: { id: 'afsharid', name: { en: 'Afsharid Dynasty', fa: 'افشاریان' }, classification: 'Native Empire', capitalCity: { en: 'Mashhad', fa: 'مشهد' }, colorFamily: 'persian' },
   zand: { id: 'zand', name: { en: 'Zand Dynasty', fa: 'زندیه' }, classification: 'Native Empire', capitalCity: { en: 'Shiraz', fa: 'شیراز' }, colorFamily: 'persian' },
-  qajar: { id: 'qajar', name: { en: 'Qajar Dynasty', fa: 'قاجاریان' }, classification: 'Native Empire', capitalCity: { en: 'Tehran', fa: 'تهران' }, colorFamily: 'turkic' },
+  qajar: { id: 'qajar', name: { en: 'Qajar Dynasty', fa: 'قاجاریان' }, classification: 'Native Empire', capitalCity: { en: 'Tehran', fa: 'تهران' }, colorFamily: 'persian' },
   pahlavi: { id: 'pahlavi', name: { en: 'Pahlavi Dynasty', fa: 'دودمان پهلوی' }, classification: 'Native Empire', capitalCity: { en: 'Tehran', fa: 'تهران' }, colorFamily: 'persian' }
 };

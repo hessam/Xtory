@@ -3,7 +3,9 @@ import { HistoricalEvent } from '../data/historicalEvents';
 import { HistoricalFigure } from '../data/figures';
 import { Artifact } from '../data/artifacts';
 import { regions, EraKey, getRegionById } from '../data/regions';
+import { getAnchorsForYear, formatAnchorsForPrompt } from '../data/historicalDataIndex';
 import { events as staticEvents } from '../data/events';
+import { rulers as staticRulers } from '../data/rulers';
 import { QuizQuestion } from '../types/quiz';
 
 const ERA_BOUNDARIES = [
@@ -213,15 +215,22 @@ export function getEraForYear(year: number): { id: EraKey } {
   if (year >= -247 && year < 224) return { id: 'parthian' };
   if (year >= 224 && year < 651) return { id: 'sasanian' };
   if (year >= 651 && year < 750) return { id: 'umayyad' };
-  if (year >= 750 && year < 850) return { id: 'abbasid' };
-  if (year >= 850 && year < 950) return { id: 'samanid' };
+  if (year >= 750 && year < 821) return { id: 'abbasid' };
+  if (year >= 821 && year < 861) return { id: 'tahirid' }; // Anchor for Khorasan
+  if (year >= 861 && year < 875) return { id: 'saffarid' }; // Anchor for Sistan
+  if (year >= 875 && year < 950) return { id: 'samanid' };
   if (year >= 950 && year < 1030) return { id: 'buyid' };
   if (year >= 1030 && year < 1186) return { id: 'ghaznavid' };
   if (year >= 1186 && year < 1250) return { id: 'seljuk' };
   if (year >= 1250 && year < 1350) return { id: 'ilkhanid' };
   if (year >= 1350 && year < 1500) return { id: 'timurid' };
-  return { id: 'safavid' };
+  if (year >= 1500 && year < 1736) return { id: 'safavid' };
+  if (year >= 1736 && year < 1747) return { id: 'afsharid' };
+  if (year >= 1747 && year < 1789) return { id: 'zand' };
+  if (year >= 1789 && year < 1925) return { id: 'qajar' };
+  return { id: 'pahlavi' };
 }
+
 
 /**
  * Validates AI results against known geographic constraints.
@@ -251,21 +260,39 @@ const getAiAsync = async () => {
 
 export interface DynamicRulerData {
   id: string;
-  rulerNameEn: string;
-  rulerNameFa: string;
-  rulerTitleEn: string;
-  rulerTitleFa: string;
+  // ── Dynasty-level fields (Pass 1 — reliable) ──
   dynastyNameEn: string;
   dynastyNameFa: string;
   dynastyColorFamily: 'persian' | 'arab' | 'turkic' | 'greek' | 'nomadic' | 'foreign' | 'semitic';
   dynastyClassification: string;
   capitalCityEn: string;
   capitalCityFa: string;
-  startDate: number;
-  endDate: number;
+  dynastyStartYear: number;   // dynasty founding — always populated
+  dynastyEndYear: number;     // dynasty end — always populated
   regionId: string;
   status: 'Direct Control' | 'Vassal State' | 'Contested/Warzone' | 'Sphere of Influence';
-  confidence?: 'high' | 'low';
+  confidence: 'high' | 'low';
+  // ── Ruler-level fields (Pass 2 — nullable, loaded on-demand) ──
+  rulerNameEn: string | null;
+  rulerNameFa: string | null;
+  rulerTitleEn: string | null;
+  rulerTitleFa: string | null;
+  rulerReignStart: number | null;   // THIS ruler's personal reign start
+  rulerReignEnd: number | null;     // THIS ruler's personal reign end
+  rulerResolved: boolean;            // false = not yet looked up, true = Pass 2 complete
+  // Legacy compat — map to dynasty dates for rendering
+  startDate: number;
+  endDate: number;
+}
+
+export interface RulerDetailResult {
+  rulerNameEn: string | null;
+  rulerNameFa: string | null;
+  rulerTitleEn: string | null;
+  rulerTitleFa: string | null;
+  rulerReignStart: number | null;
+  rulerReignEnd: number | null;
+  confidence: 'high' | 'low' | 'unknown';
 }
 
 export interface SearchResult {
@@ -594,54 +621,242 @@ export async function fetchArtifactsForYear(year: number, lang: 'en' | 'fa'): Pr
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// PASS 1 — DYNASTY IDENTIFICATION (fast, reliable, no ruler hallucination)
+// Asks AI only for dynasty-level data. No ruler names, no reign dates.
+// ═══════════════════════════════════════════════════════════════════════════════
+
 export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'): Promise<DynamicRulerData[]> {
-  const cacheKey = getHybridCacheKey(year, 'rulers', lang);
+  const cacheKey = getHybridCacheKey(year, 'dynasties_v2', lang);
   const cached = getCached<DynamicRulerData[]>(cacheKey);
   if (cached) return cached;
 
-  const knownRegionIds = staticEvents
-    .filter(e => year >= e.startDate && year <= e.endDate)
-    .map(e => e.regionId);
-
-  const missingRegions = regions.filter(r => !knownRegionIds.includes(r.id));
-
-  // If we already have full static coverage for this year across all regions, we don't need AI.
-  if (missingRegions.length === 0) return [];
-
-  const regionManifest = missingRegions.map(r => ({
-    id: r.id,
-    knownAs: r.aliases.slice(0, 3), // max 3 aliases
-    anchorCities: r.anchorCities.map(c => ({
-      name: c.name,
-      historical: c.historicalNames || []
-    }))
-  }));
-
-  const prompt = `You are a strict data-entry historian mapping the exact political borders in Greater Iran for the year ${Math.abs(year)}${year<0?'BC':'AD'}.
-  For the specific regions in the manifest below, return the ruling dynasty/power and primary ruler name. 
-  The anchorCities (including modern and historical names) and aliases are for geographic grounding—return who ruled those specific areas during that era. Do not hallucinate based on modern names if they didn't exist then.
-  Use the id field as your key. 
-  Return compact JSON ONLY. 
-  Do not skip ANY of the regions listed in the manifest.
+  // Pull every dynasty active at this year from the curated JSON files
+  const allAnchors = getAnchorsForYear(year);
   
-  Regions Manifest: ${JSON.stringify(regionManifest)}
+  // Build region manifest enriched with real curated data
+  const regionManifest = regions.map(r => {
+    const existingEvents = staticEvents.filter(e => e.regionId === r.id && year >= e.startDate && year <= e.endDate);
+    const knownRulers = existingEvents.map(e => staticRulers[e.rulerId]?.name[lang]).filter(Boolean);
+    const regionAnchors = allAnchors.filter(a => a.regionId === r.id);
+    
+    return {
+      id: r.id,
+      knownAs: r.aliases.slice(0, 3),
+      knownRulers,
+      verifiedDynasties: regionAnchors.map(a => ({
+        dynastyName: a.dynastyName,
+        yearsActive: `${a.startYear < 0 ? Math.abs(a.startYear) + ' BC' : a.startYear + ' AD'}–${a.endYear < 0 ? Math.abs(a.endYear) + ' BC' : a.endYear + ' AD'}`,
+        confidence: a.confidence
+      })),
+      anchorCity: r.anchorCities[0]?.name,
+      anchorCities: r.anchorCities.map(c => ({
+        name: c.name,
+        historical: c.historicalNames || []
+      }))
+    };
+  });
 
-  Required fields for each region object:
-  - rulerNameEn: Ruler's name in English
-  - rulerNameFa: Ruler's name in Persian
-  - rulerTitleEn: Ruler's title in English (e.g., "King of Kings", "Emperor")
-  - rulerTitleFa: Ruler's title in Persian
-  - dynastyNameEn: Dynasty name in English
-  - dynastyNameFa: Dynasty name in Persian
-  - dynastyColorFamily: Must be exactly one of: "persian", "arab", "turkic", "greek", "nomadic", "foreign", "semitic"
-  - dynastyClassification: e.g., "Empire", "Kingdom", "Caliphate", "Chiefdom"
-  - capitalCityEn: Capital city in English
-  - capitalCityFa: Capital city in Persian
-  - startDate: Start year of their reign (negative for BC)
-  - endDate: End year of their reign (negative for BC)
-  - regionId: Must be exactly the id from the manifest.
-  - status: Must be exactly one of: "Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"
-  - confidence: "high" if you are extremely certain of this ruler/region mapping, "low" if it's a fringe/contested area or historical sources are silent.`;
+  const anchorsTable = formatAnchorsForPrompt(allAnchors);
+  const regionCount = regionManifest.filter(r => r.verifiedDynasties.length > 0).length;
+
+  // ── PASS 1 PROMPT: Dynasty-level required + ruler-level optional ──
+  const prompt = `You are a strict data-entry historian mapping the political borders in Greater Iran for the year ${Math.abs(year)}${year<0?' BC':' AD'}.
+Your primary goal is to identify which DYNASTIES controlled each region.
+You may OPTIONALLY identify the specific ruler IF you are highly confident.
+
+═══ VERIFIED HISTORICAL DATA (from curated research files) ═══
+The following dynasties are CONFIRMED active at year ${Math.abs(year)}${year<0?' BC':' AD'} across ${regionCount} regions:
+
+${anchorsTable}
+
+═══ INSTRUCTIONS ═══
+
+ZONE A — Regions with "verifiedDynasties" in the manifest:
+- Return a separate entry for EACH verified dynasty in that region.
+- Do NOT invent dynasties that are not in the verified list.
+- Use the dynasty's documented years as dynastyStartYear/dynastyEndYear.
+
+ZONE B — Regions with EMPTY "verifiedDynasties" (no curated data):
+- Identify which dynasty/polity held this region based on your knowledge.
+- Mark confidence as "low".
+
+RULER FIELDS (optional):
+- If you are HIGHLY CONFIDENT about the specific ruler at this exact year, populate rulerNameEn, rulerNameFa, rulerTitleEn, rulerTitleFa, rulerReignStart, and rulerReignEnd.
+- rulerReignStart/rulerReignEnd must be THIS individual ruler's personal reign dates (typically 10–40 years), NOT the dynasty lifespan. If the dates would span more than 80 years, you are returning dynasty dates by mistake — return null instead.
+- If you are NOT confident about the specific ruler, return null for all ruler fields. A null answer is CORRECT and PREFERRED over a fabrication.
+
+capitalCityEn/capitalCityFa should be the dynasty's seat of power in THIS region, constrained to the anchorCities listed.
+
+Return compact JSON ONLY. Every regionId must come from the manifest.
+
+Regions Manifest: ${JSON.stringify(regionManifest)}`;
+
+  const dynastySchema = {
+    type: "ARRAY" as const,
+    items: {
+      type: "OBJECT" as const,
+      properties: {
+        dynastyNameEn: { type: "STRING" as const },
+        dynastyNameFa: { type: "STRING" as const },
+        dynastyColorFamily: { type: "STRING" as const, enum: ["persian", "arab", "turkic", "greek", "nomadic", "foreign", "semitic"] },
+        dynastyClassification: { type: "STRING" as const },
+        capitalCityEn: { type: "STRING" as const },
+        capitalCityFa: { type: "STRING" as const },
+        dynastyStartYear: { type: "INTEGER" as const },
+        dynastyEndYear: { type: "INTEGER" as const },
+        regionId: { type: "STRING" as const, enum: regions.map(r => r.id) },
+        status: { type: "STRING" as const, enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] },
+        confidence: { type: "STRING" as const, enum: ["high", "low"] },
+        // Ruler fields — OPTIONAL, nullable
+        rulerNameEn: { type: "STRING" as const, nullable: true },
+        rulerNameFa: { type: "STRING" as const, nullable: true },
+        rulerTitleEn: { type: "STRING" as const, nullable: true },
+        rulerTitleFa: { type: "STRING" as const, nullable: true },
+        rulerReignStart: { type: "INTEGER" as const, nullable: true },
+        rulerReignEnd: { type: "INTEGER" as const, nullable: true },
+      },
+      required: ["dynastyNameEn", "dynastyNameFa", "dynastyColorFamily", "dynastyClassification", "capitalCityEn", "capitalCityFa", "dynastyStartYear", "dynastyEndYear", "regionId", "status", "confidence"]
+    }
+  };
+
+  const callGemini = async (retryLabel = '') => {
+    const response = await (await getAiAsync()).models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: dynastySchema
+      }
+    });
+    const text = response.text || "[]";
+    const data = JSON.parse(text);
+    
+    // Filter out redundant dynasties that overlap with static data
+    const filteredData = data.filter((item: any) => {
+      const regionData = regionManifest.find(m => m.id === item.regionId);
+      if (!regionData) return true;
+      const isKnown = regionData.knownRulers.some((kr: string) => 
+        item.dynastyNameEn.toLowerCase().includes(kr.toLowerCase())
+      );
+      return !isKnown;
+    });
+    
+    return filteredData.map((item: any, index: number) => {
+      // Determine if AI returned valid ruler data
+      const hasRuler = item.rulerNameEn && item.rulerNameEn.trim() !== '';
+      let rulerReignStart = hasRuler ? (item.rulerReignStart ?? null) : null;
+      let rulerReignEnd = hasRuler ? (item.rulerReignEnd ?? null) : null;
+
+      // Mechanical guard: null reign dates if they equal dynasty dates (AI cheating)
+      if (rulerReignStart === item.dynastyStartYear && rulerReignEnd === item.dynastyEndYear) {
+        rulerReignStart = null;
+        rulerReignEnd = null;
+      }
+      // Mechanical guard: null reign dates if span > 80 years (dynasty dates leaked)
+      if (rulerReignStart != null && rulerReignEnd != null && Math.abs(rulerReignEnd - rulerReignStart) > 80) {
+        rulerReignStart = null;
+        rulerReignEnd = null;
+      }
+
+      // Use ruler reign dates for bar width when available, else dynasty dates
+      const barStart = rulerReignStart ?? item.dynastyStartYear;
+      const barEnd = rulerReignEnd ?? item.dynastyEndYear;
+
+      const entry: DynamicRulerData = {
+        id: `ai_${retryLabel}${year}_${index}_${Date.now()}`,
+        // Dynasty-level (reliable)
+        dynastyNameEn: item.dynastyNameEn,
+        dynastyNameFa: item.dynastyNameFa,
+        dynastyColorFamily: item.dynastyColorFamily,
+        dynastyClassification: item.dynastyClassification,
+        capitalCityEn: item.capitalCityEn,
+        capitalCityFa: item.capitalCityFa,
+        dynastyStartYear: item.dynastyStartYear,
+        dynastyEndYear: item.dynastyEndYear,
+        regionId: item.regionId,
+        status: item.status,
+        confidence: item.confidence || 'low',
+        // Ruler-level (populated if AI was confident, null otherwise)
+        rulerNameEn: hasRuler ? item.rulerNameEn : null,
+        rulerNameFa: hasRuler ? (item.rulerNameFa || null) : null,
+        rulerTitleEn: hasRuler ? (item.rulerTitleEn || null) : null,
+        rulerTitleFa: hasRuler ? (item.rulerTitleFa || null) : null,
+        rulerReignStart,
+        rulerReignEnd,
+        rulerResolved: hasRuler, // true if AI already provided a ruler
+        // Legacy compat: use ruler dates for bar rendering when available
+        startDate: barStart,
+        endDate: barEnd
+      };
+      return validateRegionResult(entry, year);
+    });
+  };
+
+  try {
+    const result = await callGemini();
+    setCache(cacheKey, result);
+    return result;
+  } catch (error: any) {
+    const msg = error?.message || "";
+    if (msg.includes("503") || msg.toLowerCase().includes("unavailable") || msg.toLowerCase().includes("high demand")) {
+      console.warn("Gemini busy, retrying in 2 seconds...");
+      await new Promise(r => setTimeout(r, 2000));
+      try {
+        const result = await callGemini('retry_');
+        setCache(cacheKey, result);
+        return result;
+      } catch (retryError) {
+        throw new Error(handleAIError(retryError, lang));
+      }
+    }
+    throw new Error(handleAIError(error, lang));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PASS 2 — RULER DETAIL (on-demand, per dynasty, allows null)
+// Only called when user taps a dynasty chip or opens ruler detail.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export async function fetchRulerDetail(
+  dynastyNameEn: string,
+  dynastyNameFa: string,
+  dynastyStart: number,
+  dynastyEnd: number,
+  regionId: string,
+  year: number,
+  lang: 'en' | 'fa'
+): Promise<RulerDetailResult> {
+  const cacheKey = `ruler_detail_${dynastyNameEn.replace(/\s+/g, '_')}_${regionId}_${year}`;
+  const cached = getCached<RulerDetailResult>(cacheKey);
+  if (cached) return cached;
+
+  const region = getRegionById(regionId as any);
+  const regionName = region?.displayName?.en?.full || regionId;
+  const anchorCity = region?.anchorCities?.[0]?.name || '';
+
+  const yearDisplay = `${Math.abs(year)} ${year < 0 ? 'BC' : 'AD'}`;
+  const dynastyStartDisplay = `${Math.abs(dynastyStart)} ${dynastyStart < 0 ? 'BC' : 'AD'}`;
+  const dynastyEndDisplay = `${Math.abs(dynastyEnd)} ${dynastyEnd < 0 ? 'BC' : 'AD'}`;
+
+  const prompt = `Year: ${yearDisplay}.
+Dynasty: ${dynastyNameEn} / ${dynastyNameFa} (active ${dynastyStartDisplay}–${dynastyEndDisplay}).
+Region: ${regionName} (anchor city: ${anchorCity}).
+
+What is the name of the SPECIFIC ruler of the ${dynastyNameEn} who controlled ${anchorCity || regionName} around ${yearDisplay}?
+
+STRICT RULES:
+- Return the ruler's name ONLY if you are highly confident it is historically documented.
+- If uncertain or if the specific ruler for this exact year is unknown, return null for all ruler fields.
+- A null answer is CORRECT and PREFERRED over a fabrication.
+- Do NOT invent a plausible-sounding name to fill the field.
+- Do NOT return the dynasty's dates as the ruler's reign dates.
+- rulerReignStart/rulerReignEnd must be THIS individual ruler's personal reign dates, NOT the dynasty's lifespan.
+- CRITICAL: reignStart and reignEnd must be THIS individual ruler's personal dates — typically 10–40 years. If you return dates spanning more than 80 years, you have returned dynasty dates by mistake. Return null instead.
+- The capital or seat of power must be within or near ${anchorCity || regionName}. Do not suggest capitals from other regions.
+
+Return JSON only.`;
 
   try {
     const response = await (await getAiAsync()).models.generateContent({
@@ -650,99 +865,65 @@ export async function fetchHistoricalDataForYear(year: number, lang: 'en' | 'fa'
       config: {
         responseMimeType: "application/json",
         responseSchema: {
-          type: "ARRAY",
-          items: {
-            type: "OBJECT",
-            properties: {
-              rulerNameEn: { type: "STRING" },
-              rulerNameFa: { type: "STRING" },
-              rulerTitleEn: { type: "STRING" },
-              rulerTitleFa: { type: "STRING" },
-              dynastyNameEn: { type: "STRING" },
-              dynastyNameFa: { type: "STRING" },
-              dynastyColorFamily: { type: "STRING", enum: ["persian", "arab", "turkic", "greek", "nomadic", "foreign", "semitic"] },
-              dynastyClassification: { type: "STRING" },
-              capitalCityEn: { type: "STRING" },
-              capitalCityFa: { type: "STRING" },
-              startDate: { type: "INTEGER" },
-              endDate: { type: "INTEGER" },
-              regionId: { type: "STRING", enum: missingRegions.map(r => r.id) },
-              status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] },
-              confidence: { type: "STRING", enum: ["high", "low"] }
-            },
-            required: ["rulerNameEn", "rulerNameFa", "rulerTitleEn", "rulerTitleFa", "dynastyNameEn", "dynastyNameFa", "dynastyColorFamily", "dynastyClassification", "capitalCityEn", "capitalCityFa", "startDate", "endDate", "regionId", "status", "confidence"]
-          }
+          type: "OBJECT" as const,
+          properties: {
+            rulerNameEn: { type: "STRING" as const, nullable: true },
+            rulerNameFa: { type: "STRING" as const, nullable: true },
+            rulerTitleEn: { type: "STRING" as const, nullable: true },
+            rulerTitleFa: { type: "STRING" as const, nullable: true },
+            rulerReignStart: { type: "INTEGER" as const, nullable: true },
+            rulerReignEnd: { type: "INTEGER" as const, nullable: true },
+            confidence: { type: "STRING" as const, enum: ["high", "low", "unknown"] }
+          },
+          required: ["confidence"]
         }
       }
     });
 
-    const text = response.text || "[]";
-    const data = JSON.parse(text);
-    
-    const result = data.map((item: any, index: number) => {
-      const entry = {
-        ...item,
-        id: `ai_${year}_${index}_${Date.now()}`
-      };
-      return validateRegionResult(entry, year);
-    });
+    const text = response.text || "{}";
+    const data = JSON.parse(text) as RulerDetailResult;
 
-    setCache(cacheKey, result);
-    return result;
-  } catch (error: any) {
-    const msg = error?.message || "";
-    if (msg.includes("503") || msg.toLowerCase().includes("unavailable") || msg.toLowerCase().includes("high demand")) {
-      console.warn("Gemini 3 Flash busy, retrying in 2 seconds...");
-      await new Promise(r => setTimeout(r, 2000));
-      try {
-        // Simple retry once
-        const response = await (await getAiAsync()).models.generateContent({
-          model: "gemini-3-flash-preview",
-          contents: prompt,
-          config: {
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  rulerNameEn: { type: "STRING" },
-                  rulerNameFa: { type: "STRING" },
-                  rulerTitleEn: { type: "STRING" },
-                  rulerTitleFa: { type: "STRING" },
-                  dynastyNameEn: { type: "STRING" },
-                  dynastyNameFa: { type: "STRING" },
-                  dynastyColorFamily: { type: "STRING", enum: ["persian", "arab", "turkic", "greek", "nomadic", "foreign", "semitic"] },
-                  dynastyClassification: { type: "STRING" },
-                  capitalCityEn: { type: "STRING" },
-                  capitalCityFa: { type: "STRING" },
-                  startDate: { type: "INTEGER" },
-                  endDate: { type: "INTEGER" },
-                  regionId: { type: "STRING", enum: missingRegions.map(r => r.id) },
-                  status: { type: "STRING", enum: ["Direct Control", "Vassal State", "Contested/Warzone", "Sphere of Influence"] },
-                  confidence: { type: "STRING", enum: ["high", "low"] }
-                },
-                required: ["rulerNameEn", "rulerNameFa", "rulerTitleEn", "rulerTitleFa", "dynastyNameEn", "dynastyNameFa", "dynastyColorFamily", "dynastyClassification", "capitalCityEn", "capitalCityFa", "startDate", "endDate", "regionId", "status", "confidence"]
-              }
-            }
-          }
-        });
-        const text = response.text || "[]";
-        const data = JSON.parse(text);
-        const result = data.map((item: any, index: number) => {
-          const entry = {
-            ...item,
-            id: `ai_retry_${year}_${index}_${Date.now()}`
-          };
-          return validateRegionResult(entry, year);
-        });
-        setCache(cacheKey, result);
-        return result;
-      } catch (retryError) {
-        throw new Error(handleAIError(retryError, lang));
+    // Validate: if confidence is "unknown" or names are empty, force nulls
+    if (data.confidence === 'unknown' || !data.rulerNameEn || data.rulerNameEn.trim() === '') {
+      data.rulerNameEn = null;
+      data.rulerNameFa = null;
+      data.rulerTitleEn = null;
+      data.rulerTitleFa = null;
+      data.rulerReignStart = null;
+      data.rulerReignEnd = null;
+      data.confidence = 'unknown';
+    }
+
+    // Validate: if reign dates equal dynasty dates exactly, the AI is cheating — null them
+    if (data.rulerReignStart === dynastyStart && data.rulerReignEnd === dynastyEnd) {
+      console.warn(`[Pass 2] AI returned dynasty dates as ruler dates for ${dynastyNameEn} — nulling reign dates`);
+      data.rulerReignStart = null;
+      data.rulerReignEnd = null;
+    }
+
+    // Mechanical guard: no single ruler reigns more than 80 years
+    if (data.rulerReignStart != null && data.rulerReignEnd != null) {
+      const span = Math.abs(data.rulerReignEnd - data.rulerReignStart);
+      if (span > 80) {
+        console.warn(`[Pass 2] AI returned ${span}-year reign for ${data.rulerNameEn} in ${dynastyNameEn} — nulling (exceeds 80yr ceiling)`);
+        data.rulerReignStart = null;
+        data.rulerReignEnd = null;
       }
     }
-    throw new Error(handleAIError(error, lang));
+
+    setCache(cacheKey, data);
+    return data;
+  } catch (error) {
+    console.warn(`[Pass 2] Failed to fetch ruler detail for ${dynastyNameEn}:`, error);
+    return {
+      rulerNameEn: null,
+      rulerNameFa: null,
+      rulerTitleEn: null,
+      rulerTitleFa: null,
+      rulerReignStart: null,
+      rulerReignEnd: null,
+      confidence: 'unknown'
+    };
   }
 }
 

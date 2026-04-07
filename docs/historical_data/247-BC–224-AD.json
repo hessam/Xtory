@@ -1,0 +1,266 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "247 BC – c. 140 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Frataraka (Local Governors)",
+        "approximate_years_active": "247 BC – c. 140 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Darayanid Dynasty (Kings of Persis)",
+        "approximate_years_active": "c. 140 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Parthian (Arsacid) Empire (Overlords)",
+        "approximate_years_active": "c. 139 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Bazarangid Dynasty (Local Power)",
+        "approximate_years_active": "c. 150 AD – 210 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "247 BC – 148 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Parthian (Arsacid) Empire",
+        "approximate_years_active": "148 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Karen (Local Power)",
+        "approximate_years_active": "c. 100 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "House of Mihran (Local Power)",
+        "approximate_years_active": "c. 100 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "247 BC – c. 147 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Kamnaskirid Dynasty (Elymais)",
+        "approximate_years_active": "c. 147 BC – c. 76 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Parthian (Arsacid) Empire (Overlords)",
+        "approximate_years_active": "c. 140 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Arsacid Dynasty of Elymais",
+        "approximate_years_active": "c. 76 AD – 222 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "247 BC – 141 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Parthian (Arsacid) Empire",
+        "approximate_years_active": "141 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Kingdom of Characene (Local Power)",
+        "approximate_years_active": "c. 127 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Kingdom of Hatra (Local Power)",
+        "approximate_years_active": "c. 1st Century BC – 224 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Roman Empire (Temporary Occupations)",
+        "approximate_years_active": "114–117, 165, 198 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "House of Atropates (Kingdom of Atropatene)",
+        "approximate_years_active": "247 BC – c. 10 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Seleucid Empire (Vassalage)",
+        "approximate_years_active": "223 BC – c. 190 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Kingdom of Armenia (Occupation)",
+        "approximate_years_active": "c. 80 BC – 66 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Arsacid Dynasty of Atropatene",
+        "approximate_years_active": "c. 10 AD – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Caucasian Albania (Local Kings)",
+        "approximate_years_active": "247 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Iberia (Local Kings)",
+        "approximate_years_active": "247 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Arsacid Dynasty of Armenia",
+        "approximate_years_active": "c. 54 AD – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Roman Empire (Vassalage/Client Status)",
+        "approximate_years_active": "65 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "247 BC – c. 235 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Parthian (Arsacid) Empire",
+        "approximate_years_active": "c. 235 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Cadusii/Amardi/Gelae (Tribal Powers)",
+        "approximate_years_active": "247 BC – 224 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "247 BC – c. 238 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Andragoras (Independent Satrap)",
+        "approximate_years_active": "247 BC – 238 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Parthian (Arsacid) Empire",
+        "approximate_years_active": "238 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Seleucid Empire",
+        "approximate_years_active": "247 BC – c. 150 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Sakas (Indo-Scythian Tribes)",
+        "approximate_years_active": "c. 128 BC – c. 20 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "House of Suren (Local Warlords/Vassals)",
+        "approximate_years_active": "c. 100 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Indo-Parthian Kingdom",
+        "approximate_years_active": "c. 19 AD – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Indo-Parthian Kingdom",
+        "approximate_years_active": "c. 20 AD – c. 125 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Paratarajas (Kings of Parata)",
+        "approximate_years_active": "c. 125 AD – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Greco-Bactrian Kingdom",
+        "approximate_years_active": "247 BC – c. 130 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Yuezhi Confederation",
+        "approximate_years_active": "c. 130 BC – c. 30 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Kingdom of Kangju (Local Power)",
+        "approximate_years_active": "c. 128 BC – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Kushan Empire",
+        "approximate_years_active": "c. 30 AD – 224 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Parthian (Arsacid) Empire (Overlords)",
+        "approximate_years_active": "c. 124 BC – c. 20 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Local Chorasmian Shahs (Native Dynasty)",
+        "approximate_years_active": "c. 20 AD – 224 AD",
+        "confidence": "High"
+    }
+]

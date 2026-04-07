@@ -1,0 +1,290 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Median Empire",
+        "approximate_years_active": "550 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Atropatid House (Atropates)",
+        "approximate_years_active": "331–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Neo-Elamite III Rulers",
+        "approximate_years_active": "550–539 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "539–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Neo-Babylonian Dynasty",
+        "approximate_years_active": "550–539 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "539–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Median Empire (Little Media)",
+        "approximate_years_active": "550 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "550–331 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Atropatid House (Atropates)",
+        "approximate_years_active": "331–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Orontid Dynasty",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Local Tribes (Colchians/Albanians)",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Achaemenid Dynasty (Hyrcania Satrapy)",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Cadusian Tribal Chiefs",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Amardian Tribes",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "Low"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Ariaspae Tribe (Local Authority)",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mitradates (Rebel State in Zaris)",
+        "approximate_years_active": "c. 390s BC",
+        "confidence": "Low"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Local Hakim/Tribal Leadership",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Sogdian Principality Rulers",
+        "approximate_years_active": "550–540 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Saka / Massagetae Tribal Confederations",
+        "approximate_years_active": "550–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–360 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Independent Chorasmian Kings",
+        "approximate_years_active": "360–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "egypt",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "525–404 BC; 343–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "lydia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "546–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "ionia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "546–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "cappadocia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "546–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "phrygia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caria",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "cilicia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "levant_and_cyprus",
+        "dynasty_name": "Achaemenid Dynasty (Eber-Nari)",
+        "approximate_years_active": "539–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "arabia",
+        "dynasty_name": "Achaemenid Dynasty (Vassalage)",
+        "approximate_years_active": "525–330 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "thrace",
+        "dynasty_name": "Achaemenid Dynasty (Skudra)",
+        "approximate_years_active": "512–479 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "nubia",
+        "dynasty_name": "Achaemenid Dynasty (Kush)",
+        "approximate_years_active": "525–c. 400 BC",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "libya",
+        "dynasty_name": "Achaemenid Dynasty (Put)",
+        "approximate_years_active": "525–404 BC; 343–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "india",
+        "dynasty_name": "Achaemenid Dynasty (Hindush)",
+        "approximate_years_active": "530–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "arachosia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "aria",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "gandhara",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sattagydia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "bactria",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "540–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "scythia",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "519–330 BC",
+        "confidence": "High"
+    },
+    {
+        "region_id": "dahae",
+        "dynasty_name": "Achaemenid Dynasty",
+        "approximate_years_active": "479–330 BC",
+        "confidence": "Medium"
+    }
+]

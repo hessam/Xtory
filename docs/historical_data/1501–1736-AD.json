@@ -1,0 +1,362 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1501–1504",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1504–1724",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Hotak Dynasty",
+        "approximate_years": "1724–1729",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Afsharid Dynasty / Safavid Restoration",
+        "approximate_years": "1729–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1501–1503",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Khorshidi Dynasty (Little Lorestan)",
+        "approximate_years": "1501–1598",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1503–1722",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Hotak Dynasty",
+        "approximate_years": "1722–1729",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Ottoman Empire (Western Parts)",
+        "approximate_years": "1724–1732",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Afsharid Dynasty / Safavid Restoration",
+        "approximate_years": "1729–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Musha'sha' Dynasty",
+        "approximate_years": "1501–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1508–1722",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Banu Ka'b",
+        "approximate_years": "1720–1736",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Afsharid Dynasty",
+        "approximate_years": "1730–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1501–1508",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1508–1534",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1534–1623",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1623–1638",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1638–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1501–1501",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1501–1585",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1585–1603",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1603–1724",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1724–1732",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Safavid Dynasty (Restoration)",
+        "approximate_years": "1732–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs",
+        "approximate_years": "1501–1538",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Bagrationi Dynasty (Georgian Vassals)",
+        "approximate_years": "1510s–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1538–1578",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1578–1606",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1606–1722",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Russian Empire",
+        "approximate_years": "1723–1735",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Ottoman Empire",
+        "approximate_years": "1724–1735",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Safavid Dynasty (Restoration)",
+        "approximate_years": "1735–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Kia Dynasty (Gilan)",
+        "approximate_years": "1501–1592",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Ishaqid Dynasty (Gilan)",
+        "approximate_years": "1501–1592",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Mar'ashi Dynasty (Mazandaran)",
+        "approximate_years": "1501–1596",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanids (Mazandaran)",
+        "approximate_years": "1501–1598",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1592–1723",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Russian Empire",
+        "approximate_years": "1723–1735",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Safavid Dynasty (Restoration)",
+        "approximate_years": "1735–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1501–1507",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Shaybanid Uzbeks",
+        "approximate_years": "1507–1510",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1510–1722",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Shaybanid Uzbeks",
+        "approximate_years": "1520s–1598 (intermittent)",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Sistani Kingdom (Malek Mahmud)",
+        "approximate_years": "1722–1726",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Afsharid Dynasty / Safavid Restoration",
+        "approximate_years": "1726–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mihrabanid Dynasty",
+        "approximate_years": "1501–1537",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Safavid Dynasty",
+        "approximate_years": "1537–1722",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Kiani Maliks (Safavid Vassals)",
+        "approximate_years": "1537–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Hotak Dynasty",
+        "approximate_years": "1722–1729",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Malik Dynasty (Kech)",
+        "approximate_years": "1501–16th century",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Buledi Tribe",
+        "approximate_years": "16th century–17th century",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Gichki Tribe",
+        "approximate_years": "17th century–1736",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1501–1505",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Shaybanid Dynasty",
+        "approximate_years": "1505–1598",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Janid (Ashtarkhanid) Dynasty",
+        "approximate_years": "1599–1736",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1501–1505",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Shaybanid Dynasty",
+        "approximate_years": "1505–1511",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Arabshahid Dynasty (Khanate of Khiva)",
+        "approximate_years": "1511–1728",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Qongrat Inaqs",
+        "approximate_years": "1720s–1736",
+        "confidence": "medium"
+    }
+]

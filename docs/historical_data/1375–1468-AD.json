@@ -1,0 +1,278 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years": "1314–1393",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1393–1453",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Qara Qoyunlu",
+        "approximate_years": "1447–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "fars",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1468–1503",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years": "1314–1393",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1393–1447",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Qara Qoyunlu",
+        "approximate_years": "1447–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1468–1503",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Muzaffarid Dynasty",
+        "approximate_years": "1314–1393",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1393–1441",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Mushasha Dynasty",
+        "approximate_years": "1436–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years": "1335–1410",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1393–1405",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Qara Qoyunlu",
+        "approximate_years": "1410–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1467–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Jalayirid Sultanate",
+        "approximate_years": "1335–1410",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Qara Qoyunlu",
+        "approximate_years": "1375–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1386–1408",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Aq Qoyunlu",
+        "approximate_years": "1467–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Georgia",
+        "approximate_years": "1008–1466",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs (Yazidid/Kasranid line)",
+        "approximate_years": "861–1382",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Shirvanshahs (Darbandid line)",
+        "approximate_years": "1382–1500",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1386–1405",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Qara Qoyunlu",
+        "approximate_years": "1407–1468",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Kakheti",
+        "approximate_years": "1463–1507",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Kingdom of Imereti",
+        "approximate_years": "1455–1507",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Principality of Samtskhe",
+        "approximate_years": "1451–1507",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Baduspanid Dynasty",
+        "approximate_years": "1375–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Mar'ashi Dynasty",
+        "approximate_years": "1359–1507",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1393–1405",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Afrasiyabids",
+        "approximate_years": "1349–1393",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Kar-Kiya Dynasty",
+        "approximate_years": "1370s–1507",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kartid Dynasty",
+        "approximate_years": "1244–1381",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Sarbadars",
+        "approximate_years": "1337–1381",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1381–1507",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Mihrabanid Dynasty",
+        "approximate_years": "1236–1537",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1383–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Maliks of Kech / Makran",
+        "approximate_years": "1375–1468",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Zikri State / Movement",
+        "approximate_years": "1450–1468",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Buledi Tribe",
+        "approximate_years": "15th century",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Rind-Lashari Tribal Power",
+        "approximate_years": "15th century",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1370–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Chagatai Khanate",
+        "approximate_years": "1370–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Sufi (Qunghrat) Dynasty",
+        "approximate_years": "1359–1388",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Timurid Empire",
+        "approximate_years": "1388–1468",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Golden Horde",
+        "approximate_years": "Intermittent",
+        "confidence": "medium"
+    }
+]

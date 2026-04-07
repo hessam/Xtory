@@ -1,0 +1,146 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Umayyad Caliphate (Emirate of Arminiya / Arran)",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Mihranid Dynasty",
+        "approximate_years_active": "630–705 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Khazar Khaganate (Incursions / Control)",
+        "approximate_years_active": "c. 650–969 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Dabuyid Dynasty",
+        "approximate_years_active": "642–760 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Bavandid Dynasty",
+        "approximate_years_active": "651–1349 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Paduspanid (Baduspanid) Dynasty",
+        "approximate_years_active": "665–1598 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Masmughans of Damavand",
+        "approximate_years_active": "651–760 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Zunbil Dynasty",
+        "approximate_years_active": "680–870 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Brahman Dynasty",
+        "approximate_years_active": "641–725 AD",
+        "confidence": "Medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Sogdian City-States (Ikhshids of Sogdia)",
+        "approximate_years_active": "661–750 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Türgesh Khaganate",
+        "approximate_years_active": "699–766 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Tang China",
+        "approximate_years_active": "660–669 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Tibetan Empire",
+        "approximate_years_active": "660–842 AD",
+        "confidence": "Low"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Afrighid Dynasty",
+        "approximate_years_active": "305–995 AD",
+        "confidence": "High"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Umayyad Caliphate",
+        "approximate_years_active": "c. 712–750 AD",
+        "confidence": "High"
+    }
+]

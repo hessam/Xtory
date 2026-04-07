@@ -1,0 +1,134 @@
+[
+    {
+        "region_id": "fars",
+        "dynasty_name": "Pahlavi Dynasty",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "jibal",
+        "dynasty_name": "Pahlavi Dynasty",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khuzestan",
+        "dynasty_name": "Pahlavi Dynasty",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Hashemites of Iraq",
+        "approximate_years": "1921–1958",
+        "confidence": "high"
+    },
+    {
+        "region_id": "mesopotamia",
+        "dynasty_name": "Republic of Iraq (Post-Hashemite State)",
+        "approximate_years": "1958–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Pahlavi Dynasty (Iranian Azerbaijan)",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "azerbaijan",
+        "dynasty_name": "Soviet Union",
+        "approximate_years": "1920s–1991",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caucasus",
+        "dynasty_name": "Soviet Union",
+        "approximate_years": "1920s–1991",
+        "confidence": "high"
+    },
+    {
+        "region_id": "caspian_coast",
+        "dynasty_name": "Pahlavi Dynasty",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Pahlavi Dynasty (Iranian Khorasan)",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Kingdom of Afghanistan",
+        "approximate_years": "1926–1973",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Republic of Afghanistan",
+        "approximate_years": "1973–1978",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Democratic Republic of Afghanistan",
+        "approximate_years": "1978–1987",
+        "confidence": "high"
+    },
+    {
+        "region_id": "khorasan",
+        "dynasty_name": "Soviet Union (Soviet Central Asia)",
+        "approximate_years": "1920s–1991",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Pahlavi Dynasty (Iranian Sistan)",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Kingdom of Afghanistan",
+        "approximate_years": "1926–1973",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Republic of Afghanistan",
+        "approximate_years": "1973–1978",
+        "confidence": "high"
+    },
+    {
+        "region_id": "sistan",
+        "dynasty_name": "Democratic Republic of Afghanistan",
+        "approximate_years": "1978–1987",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "Pahlavi Dynasty (Iranian Makran)",
+        "approximate_years": "1925–1979",
+        "confidence": "high"
+    },
+    {
+        "region_id": "makran",
+        "dynasty_name": "State of Makran / Pakistan",
+        "approximate_years": "1947–present",
+        "confidence": "medium"
+    },
+    {
+        "region_id": "transoxiana",
+        "dynasty_name": "Soviet Union",
+        "approximate_years": "1920s–1991",
+        "confidence": "high"
+    },
+    {
+        "region_id": "chorasmia",
+        "dynasty_name": "Soviet Union",
+        "approximate_years": "1924–1991",
+        "confidence": "high"
+    }
+]
